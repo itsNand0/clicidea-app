@@ -14,7 +14,12 @@
 
     <div class="flex-1 p-8">
         <!-- Contenido principal -->
-        <h1 class="text-2xl font-bold">INCIDENCIAS</h1>
+        <div class="flex items-center justify-between mb-4">
+            <h1 class="text-2xl font-bold">INCIDENCIAS</h1>
+            <a href="{{route('incidencias.create')}}" class="bg-lime-600 text-white px-4 py-2 rounded-lg">
+                <i class="fa-solid fa-plus"></i>
+            </a>
+        </div>
         @livewire('incidencias')
     </div>
 </div>

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Usercontroller;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Incidenciacontroller;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,6 +12,7 @@ Route::post('/', [AuthController::class, 'login']);
 
 //Route::middleware('auth')->group(function () {
     Route::resource('users', Usercontroller::class);
+    Route::resource('incidencias', Incidenciacontroller::class);
     Route::get('/dashboard', function () {
         return view('dashboard');
     });
