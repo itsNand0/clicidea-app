@@ -38,7 +38,7 @@ class Usercontroller extends Controller
             'password' => 'required|string|max:255',
             'password_confirmation' => 'required|string|max:255',
         ]);
-
+        
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = $request->password;

@@ -13,6 +13,7 @@ Route::post('/', [AuthController::class, 'login']);
 //Route::middleware('auth')->group(function () {
     Route::resource('users', Usercontroller::class);
     Route::resource('incidencias', Incidenciacontroller::class);
+    Route::get('/incidencias/create', [IncidenciaController::class, 'create'])->name('incidencias.create');
     Route::get('/dashboard', function () {
         return view('dashboard');
     });
