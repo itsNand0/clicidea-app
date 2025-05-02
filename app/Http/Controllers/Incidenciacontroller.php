@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cliente;
 use Illuminate\Http\Request;
 use Livewire\Attributes\Validate;
 use App\Models\Incidencias;
@@ -30,8 +31,6 @@ class Incidenciacontroller extends Controller
      */
     public function store(Request $request)
     {   
-        
-        
         // Validar los datos de entrada
         $data = new Incidencias();
         $validate = $request->validate([
@@ -39,7 +38,7 @@ class Incidenciacontroller extends Controller
             'asunto' => 'required|string|max:255',
             'descripcion' => 'required|string|max:255',
             'contacto' => 'required|string|max:255',
-            'adjunto' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'adjunto.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);       
         
         $data->usuarioIncidencia = Auth::user()->name;
@@ -50,26 +49,30 @@ class Incidenciacontroller extends Controller
         $data->Tecnico_idTecnico = 1;
         $data->cliente_idCliente  = 1;
         $data->EstadoIncidencia_idEstadoIncidencia  = 1;
+        $archivos = [];
 
         if ($request->hasFile('adjunto')) {
-            $file = $request->file('adjunto');
-            $filename = time().'_'.$file->getClientOriginalName();
-            $path = $file->storeAs('adjuntos', $filename, 'public'); // Guarda en storage/app/public/adjuntos
-        
-            $data->adjuntoIncidencia = $filename;
+            foreach ($request->file('adjunto') as $file) {
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $file->storeAs('adjuntos', $filename, 'public');
+                $archivos[] = $filename;
+            }
         }
-        dd($file->storeAs('public/adjuntos', $filename));
+        
+        $data->adjuntoIncidencia = json_encode($archivos);
+
         $data->save(); // Guardar la incidencia en la base de datos
         // Redirigir o mostrar un mensaje de éxito
-        return redirect()->route('incidencias.create')->with('success', 'Incidencia creada correctamente.');
+        return redirect()->route('incidencias.show',['id' => $data -> idIncidencia])->with('success', 'Incidencia creada correctamente.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        //
+    public function show(Request $request, $id)
+    {   
+        $datas = Incidencias::with(['cliente', 'tecnico', 'estadoincidencia'])->findorfail($id);
+        return view('incidencias.show', compact('datas'));
     }
 
     /**

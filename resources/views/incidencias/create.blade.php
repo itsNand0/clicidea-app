@@ -43,7 +43,7 @@
             </div>
 
             <div class="mb-4">
-                <textarea name="descripcion" rows="4" placeholder="Descripción detallada"
+                <textarea name="descripcion" rows="2" placeholder="Descripción detallada"
                     class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"></textarea>
             </div>
 
@@ -54,8 +54,8 @@
 
             <div class="mb-4">
                 <label class="block text-gray-700 font-semibold mb-1">Imagen o Adjunto</label>
-                <input type="file" name="adjunto"
-                    class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                <input type="file" name="adjunto[]"
+                    class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" multiple>
             </div>
 
             <button type="submit"

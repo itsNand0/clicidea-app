@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Incidencias extends Model
 {
     protected $table = 'incidencia';
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'idIncidencia';
     public $timestamps = false;
 
     protected $fillable = [
@@ -21,4 +21,19 @@ class Incidencias extends Model
         'adjuntoIncidencia',
         'Tecnico_idTecnico', // si es que lo vas a usar más adelante
     ];
+
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class, 'cliente_idCliente', 'idCliente');
+    }
+
+    public function tecnico()
+    {
+        return $this->belongsTo(Tecnico::class, 'Tecnico_idTecnico', 'idTecnico');
+    }
+
+    public function estadoIncidencia()
+    {
+        return $this->belongsTo(Estadoincidencia::class, 'EstadoIncidencia_idEstadoIncidencia ', 'idEstadoIncidencia');
+    }
 }

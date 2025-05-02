@@ -14,6 +14,7 @@ Route::post('/', [AuthController::class, 'login']);
     Route::resource('users', Usercontroller::class);
     Route::resource('incidencias', Incidenciacontroller::class);
     Route::get('/incidencias/create', [IncidenciaController::class, 'create'])->name('incidencias.create');
+    Route::get('/incidencias/{id}', [IncidenciaController::class, 'show'])->name('incidencias.show');
     Route::get('/dashboard', function () {
         return view('dashboard');
     });
