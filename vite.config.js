@@ -10,4 +10,10 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
+
+    server: {
+        allowedHosts: [
+          'panama-networking-kw-jews.trycloudflare.com', // Añade aquí tu host
+        ],
+      },
 });

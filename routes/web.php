@@ -3,6 +3,7 @@
 use App\Http\Controllers\Usercontroller;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Incidenciacontroller;
+use App\Http\Controllers\Tecnicocontroller;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,6 +16,10 @@ Route::post('/', [AuthController::class, 'login']);
     Route::resource('incidencias', Incidenciacontroller::class);
     Route::get('/incidencias/create', [IncidenciaController::class, 'create'])->name('incidencias.create');
     Route::get('/incidencias/{id}', [IncidenciaController::class, 'show'])->name('incidencias.show');
+    Route::post('/incidencias/{id}/asignar', [IncidenciaController::class, 'asignar'])->name('incidencias.asignar');
+    Route::put('/incidencias/{id}/update-file', [IncidenciaController::class, 'updateFile'])->name('incidencias.updateFile');
+
+    
     Route::get('/dashboard', function () {
         return view('dashboard');
     });
