@@ -60,12 +60,11 @@
             @else
                 <p class="text-gray-500 italic">No hay archivos adjuntos para esta incidencia.</p>
             @endif
-
         </div>
 
         <!-- Espacio para el menú de acciones -->
 
-        <div class="flex-1 bg-white border border-gray-300 rounded-xl shadow-sm p-2">
+        <div class="flex-1 flex flex-col bg-gray-200 border border-gray-300 rounded-xl shadow-sm p-2">
             <nav class="bg-gray-800 text-white px-4 py-2 shadow-sm rounded-md">
                 <ul class="flex justify-between items-center space-x-2">
 
@@ -137,15 +136,14 @@
 
                                 <label class="ml-2 block text-sm text-black">Asunto: </label>
                                 <input type="text" name="asunto"
-                                    class="w-full border px-4 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 text-gray-700" value="{{ $datas->asuntoIncidencia }}">
+                                    class="w-full border px-4 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 text-gray-700"
+                                    value="{{ $datas->asuntoIncidencia }}">
                                 <label class="ml-2 block text-sm text-black">Descipcion: </label>
                                 <textarea name="descripcion"
-                                    class="w-full border px-4 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 text-gray-700"
-                                    >{{ old('descripcion', $datas->descriIncidencia) }}</textarea>
+                                    class="w-full border px-4 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 text-gray-700">{{ old('descripcion', $datas->descriIncidencia) }}</textarea>
                                 <label class="ml-2 block text-sm text-black">Contacto: </label>
                                 <textarea name="contacto"
-                                    class="w-full border px-4 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 text-gray-700"
-                                    >{{ old('descripcion', $datas->contactoIncidencia) }}</textarea>
+                                    class="w-full border px-4 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 text-gray-700">{{ old('descripcion', $datas->contactoIncidencia) }}</textarea>
 
                                 <div class="flex justify-end space-x-2">
                                     <button type="button" onclick="closeModal()"
@@ -162,12 +160,6 @@
                         <a class="nav-link text-m" href="#"><i class="fa-solid fa-paperclip"></i>&nbsp;&nbsp;
                             Adjuntar</a>
                     </li>
-                    <!--
-                    <li class="nav-item border border-gray-500 px-3 py-1 rounded-md hover:bg-gray-700">
-                        <a class="nav-link text-m" href="#" onclick="document.getElementById('fileInput').click();"><i class="fa-solid fa-paperclip"></i>&nbsp;&nbsp;
-                            Adjuntar</a>
-                        <input type="file" id="fileInput" style="display: none;" name="adjunto[]" multiple>
-                    </li>-->
 
                     <div id="modaladjuntar"
                         class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
@@ -214,6 +206,39 @@
                     </li>
                 </ul>
             </nav>
+
+            <!-- Campo historial acciones -->
+
+            <div class="max-h-96 overflow-y-auto w-25 border p-4 mt-3 bg-white rounded-md shadow">
+                @if ($auditorias->isEmpty())
+                    <p class="text-gray-500 italic">No hay registros de auditoría.</p>
+                @else
+                    @foreach ($auditorias as $auditoria)
+                        <p class="font-semibold text-gray-700">Acción: {{ ucfirst($auditoria->accion) }}</p>
+                        @php
+                            $cambios = json_decode($auditoria->cambios, true);
+                        @endphp
+                        <div class="mb-4 border-b pb-2">
+                            <p class="text-sm text-gray-700"><strong>Usuario:</strong>
+                                {{ $auditoria->usuario->name ?? 'N/A' }}</p>
+                            <p class="text-sm text-gray-600"><strong>Fecha:</strong>
+                                {{ $auditoria->created_at->format('d/m/Y H:i') }}</p>
+                            <ul class="ml-4 mt-1 text-sm">
+                                @foreach ($cambios['antes'] as $campo => $valorAntes)
+                                    @if (isset($cambios['despues'][$campo]))
+                                        <li>
+                                            <strong>{{ $campo }}:</strong>
+                                            <span class="line-through text-red-600">{{ $valorAntes }}</span> →
+                                            <span class="text-green-600">{{ $cambios['despues'][$campo] }}</span>
+                                        </li>
+                                    @endif
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endforeach
+                @endif
+            </div>
+
         </div>
 
     </div>

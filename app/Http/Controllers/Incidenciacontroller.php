@@ -8,6 +8,7 @@ use Livewire\Attributes\Validate;
 use App\Models\Incidencias;
 use App\Models\Tecnico;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Auditoria;
 
 class Incidenciacontroller extends Controller
 {
@@ -87,7 +88,14 @@ class Incidenciacontroller extends Controller
     {
         $datas = Incidencias::with(['cliente', 'tecnico', 'estadoincidencia'])->findorfail($id);
         $datatecnicos = Tecnico::all();
-        return view('incidencias.show', compact(['datas', 'datatecnicos']));  // Pasar la lista de técnicos a la vista  
+
+        $auditorias = Auditoria::where('modelo', 'Incidencia')
+        ->where('modelo_id', $id)
+        ->with('usuario') // si tienes relación con User
+        ->latest()
+        ->get();
+
+        return view('incidencias.show', compact(['datas', 'datatecnicos', 'auditorias']));  
     }
 
 
@@ -102,17 +110,19 @@ class Incidenciacontroller extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {   
-        
+    {
+
         // Encuentra la incidencia
         $data = Incidencias::findOrFail($id);
-        
+
         // Validación de los campos de texto
         $request->validate([
             'asunto' => 'nullable|string|max:255',
             'descripcion' => 'nullable|string|max:255',
             'contacto' => 'nullable|string|max:255',
         ]);
+
+        $original = $data->getOriginal();
 
         // Asignación de los valores a la incidencia
         $data->asuntoIncidencia = $request->asunto;
@@ -122,11 +132,11 @@ class Incidenciacontroller extends Controller
         if ($request->has('asunto')) {
             $data->asuntoIncidencia = $request->asunto;
         }
-        
+
         if ($request->has('descripcion')) {
             $data->descriIncidencia = $request->descripcion;
         }
-        
+
         if ($request->has('contacto')) {
             $data->contactoIncidencia = $request->contacto;
         }
@@ -134,16 +144,28 @@ class Incidenciacontroller extends Controller
         // Guardar los cambios en la base de datos
         $data->save();
 
+        // Auditoría: se ejecuta después de guardar
+        Auditoria::create([
+            'accion' => 'actualización',
+            'modelo' => 'Incidencia',
+            'modelo_id' => $data->idIncidencia,
+            'cambios' => json_encode([
+                'antes' => $original,
+                'despues' => $data->getChanges(),
+            ]),
+            'usuario_id' => Auth::user()->id,
+        ]);
+
         // Redirigir con un mensaje de éxito
         return redirect()->route('incidencias.show', ['id' => $data->idIncidencia])->with('success', 'Incidencia actualizada correctamente.');
     }
 
     public function updateFile(Request $request, string $id)
-    {   
-        
+    {
+
         // Encuentra la incidencia
         $data = Incidencias::findOrFail($id);
-        
+
         // Validación de los campos de texto
         $request->validate([
             'adjunto.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -151,7 +173,7 @@ class Incidenciacontroller extends Controller
 
         // Inicializamos un array para los nuevos archivos
         $archivos = [];
-        
+
         // Si se adjuntan archivos, procesarlos
         if ($request->hasFile('adjunto')) {
             foreach ($request->file('adjunto') as $file) {
@@ -178,6 +200,19 @@ class Incidenciacontroller extends Controller
         // Redirigir con un mensaje de éxito
         return redirect()->route('incidencias.show', ['id' => $data->idIncidencia])->with('success', 'Incidencia actualizada correctamente.');
     }
+
+    public function getAuditoria($id)
+    {   
+        $datas = Incidencias::findorfail($id);
+        $auditorias = Auditoria::where('modelo', 'Incidencia')
+        ->where('modelo_id', $id)
+        ->with('usuario') // Asegúrate que la relación esté bien definida
+        ->latest()
+        ->get();
+
+    return response()->json($auditorias, $datas);
+    }
+
 
 
     /**

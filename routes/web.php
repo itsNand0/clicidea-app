@@ -17,6 +17,7 @@ Route::post('/', [AuthController::class, 'login']);
     Route::get('/incidencias/create', [IncidenciaController::class, 'create'])->name('incidencias.create');
     Route::get('/incidencias/{id}', [IncidenciaController::class, 'show'])->name('incidencias.show');
     Route::post('/incidencias/{id}/asignar', [IncidenciaController::class, 'asignar'])->name('incidencias.asignar');
+    Route::get('/incidencias/{id}/auditoria', [IncidenciaController::class, 'getAuditoria'])->name('incidencias.auditoria');
     Route::put('/incidencias/{id}/update-file', [IncidenciaController::class, 'updateFile'])->name('incidencias.updateFile');
 
     
