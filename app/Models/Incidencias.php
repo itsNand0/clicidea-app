@@ -19,7 +19,7 @@ class Incidencias extends Model
         'EstadoIncidencia_idEstadoIncidencia',
         'fechaIncidencia',
         'adjuntoIncidencia',
-        'Tecnico_idTecnico', // si es que lo vas a usar más adelante
+        'Tecnico_idTecnico',
     ];
 
     public function cliente()
@@ -34,6 +34,6 @@ class Incidencias extends Model
 
     public function estadoIncidencia()
     {
-        return $this->belongsTo(Estadoincidencia::class, 'EstadoIncidencia_idEstadoIncidencia ', 'idEstadoIncidencia');
+        return $this->belongsTo(Estadoincidencia::class, 'EstadoIncidencia_idEstadoIncidencia', 'idEstadoIncidencia');
     }
 }

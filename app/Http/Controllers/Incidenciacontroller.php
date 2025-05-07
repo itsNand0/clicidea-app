@@ -50,7 +50,7 @@ class Incidenciacontroller extends Controller
         $data->fechaIncidencia = now();
         $data->Tecnico_idTecnico = 1;
         $data->cliente_idCliente  = 1;
-        $data->EstadoIncidencia_idEstadoIncidencia  = 1;
+        $data->EstadoIncidencia_idEstadoIncidencia = 1;
         $archivos = [];
 
         if ($request->hasFile('adjunto')) {
@@ -162,7 +162,6 @@ class Incidenciacontroller extends Controller
 
     public function updateFile(Request $request, string $id)
     {
-
         // Encuentra la incidencia
         $data = Incidencias::findOrFail($id);
 

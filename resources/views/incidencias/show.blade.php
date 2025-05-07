@@ -25,7 +25,7 @@
 
         <div
             class="bg-paper bg-cover border border-gray-300 shadow-xl rounded-xl p-4 sm:p-6 md:p-8 font-handwriting text-gray-800 w-full sm:w-[450px] md:w-[500px] lg:w-[450px] h-auto sm:h-[500px] md:h-[500px] lg:h-[590px]">
-
+            
             <div class="flex justify-between items-center mb-3">
                 <h1 class="text-sm text-right text-gray-600 w-1/3">
                     Creado por: {{ $datas->usuarioIncidencia }}<br>
@@ -207,40 +207,61 @@
                 </ul>
             </nav>
 
-            <!-- Campo historial acciones -->
+            <div class="flex gap-4 mt-4">
 
-            <div class="max-h-96 overflow-y-auto w-25 border p-4 mt-3 bg-white rounded-md shadow">
-                @if ($auditorias->isEmpty())
-                    <p class="text-gray-500 italic">No hay registros de auditoría.</p>
-                @else
-                    @foreach ($auditorias as $auditoria)
-                        <p class="font-semibold text-gray-700">Acción: {{ ucfirst($auditoria->accion) }}</p>
-                        @php
-                            $cambios = json_decode($auditoria->cambios, true);
-                        @endphp
-                        <div class="mb-4 border-b pb-2">
-                            <p class="text-sm text-gray-700"><strong>Usuario:</strong>
-                                {{ $auditoria->usuario->name ?? 'N/A' }}</p>
-                            <p class="text-sm text-gray-600"><strong>Fecha:</strong>
-                                {{ $auditoria->created_at->format('d/m/Y H:i') }}</p>
-                            <ul class="ml-4 mt-1 text-sm">
-                                @foreach ($cambios['antes'] as $campo => $valorAntes)
-                                    @if (isset($cambios['despues'][$campo]))
-                                        <li>
-                                            <strong>{{ $campo }}:</strong>
-                                            <span class="line-through text-red-600">{{ $valorAntes }}</span> →
-                                            <span class="text-green-600">{{ $cambios['despues'][$campo] }}</span>
-                                        </li>
-                                    @endif
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endforeach
-                @endif
+                <div class="max-h-96 overflow-y-auto w-[500px] border p-4 bg-white rounded-md shadow">
+                    <div class="bg-blue-600 text-white font-semibold px-4 py-2 rounded-md shadow mb-4">
+                        <i>INCIDENCIA - #{{ $datas->idIncidencia }}</i>
+                    </div>
+                    <div
+                        class="
+                    px-6 py-1 rounded-full text-base text-center
+                        @switch($datas->estadoincidencia->descriEstadoIncidencia)
+                        
+                            @case('En proceso') bg-green-200 text-gray-800 @break
+                            @case('Pendiente') bg-yellow-200 text-gray-800 @break
+                            @case('cerrado') bg-red-200 text-gray-800 @break
+                            @default bg-gray-200 text-gray-800
+                        @endswitch
+                    ">
+                        {{ $datas->estadoincidencia->descriEstadoIncidencia }}
+                    </div>
+                </div>
+
+
+                <div class="max-h-96 overflow-y-auto w-80 border p-4 bg-white rounded-md shadow">
+                    @if ($auditorias->isEmpty())
+                        <p class="text-gray-500 italic">No hay registros de auditoría.</p>
+                    @else
+                        @foreach ($auditorias as $auditoria)
+                            <p class="font-semibold text-gray-700">Acción: {{ ucfirst($auditoria->accion) }}</p>
+                            @php
+                                $cambios = json_decode($auditoria->cambios, true);
+                            @endphp
+                            <div class="mb-4 border-b pb-2">
+                                <p class="text-sm text-gray-700"><strong>Usuario:</strong>
+                                    {{ $auditoria->usuario->name ?? 'N/A' }}</p>
+                                <p class="text-sm text-gray-600"><strong>Fecha:</strong>
+                                    {{ $auditoria->created_at->format('d/m/Y H:i') }}</p>
+                                <ul class="ml-4 mt-1 text-sm">
+                                    @foreach ($cambios['antes'] as $campo => $valorAntes)
+                                        @if (isset($cambios['despues'][$campo]))
+                                            <li>
+                                                <strong>{{ $campo }}:</strong>
+                                                <span class="line-through text-red-600">{{ $valorAntes }}</span> →
+                                                <span class="text-green-600">{{ $cambios['despues'][$campo] }}</span>
+                                            </li>
+                                        @endif
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endforeach
+                    @endif
+                </div>
             </div>
 
-        </div>
 
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
