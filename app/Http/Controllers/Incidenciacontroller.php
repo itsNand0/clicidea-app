@@ -9,6 +9,7 @@ use App\Models\Incidencias;
 use App\Models\Tecnico;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Auditoria;
+use App\Models\Comentarios;
 
 class Incidenciacontroller extends Controller
 {
@@ -212,6 +213,21 @@ class Incidenciacontroller extends Controller
     return response()->json($auditorias, $datas);
     }
 
+    public function comentarios(Request $request, $idincidencia) 
+    {
+        $request->validate([
+            'contenido' => 'required|string|max:1000',
+        ]);
+
+        Comentarios::created
+        ([
+            'incidenciaId' =>  $idincidencia,
+            'usuario_id' => Auth::id(),
+            'contenido' => $request -> contenido,
+        ]);
+
+        return redirect()->back()->with('success','Comentario agregado correctamente');
+    }
 
 
     /**

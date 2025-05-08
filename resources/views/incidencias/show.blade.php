@@ -25,7 +25,7 @@
 
         <div
             class="bg-paper bg-cover border border-gray-300 shadow-xl rounded-xl p-4 sm:p-6 md:p-8 font-handwriting text-gray-800 w-full sm:w-[450px] md:w-[500px] lg:w-[450px] h-auto sm:h-[500px] md:h-[500px] lg:h-[590px]">
-            
+
             <div class="flex justify-between items-center mb-3">
                 <h1 class="text-sm text-right text-gray-600 w-1/3">
                     Creado por: {{ $datas->usuarioIncidencia }}<br>
@@ -68,15 +68,16 @@
             <nav class="bg-gray-800 text-white px-4 py-2 shadow-sm rounded-md">
                 <ul class="flex justify-between items-center space-x-2">
 
-                    <li class="nav-item border border-gray-500 px-4 py-1 rounded-md hover:bg-gray-700">
+                    <li id="opcionasignar"
+                        class="nav-item border border-gray-500 px-4 py-1 rounded-md hover:bg-gray-700">
                         <a id="opcionasignar" class="nav-link text-m " href="#"><i
                                 class="fa-regular fa-user"></i>&nbsp;&nbsp;Asignar</a>
                     </li>
 
                     <!-- Modal (oculto por defecto) -->
                     <div id="modalasignar"
-                        class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
-                        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+                        class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
+                        <div class="modal-content bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
                             <h2 class="text-xl font-semibold mb-4 text-gray-700">Selecciona una
                                 opcion</h2>
                             <form action="{{ route('incidencias.asignar', $datas->idIncidencia) }}" method="POST">
@@ -120,15 +121,15 @@
                         </div>
                     </div>
 
-                    <li id="opcioneditar"
+                    <li id='opcioneditar'
                         class="nav-item border border-gray-500 px-3 py-1 rounded-md hover:bg-gray-700">
                         <a class="nav-link text-m" href="#"><i class="fa-solid fa-pen-to-square"></i>&nbsp;&nbsp;
                             Editar</a>
                     </li>
 
                     <div id="modaleditar"
-                        class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
-                        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+                        class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
+                        <div class="modal-content bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
                             <h2 class="text-xl font-semibold mb-4 text-gray-700">Modificar Detalle</h2>
                             <form action="{{ route('incidencias.update', $datas->idIncidencia) }}" method="POST">
                                 @csrf
@@ -162,8 +163,8 @@
                     </li>
 
                     <div id="modaladjuntar"
-                        class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
-                        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+                        class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
+                        <div class="modal-content bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
                             <h2 class="text-xl font-semibold mb-4 text-gray-700">Nuevos Archivos</h2>
                             <form action="{{ route('incidencias.updateFile', $datas->idIncidencia) }}" method="POST"
                                 enctype="multipart/form-data">
@@ -193,10 +194,31 @@
                         </div>
                     </div>
 
-                    <li class="nav-item border border-gray-500 px-3 py-1 rounded-md hover:bg-gray-700">
+                    <li id="opcioncomentar"
+                        class="nav-item border border-gray-500 px-3 py-1 rounded-md hover:bg-gray-700">
                         <a class="nav-link text-m" href="#"><i class="fa-solid fa-comment"></i>&nbsp;&nbsp;
                             Comentario</a>
                     </li>
+
+                    <div id="modalcomentario"
+                        class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
+                        <div class="modal-content bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+                            <form action="{{ route('comentarios.store', $datas->idIncidencia) }}" method="POST"
+                                class="mb-4">
+                                @csrf
+                                <textarea name="contenido" class="w-full p-2 border rounded text-black" rows="3"
+                                    placeholder="Escribe un comentario..."></textarea>
+
+                                <div class="flex justify-end space-x-2">
+                                    <button type="button" onclick="closeModal()"
+                                        class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancelar</button>
+                                    <button type="submit"
+                                        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Comentar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
                     <li class="nav-item border border-gray-500 px-3 py-1 rounded-md hover:bg-gray-700">
                         <a class="nav-link text-m" href="#"><i
                                 class="fa-solid fa-bars"></i>&nbsp;&nbsp;Estado</a>
@@ -268,6 +290,7 @@
     <!-- Abrir modal oculto -->
     <script>
         document.getElementById('opcionasignar').addEventListener('click', function(event) {
+            event.stopPropagation();
             const modal = document.getElementById('modalasignar');
             modal.classList.remove('hidden');
             modal.classList.add('flex'); // si no querés que redireccione
@@ -275,6 +298,7 @@
         });
 
         document.getElementById('opcioneditar').addEventListener('click', function(event) {
+            event.stopPropagation();
             const modal = document.getElementById('modaleditar');
             modal.classList.remove('hidden');
             modal.classList.add('flex'); // si no querés que redireccione
@@ -282,23 +306,45 @@
         });
 
         document.getElementById('opcionadjuntar').addEventListener('click', function(event) {
+            event.stopPropagation();
             const modal = document.getElementById('modaladjuntar');
             modal.classList.remove('hidden');
             modal.classList.add('flex'); // si no querés que redireccione
 
         });
 
+        document.getElementById('opcioncomentar').addEventListener('click', function(event) {
+            event.stopPropagation();
+            const modal = document.getElementById('modalcomentario');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex'); // si no querés que redireccione
+
+        });
+
         function closeModal() {
-            const modal = document.getElementById('modalasignar');
-            modal.classList.remove('flex');
-            modal.classList.add('hidden');
-            const modaleditar = document.getElementById('modaleditar');
-            modaleditar.classList.remove('flex');
-            modaleditar.classList.add('hidden');
-            const modaladjuntar = document.getElementById('modaladjuntar');
-            modaladjuntar.classList.remove('flex');
-            modaladjuntar.classList.add('hidden'); // lo vuelve a ocultar
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            });
         }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('click', function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                const content = modal.querySelector('.modal-content');
+                if (!modal.classList.contains('hidden') && !content.contains(event.target)) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex'); // ¡IMPORTANTE! Remover también "flex"
+                }
+            });
+        });
 
         const opcion1 = document.getElementById('opcion1');
         const opcion2 = document.getElementById('opcion2');

@@ -36,4 +36,9 @@ class Incidencias extends Model
     {
         return $this->belongsTo(Estadoincidencia::class, 'EstadoIncidencia_idEstadoIncidencia', 'idEstadoIncidencia');
     }
+
+    public function comentarios()
+    {
+        return $this->hasMany(Comentarios::class);
+    }
 }
