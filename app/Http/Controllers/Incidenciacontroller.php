@@ -96,7 +96,12 @@ class Incidenciacontroller extends Controller
         ->latest()
         ->get();
 
-        return view('incidencias.show', compact(['datas', 'datatecnicos', 'auditorias']));  
+        $comentarios = Comentarios::where('incidencia_id', $id)
+        ->with('usuario') // si tienes relación con User
+        ->latest()
+        ->get();
+
+        return view('incidencias.show', compact(['datas', 'datatecnicos', 'auditorias', 'comentarios']));  
     }
 
 
@@ -213,18 +218,20 @@ class Incidenciacontroller extends Controller
     return response()->json($auditorias, $datas);
     }
 
-    public function comentarios(Request $request, $idincidencia) 
-    {
+    public function comentarios(Request $request, string $id) 
+    {   
+        
         $request->validate([
             'contenido' => 'required|string|max:1000',
         ]);
 
-        Comentarios::created
-        ([
-            'incidenciaId' =>  $idincidencia,
-            'usuario_id' => Auth::id(),
-            'contenido' => $request -> contenido,
-        ]);
+        $comentarios = new Comentarios();
+
+        $comentarios -> incidencia_id = $id;
+        $comentarios -> usuario_id = Auth::id();
+        $comentarios -> contenido = $request -> contenido;
+
+        $comentarios->save();
 
         return redirect()->back()->with('success','Comentario agregado correctamente');
     }

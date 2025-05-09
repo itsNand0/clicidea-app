@@ -231,24 +231,49 @@
 
             <div class="flex gap-4 mt-4">
 
-                <div class="max-h-96 overflow-y-auto w-[500px] border p-4 bg-white rounded-md shadow">
+                <div class="overflow-hidden w-[500px] border p-4 bg-white rounded-md shadow">
                     <div class="bg-blue-600 text-white font-semibold px-4 py-2 rounded-md shadow mb-4">
                         <i>INCIDENCIA - #{{ $datas->idIncidencia }}</i>
                     </div>
+
                     <div
-                        class="
-                    px-6 py-1 rounded-full text-base text-center
-                        @switch($datas->estadoincidencia->descriEstadoIncidencia)
-                        
-                            @case('En proceso') bg-green-200 text-gray-800 @break
-                            @case('Pendiente') bg-yellow-200 text-gray-800 @break
-                            @case('cerrado') bg-red-200 text-gray-800 @break
-                            @default bg-gray-200 text-gray-800
-                        @endswitch
-                    ">
+                        class="px-6 py-1 rounded-full text-base text-center
+                            @switch($datas->estadoincidencia->descriEstadoIncidencia)
+                                @case('En proceso') bg-green-200 text-gray-800 @break
+                                @case('Pendiente') bg-yellow-200 text-gray-800 @break
+                                @case('cerrado') bg-red-200 text-gray-800 @break
+                                @default bg-gray-200 text-gray-800
+                            @endswitch
+                        ">
                         {{ $datas->estadoincidencia->descriEstadoIncidencia }}
                     </div>
+
+                    <p class="text-lg font-semibold text-gray-800 border-b pb-1 mb-2 mt-2">
+                        Comentarios
+                    </p>
+                    <div id="comentarios-container" class="max-h-64 overflow-y-auto space-y-2 mt-4 pr-1">
+                        @if ($comentarios->isEmpty())
+                            <p class="text-gray-500 italic">No hay registros de Comentarios.</p>
+                        @else
+                            @foreach ($comentarios as $comentario)
+                                <div
+                                    class="border border-gray-200 rounded-xl p-3 bg-white shadow-sm hover:shadow-md transition-shadow duration-200">
+                                    <div class="mt-3 text-sm text-gray-500">
+                                        Publicado por
+                                        <span
+                                            class="font-medium text-gray-700">{{ $comentario->usuario->name ?? 'Anónimo' }}</span>
+                                        el {{ $comentario->created_at->format('d/m/Y H:i') }}
+                                    </div>
+                                    <div class="flex items-start justify-between">
+                                        <p class="text-gray-700 text-base leading-relaxed">
+                                            {{ $comentario->contenido }}</p>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
                 </div>
+
 
 
                 <div class="max-h-96 overflow-y-auto w-80 border p-4 bg-white rounded-md shadow">
