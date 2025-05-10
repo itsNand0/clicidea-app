@@ -219,10 +219,38 @@
                         </div>
                     </div>
 
-                    <li class="nav-item border border-gray-500 px-3 py-1 rounded-md hover:bg-gray-700">
+                    <li id="opcionestado" class="nav-item border border-gray-500 px-3 py-1 rounded-md hover:bg-gray-700">
                         <a class="nav-link text-m" href="#"><i
                                 class="fa-solid fa-bars"></i>&nbsp;&nbsp;Estado</a>
                     </li>
+
+                    <div id="modalestado"
+                        class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
+                        <div class="modal-content bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+                            <h2 class="text-xl font-semibold mb-4 text-gray-700">Selecciona Estado</h2>
+                            <form action="{{ route('incidencias.cambiarEstado', $datas->idIncidencia) }}" method="POST">
+                                @csrf
+                                <select name="estado_id"
+                                    class="w-full border border-gray-300 rounded-md p-2 mb-4 text-gray-700">
+                                    @foreach ($estadosincidencias as $estadoincidencia)
+                                        <option value="{{ $estadoincidencia->idEstadoIncidencia}}"
+                                            for="estadosincidencias{{ $estadoincidencia->idEstadoIncidencia }}"
+                                            class="ml-2 text-sm text-gray-700">
+                                            {{ $estadoincidencia->descriEstadoIncidencia }}
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                                <div class="flex justify-end space-x-2">
+                                    <button type="button" onclick="closeModal()"
+                                        class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancelar</button>
+                                    <button type="submit"
+                                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Asignar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
                     <li class="nav-item border border-gray-500 px-3 py-1 rounded-md hover:bg-green-700">
                         <a class="nav-link text-sm text-white" href="#">Resolver</a>
                     </li>
@@ -241,7 +269,7 @@
                             @switch($datas->estadoincidencia->descriEstadoIncidencia)
                                 @case('En proceso') bg-green-200 text-gray-800 @break
                                 @case('Pendiente') bg-yellow-200 text-gray-800 @break
-                                @case('cerrado') bg-red-200 text-gray-800 @break
+                                @case('Cerrado') bg-red-200 text-gray-800 @break
                                 @default bg-gray-200 text-gray-800
                             @endswitch
                         ">
@@ -345,6 +373,15 @@
             modal.classList.add('flex'); // si no querés que redireccione
 
         });
+
+        document.getElementById('opcionestado').addEventListener('click', function(event) {
+            event.stopPropagation();
+            const modal = document.getElementById('modalestado');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex'); // si no querés que redireccione
+
+        });
+        
 
         function closeModal() {
             const modals = document.querySelectorAll('.modal');

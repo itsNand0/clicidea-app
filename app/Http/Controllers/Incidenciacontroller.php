@@ -10,6 +10,7 @@ use App\Models\Tecnico;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Auditoria;
 use App\Models\Comentarios;
+use App\Models\Estadoincidencia;
 
 class Incidenciacontroller extends Controller
 {
@@ -101,16 +102,9 @@ class Incidenciacontroller extends Controller
         ->latest()
         ->get();
 
-        return view('incidencias.show', compact(['datas', 'datatecnicos', 'auditorias', 'comentarios']));  
+        $estadosincidencias = Estadoincidencia::all();
+        return view('incidencias.show', compact(['datas', 'datatecnicos', 'auditorias', 'comentarios','estadosincidencias']));  
     }
-
-
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id) {}
-
 
     /**
      * Update the specified resource in storage.
@@ -234,6 +228,21 @@ class Incidenciacontroller extends Controller
         $comentarios->save();
 
         return redirect()->back()->with('success','Comentario agregado correctamente');
+    }
+
+    public function cambiarEstado (Request $request, $id)
+    {   
+        //dd($request);
+        $request->validate([
+            'estado_id'=> 'required|exists:estadoincidencia,idEstadoIncidencia',
+        ]);
+
+        $incidencia = Incidencias::findorfail($id);
+        $incidencia -> EstadoIncidencia_idEstadoIncidencia = $request->estado_id;
+        $incidencia -> save();
+
+        return redirect()->back()->with('success', 'Estado asignado correctamente.');
+        
     }
 
 
