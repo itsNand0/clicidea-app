@@ -78,7 +78,26 @@ class Incidenciacontroller extends Controller
 
         $incidencia = Incidencias::findOrFail($id);
         $incidencia->Tecnico_idTecnico = $request->tecnico_id;
+
+        $original = $incidencia->getOriginal();
+
+        $tecnicoNuevo = Tecnico::find($request->tecnico_id);
+        $tecnicoAnterior = Tecnico::find($original['Tecnico_idTecnico']);
+
         $incidencia->save();
+
+        Auditoria::create([
+            'accion' => 'Asignacion',
+            'modelo' => 'Incidencia',
+            'modelo_id' => $incidencia->idIncidencia,
+            'cambios' => json_encode([
+                'tecnico' => [
+                    'antes' => $tecnicoAnterior ? $tecnicoAnterior->nombreTecnico : null,
+                    'despues' => $tecnicoNuevo->nombreTecnico,
+                ],
+            ]),
+            'usuario_id' => Auth::user()->id,
+        ]);
 
         return redirect()->back()->with('success', 'Técnico asignado correctamente.');
     }
@@ -92,18 +111,18 @@ class Incidenciacontroller extends Controller
         $datatecnicos = Tecnico::all();
 
         $auditorias = Auditoria::where('modelo', 'Incidencia')
-        ->where('modelo_id', $id)
-        ->with('usuario') // si tienes relación con User
-        ->latest()
-        ->get();
+            ->where('modelo_id', $id)
+            ->with('usuario') // si tienes relación con User
+            ->latest()
+            ->get();
 
         $comentarios = Comentarios::where('incidencia_id', $id)
-        ->with('usuario') // si tienes relación con User
-        ->latest()
-        ->get();
+            ->with('usuario') // si tienes relación con User
+            ->latest()
+            ->get();
 
         $estadosincidencias = Estadoincidencia::all();
-        return view('incidencias.show', compact(['datas', 'datatecnicos', 'auditorias', 'comentarios','estadosincidencias']));  
+        return view('incidencias.show', compact(['datas', 'datatecnicos', 'auditorias', 'comentarios', 'estadosincidencias']));
     }
 
     /**
@@ -184,6 +203,9 @@ class Incidenciacontroller extends Controller
                 $archivos[] = $filename;
             }
         }
+
+        $original = $data->getOriginal();
+
         // Recuperar los archivos anteriores
         $archivosAnteriores = json_decode($data->adjuntoIncidencia, true) ?? [];
 
@@ -196,53 +218,81 @@ class Incidenciacontroller extends Controller
         // Guardar los cambios en la base de datos
         $data->save();
 
+        Auditoria::create([
+            'accion' => 'Adjuntos',
+            'modelo' => 'Incidencia',
+            'modelo_id' => $data->idIncidencia,
+            'cambios' => json_encode([
+                'antes' => $original,
+                'despues' => $data->getChanges(),
+            ]),
+            'usuario_id' => Auth::user()->id,
+        ]);
+
         // Redirigir con un mensaje de éxito
         return redirect()->route('incidencias.show', ['id' => $data->idIncidencia])->with('success', 'Incidencia actualizada correctamente.');
     }
 
     public function getAuditoria($id)
-    {   
+    {
         $datas = Incidencias::findorfail($id);
         $auditorias = Auditoria::where('modelo', 'Incidencia')
-        ->where('modelo_id', $id)
-        ->with('usuario') // Asegúrate que la relación esté bien definida
-        ->latest()
-        ->get();
+            ->where('modelo_id', $id)
+            ->with('usuario') // Asegúrate que la relación esté bien definida
+            ->latest()
+            ->get();
 
-    return response()->json($auditorias, $datas);
+        return response()->json($auditorias, $datas);
     }
 
-    public function comentarios(Request $request, string $id) 
-    {   
-        
+    public function comentarios(Request $request, string $id)
+    {
+
         $request->validate([
             'contenido' => 'required|string|max:1000',
         ]);
 
         $comentarios = new Comentarios();
 
-        $comentarios -> incidencia_id = $id;
-        $comentarios -> usuario_id = Auth::id();
-        $comentarios -> contenido = $request -> contenido;
+        $comentarios->incidencia_id = $id;
+        $comentarios->usuario_id = Auth::id();
+        $comentarios->contenido = $request->contenido;
 
         $comentarios->save();
 
-        return redirect()->back()->with('success','Comentario agregado correctamente');
+        return redirect()->back()->with('success', 'Comentario agregado correctamente');
     }
 
-    public function cambiarEstado (Request $request, $id)
-    {   
-        //dd($request);
+    public function cambiarEstado(Request $request, $id)
+    {
         $request->validate([
-            'estado_id'=> 'required|exists:estadoincidencia,idEstadoIncidencia',
+            'estado_id' => 'required|exists:estadoincidencia,idEstadoIncidencia',
         ]);
 
         $incidencia = Incidencias::findorfail($id);
-        $incidencia -> EstadoIncidencia_idEstadoIncidencia = $request->estado_id;
-        $incidencia -> save();
+        $incidencia->EstadoIncidencia_idEstadoIncidencia = $request->estado_id;
+
+        $original = $incidencia->getOriginal();
+
+        $estadoNuevo = Estadoincidencia::find($request->estado_id);
+        $estadoAnterior = Estadoincidencia::find($original['EstadoIncidencia_idEstadoIncidencia']);
+
+        $incidencia->save();
+
+        Auditoria::create([
+            'accion' => 'Cambio de estado',
+            'modelo' => 'Incidencia',
+            'modelo_id' => $incidencia->idIncidencia,
+            'cambios' => json_encode([
+                'estado' => [
+                    'antes' => $estadoAnterior ? $estadoAnterior->descriEstadoIncidencia : null,
+                    'despues' => $estadoNuevo ? $estadoNuevo->descriEstadoIncidencia : null,
+                ],
+            ]),
+            'usuario_id' => Auth::user()->id,
+        ]);
 
         return redirect()->back()->with('success', 'Estado asignado correctamente.');
-        
     }
 
 

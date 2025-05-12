@@ -41,6 +41,15 @@ services:
     networks:
       - laravel
 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: db
+    ports:
+      - "8080:80"
+    networks:
+      - laravel
+
 networks:
   laravel:
     driver: bridge

@@ -219,7 +219,8 @@
                         </div>
                     </div>
 
-                    <li id="opcionestado" class="nav-item border border-gray-500 px-3 py-1 rounded-md hover:bg-gray-700">
+                    <li id="opcionestado"
+                        class="nav-item border border-gray-500 px-3 py-1 rounded-md hover:bg-gray-700">
                         <a class="nav-link text-m" href="#"><i
                                 class="fa-solid fa-bars"></i>&nbsp;&nbsp;Estado</a>
                     </li>
@@ -228,12 +229,13 @@
                         class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
                         <div class="modal-content bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
                             <h2 class="text-xl font-semibold mb-4 text-gray-700">Selecciona Estado</h2>
-                            <form action="{{ route('incidencias.cambiarEstado', $datas->idIncidencia) }}" method="POST">
+                            <form action="{{ route('incidencias.cambiarEstado', $datas->idIncidencia) }}"
+                                method="POST">
                                 @csrf
                                 <select name="estado_id"
                                     class="w-full border border-gray-300 rounded-md p-2 mb-4 text-gray-700">
                                     @foreach ($estadosincidencias as $estadoincidencia)
-                                        <option value="{{ $estadoincidencia->idEstadoIncidencia}}"
+                                        <option value="{{ $estadoincidencia->idEstadoIncidencia }}"
                                             for="estadosincidencias{{ $estadoincidencia->idEstadoIncidencia }}"
                                             class="ml-2 text-sm text-gray-700">
                                             {{ $estadoincidencia->descriEstadoIncidencia }}
@@ -302,9 +304,10 @@
                     </div>
                 </div>
 
-
-
                 <div class="max-h-96 overflow-y-auto w-80 border p-4 bg-white rounded-md shadow">
+                    <p class="text-lg font-semibold text-gray-800 border-b pb-1 mb-2 mt-2">
+                        Registros.
+                    </p>
                     @if ($auditorias->isEmpty())
                         <p class="text-gray-500 italic">No hay registros de auditoría.</p>
                     @else
@@ -319,15 +322,61 @@
                                 <p class="text-sm text-gray-600"><strong>Fecha:</strong>
                                     {{ $auditoria->created_at->format('d/m/Y H:i') }}</p>
                                 <ul class="ml-4 mt-1 text-sm">
-                                    @foreach ($cambios['antes'] as $campo => $valorAntes)
-                                        @if (isset($cambios['despues'][$campo]))
+                                    
+                                    @php
+                                        $fuentes = [
+                                            'directo' => [
+                                                'antes' => $cambios['antes'] ?? [],
+                                                'despues' => $cambios['despues'] ?? [],
+                                            ],
+                                            'tecnico' => [
+                                                'antes' => $cambios['tecnico']['antes'] ?? [],
+                                                'despues' => $cambios['tecnico']['despues'] ?? [],
+                                            ],
+                                            'estado' => [
+                                                'antes' => $cambios['estado']['antes'] ?? null,
+                                                'despues' => $cambios['estado']['despues'] ?? null,
+                                            ],
+                                        ];
+                                    @endphp
+
+                                    {{-- Caso especial para editar (cuando son strings planos) --}}
+                                    @if (isset($cambios['antes']) && is_array($cambios['antes']))
+                                        @foreach ($cambios['antes'] as $campo => $valorAntes)
+                                            @if (isset($cambios['despues'][$campo]))
+                                                <li>
+                                                    <strong>{{ $campo }}:</strong>
+                                                    <span class="text-red-600">{{ $valorAntes }}</span> →
+                                                    <span
+                                                        class="text-green-600">{{ $cambios['despues'][$campo] }}</span>
+                                                </li>
+                                            @endif
+                                        @endforeach
+                                    @endif
+
+                                    {{-- Caso especial para técnico (cuando son strings planos) --}}
+                                    @if (isset($cambios['tecnico']) && is_array($cambios['tecnico']))
+                                        @if (isset($cambios['tecnico']['antes']) && isset($cambios['tecnico']['despues']))
                                             <li>
-                                                <strong>{{ $campo }}:</strong>
-                                                <span class="line-through text-red-600">{{ $valorAntes }}</span> →
-                                                <span class="text-green-600">{{ $cambios['despues'][$campo] }}</span>
+                                                <strong>Técnico:</strong>
+                                                <span class="text-red-600">{{ $cambios['tecnico']['antes'] }}</span> →
+                                                <span
+                                                    class="text-green-600">{{ $cambios['tecnico']['despues'] }}</span>
                                             </li>
                                         @endif
-                                    @endforeach
+                                    @endif
+
+                                    {{-- Caso especial para estado (cuando son strings planos) --}}
+                                    @if (isset($cambios['estado']) && is_array($cambios['estado']))
+                                        @if (isset($cambios['estado']['antes']) && isset($cambios['estado']['despues']))
+                                            <li>
+                                                <strong>Estado:</strong>
+                                                <span class="text-red-600">{{ $cambios['estado']['antes'] }}</span> →
+                                                <span
+                                                    class="text-green-600">{{ $cambios['estado']['despues'] }}</span>
+                                            </li>
+                                        @endif
+                                    @endif
                                 </ul>
                             </div>
                         @endforeach
@@ -381,7 +430,7 @@
             modal.classList.add('flex'); // si no querés que redireccione
 
         });
-        
+
 
         function closeModal() {
             const modals = document.querySelectorAll('.modal');
