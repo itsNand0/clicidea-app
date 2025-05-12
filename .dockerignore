@@ -1,0 +1,6 @@
+*.log
+*.tmp
+vendor/
+node_modules/
+.git/
+public/storage
