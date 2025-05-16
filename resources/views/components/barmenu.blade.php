@@ -12,7 +12,7 @@
                 <span class="text-sm">Hola, {{ Auth::user()->name }}</span>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-1 rounded fa-solid fa-arrow-right-from-bracket"">
+                    <button type="submit" class="close_Sesion bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-1 rounded fa-solid fa-arrow-right-from-bracket">
                     </button>
                 </form>
             @endauth

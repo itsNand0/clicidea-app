@@ -27,6 +27,8 @@ RUN composer install
 
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 755 /var/www/storage
+    
+RUN php artisan storage:link
 
 EXPOSE 9000
 CMD ["php-fpm"]

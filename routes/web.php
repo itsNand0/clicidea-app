@@ -22,6 +22,7 @@ Route::post('/', [AuthController::class, 'login']);
     Route::get('/incidencias/{id}/auditoria', [IncidenciaController::class, 'getAuditoria'])->name('incidencias.auditoria');
     Route::post('/incidencias/{id}/comentario', [Incidenciacontroller::class, 'comentarios'])->name('comentarios.store');
     Route::post('/incidencias/{id}/cambiar_estado', [Incidenciacontroller::class, 'cambiarEstado'])->name('incidencias.cambiarEstado');
+    Route::put('/incidencias/{id}/resolver', [Incidenciacontroller::class, 'resolverIncidencia'])->name('incidencias.resolverIncidencia');
     Route::put('/incidencias/{id}/update-file', [IncidenciaController::class, 'updateFile'])->name('incidencias.updateFile');
 
     

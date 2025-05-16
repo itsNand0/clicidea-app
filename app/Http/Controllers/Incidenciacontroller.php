@@ -295,6 +295,15 @@ class Incidenciacontroller extends Controller
         return redirect()->back()->with('success', 'Estado asignado correctamente.');
     }
 
+    public function resolverIncidencia(Request $request, $id)
+    {   
+        $this->cambiarEstado($request, $id);
+        $this->updateFile($request, $id);
+        $this->comentarios($request, $id);
+
+        return redirect()->back()->with('success', 'Estado asignado correctamente.');
+    }
+
 
     /**
      * Remove the specified resource from storage.

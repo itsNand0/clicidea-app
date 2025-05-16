@@ -253,9 +253,68 @@
                         </div>
                     </div>
 
-                    <li class="nav-item border border-gray-500 px-3 py-1 rounded-md hover:bg-green-700">
-                        <a class="nav-link text-sm text-white" href="#">Resolver</a>
+                    <li id="opcionresolver"
+                        class="nav-item border border-gray-500 px-3 py-1 rounded-md hover:bg-gray-700">
+                        <a class="nav-link text-m" href="#"><i
+                                class="fa-solid fa-hand"></i>&nbsp;&nbsp;Resolver</a>
                     </li>
+                    
+                    <div id="modalresolver"
+                        class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
+                        <div class="modal-content bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+                            <h2 class="text-xl font-semibold mb-4 text-gray-700">Nuevos Archivos</h2>
+                            <form id="resolverFormulario"
+                                action="{{ route('incidencias.resolverIncidencia', $datas->idIncidencia) }}"
+                                method="POST" enctype="multipart/form-data">
+                                @csrf
+                                @method('PUT')
+                                
+                                <label class="ml-2 block text-sm text-black">Seleccionar: </label>
+                                <input type="file" name="adjunto[]"
+                                    class="w-full border px-4 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 text-gray-700"
+                                    multiple>
+                                <textarea name="contenido" class="w-full p-2 border rounded text-black" rows="3"
+                                    placeholder="Escribe un comentario..."></textarea>
+                                    <input type="hidden" name="estado_id" value="3">
+                                <div class="flex justify-end space-x-2">
+                                    <button type="button" onclick="closeModal()"
+                                        class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancelar</button>
+                                    <button type="submit"
+                                        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Subir</button>
+                                </div>
+                                @if ($errors->any())
+                                    <div>
+                                        <ul>
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Una vez que esta resuelta la incidencia, se deshabilita todo en la vista -->
+                    @if ($datas->estadoincidencia->descriEstadoIncidencia === 'Cerrado')
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                // Deshabilita todos los elementos interactivos
+                                const elements = document.querySelectorAll('button, input, select, textarea, [tabindex]');
+                                elements.forEach(el => {
+                                     if (!el.classList.contains('close_Sesion')) {
+                                        el.setAttribute('disabled', 'disabled');
+                                        el.classList.add('pointer-events-none', 'opacity-60');
+                                    }
+                                });
+                                // Opcional: bloquea clicks en toda la página
+                                document.body.classList.add('pointer-events-none');
+                                // Permite scroll y selección de texto
+                                document.body.classList.remove('pointer-events-none');
+                                
+                            });
+                        </script>
+                    @endif
                 </ul>
             </nav>
 
@@ -322,7 +381,7 @@
                                 <p class="text-sm text-gray-600"><strong>Fecha:</strong>
                                     {{ $auditoria->created_at->format('d/m/Y H:i') }}</p>
                                 <ul class="ml-4 mt-1 text-sm">
-                                    
+                                    {{-- Caso especial para editar (cuando son strings planos) --}}
                                     @php
                                         $fuentes = [
                                             'directo' => [
@@ -339,7 +398,6 @@
                                             ],
                                         ];
                                     @endphp
-
                                     {{-- Caso especial para editar (cuando son strings planos) --}}
                                     @if (isset($cambios['antes']) && is_array($cambios['antes']))
                                         @foreach ($cambios['antes'] as $campo => $valorAntes)
@@ -395,7 +453,7 @@
             event.stopPropagation();
             const modal = document.getElementById('modalasignar');
             modal.classList.remove('hidden');
-            modal.classList.add('flex'); // si no querés que redireccione
+            modal.classList.add('flex');
 
         });
 
@@ -403,7 +461,7 @@
             event.stopPropagation();
             const modal = document.getElementById('modaleditar');
             modal.classList.remove('hidden');
-            modal.classList.add('flex'); // si no querés que redireccione
+            modal.classList.add('flex');
 
         });
 
@@ -411,7 +469,7 @@
             event.stopPropagation();
             const modal = document.getElementById('modaladjuntar');
             modal.classList.remove('hidden');
-            modal.classList.add('flex'); // si no querés que redireccione
+            modal.classList.add('flex');
 
         });
 
@@ -419,7 +477,7 @@
             event.stopPropagation();
             const modal = document.getElementById('modalcomentario');
             modal.classList.remove('hidden');
-            modal.classList.add('flex'); // si no querés que redireccione
+            modal.classList.add('flex');
 
         });
 
@@ -427,7 +485,15 @@
             event.stopPropagation();
             const modal = document.getElementById('modalestado');
             modal.classList.remove('hidden');
-            modal.classList.add('flex'); // si no querés que redireccione
+            modal.classList.add('flex');
+
+        });
+
+        document.getElementById('opcionresolver').addEventListener('click', function(event) {
+            event.stopPropagation();
+            const modal = document.getElementById('modalresolver');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
 
         });
 
@@ -454,6 +520,14 @@
                     modal.classList.add('hidden');
                     modal.classList.remove('flex'); // ¡IMPORTANTE! Remover también "flex"
                 }
+            });
+        });
+
+        document.getElementById('resolverFormulario').addEventListener('submit', function() {
+            // Selecciona todos los botones dentro del formulario y los desactiva
+            const botones = this.querySelectorAll('li');
+            botones.forEach(btn => {
+                btn.disabled = true; // Opcional
             });
         });
 
