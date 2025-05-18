@@ -18,7 +18,7 @@ Route::post('/', [AuthController::class, 'login']);
     Route::resource('incidencias', Incidenciacontroller::class);
     Route::get('/incidencias/create', [IncidenciaController::class, 'create'])->name('incidencias.create');
     Route::get('/incidencias/{id}', [IncidenciaController::class, 'show'])->name('incidencias.show');
-    Route::post('/incidencias/{id}/asignar', [IncidenciaController::class, 'asignar'])->name('incidencias.asignar');
+    Route::put('/incidencias/{id}/asignar', [IncidenciaController::class, 'asignar'])->name('incidencias.asignar');
     Route::get('/incidencias/{id}/auditoria', [IncidenciaController::class, 'getAuditoria'])->name('incidencias.auditoria');
     Route::post('/incidencias/{id}/comentario', [Incidenciacontroller::class, 'comentarios'])->name('comentarios.store');
     Route::post('/incidencias/{id}/cambiar_estado', [Incidenciacontroller::class, 'cambiarEstado'])->name('incidencias.cambiarEstado');

@@ -20,6 +20,7 @@ class Incidencias extends Model
         'fechaIncidencia',
         'adjuntoIncidencia',
         'Tecnico_idTecnico',
+        'Area_idArea',
     ];
 
     public function cliente()
@@ -40,5 +41,10 @@ class Incidencias extends Model
     public function comentarios()
     {
         return $this->hasMany(Comentarios::class);
+    }
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class, 'Area_idArea', 'id');
     }
 }

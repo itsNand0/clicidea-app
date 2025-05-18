@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Livewire\Attributes\Validate;
 use App\Models\Incidencias;
 use App\Models\Tecnico;
+use App\Models\Area;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Auditoria;
 use App\Models\Comentarios;
@@ -73,33 +74,41 @@ class Incidenciacontroller extends Controller
     public function asignar(Request $request, $id)
     {
         $request->validate([
-            'tecnico_id' => 'required|exists:tecnico,idTecnico',
+            'tecnico_id' => 'nullable|exists:tecnico,idTecnico',
+            'area_id' => 'nullable|exists:areas,id',
         ]);
 
         $incidencia = Incidencias::findOrFail($id);
-        $incidencia->Tecnico_idTecnico = $request->tecnico_id;
+        $incidencia->Tecnico_idTecnico = $request->filled('tecnico_id') ? $request->tecnico_id : null;
+        $incidencia->Area_idArea = $request->filled('area_id') ? $request->area_id : null;
 
         $original = $incidencia->getOriginal();
 
-        $tecnicoNuevo = Tecnico::find($request->tecnico_id);
-        $tecnicoAnterior = Tecnico::find($original['Tecnico_idTecnico']);
+        $tecnicoNuevo = $request->filled('tecnico_id') ? Tecnico::find($request->tecnico_id) : null;
+        $tecnicoAnterior = $original['Tecnico_idTecnico'] ? Tecnico::find($original['Tecnico_idTecnico']) : null;
+
+        $areaNueva = $request->filled('area_id') ? Area::find($request->area_id) : null;
+        $areaAnterior = $original['Area_idArea'] ?? null ? Area::find($original['Area_idArea']) : null;
 
         $incidencia->save();
-
         Auditoria::create([
             'accion' => 'Asignacion',
             'modelo' => 'Incidencia',
             'modelo_id' => $incidencia->idIncidencia,
             'cambios' => json_encode([
-                'tecnico' => [
+                'responsable' => [
                     'antes' => $tecnicoAnterior ? $tecnicoAnterior->nombreTecnico : null,
-                    'despues' => $tecnicoNuevo->nombreTecnico,
+                    'despues' => $tecnicoNuevo ? $tecnicoNuevo->nombreTecnico : null,
+                ],
+                'area' => [
+                    'antes' => $areaAnterior ? $areaAnterior->nombreArea : null,
+                    'despues' => $areaNueva ? $areaNueva->nombreArea : null,
                 ],
             ]),
             'usuario_id' => Auth::user()->id,
         ]);
 
-        return redirect()->back()->with('success', 'Técnico asignado correctamente.');
+        return redirect()->back()->with('success', 'Responsable asignado correctamente.');
     }
 
     /**
@@ -107,8 +116,9 @@ class Incidenciacontroller extends Controller
      */
     public function show(Request $request, $id)
     {
-        $datas = Incidencias::with(['cliente', 'tecnico', 'estadoincidencia'])->findorfail($id);
+        $datas = Incidencias::with(['cliente', 'tecnico', 'estadoincidencia', 'area'])->findorfail($id);
         $datatecnicos = Tecnico::all();
+        $dataareas = Area::all();
 
         $auditorias = Auditoria::where('modelo', 'Incidencia')
             ->where('modelo_id', $id)
@@ -122,7 +132,7 @@ class Incidenciacontroller extends Controller
             ->get();
 
         $estadosincidencias = Estadoincidencia::all();
-        return view('incidencias.show', compact(['datas', 'datatecnicos', 'auditorias', 'comentarios', 'estadosincidencias']));
+        return view('incidencias.show', compact(['datas', 'datatecnicos', 'dataareas', 'auditorias', 'comentarios', 'estadosincidencias']));
     }
 
     /**
@@ -296,7 +306,7 @@ class Incidenciacontroller extends Controller
     }
 
     public function resolverIncidencia(Request $request, $id)
-    {   
+    {
         $this->cambiarEstado($request, $id);
         $this->updateFile($request, $id);
         $this->comentarios($request, $id);

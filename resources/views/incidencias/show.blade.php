@@ -36,7 +36,15 @@
             <h2 class="text-3xl text-center mb-4">Detalles de la Incidencia</h2>
 
             <ul class="list-disc list-inside text-left space-y-2 mb-6">
-                <li><strong>Responsable:</strong> {{ $datas->tecnico->nombreTecnico }}</li>
+                <li><strong>Responsable:</strong>
+                    @if ($datas->tecnico && $datas->tecnico->nombreTecnico)
+                        {{ $datas->tecnico->nombreTecnico }}
+                    @elseif ($datas->area && $datas->area->area_name)
+                        {{ $datas->area->area_name }}
+                    @else
+                        <span class="text-gray-500 italic">Sin asignar</span>
+                    @endif
+                </li>
                 <li><strong>Contrato:</strong> {{ $datas->cliente->nombre }}</li>
                 <li><strong>Asunto:</strong> {{ $datas->asuntoIncidencia }}</li>
                 <li><strong>Descripción:</strong> {{ $datas->descriIncidencia }}</li>
@@ -66,6 +74,21 @@
 
         <div class="flex-1 flex flex-col bg-gray-200 border border-gray-300 rounded-xl shadow-sm p-2">
             <nav class="bg-gray-800 text-white px-4 py-2 shadow-sm rounded-md">
+
+
+                @if (session('success'))
+                    <div id="success-alert" class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                    <script>
+                        setTimeout(function() {
+                            var alert = document.getElementById('success-alert');
+                            if (alert) {
+                                alert.style.display = 'none';
+                            }
+                        }, 3000); // 3 segundos
+                    </script>
+                @endif
                 <ul class="flex justify-between items-center space-x-2">
 
                     <li id="opcionasignar"
@@ -82,6 +105,7 @@
                                 opcion</h2>
                             <form action="{{ route('incidencias.asignar', $datas->idIncidencia) }}" method="POST">
                                 @csrf
+                                @method('PUT')
                                 <label class="block mb-2 text-sm font-medium text-gray-700">Asignar a:</label>
 
                                 <div class="flex items-center space-x-4 mb-2">
@@ -98,10 +122,11 @@
                                     </div>
                                 </div>
 
-                                <!-- Lista de tecnicos para asiganar -->
+                                <!-- Lista de tecnicos para asignar -->
 
                                 <select id="tecnicos-lista" name="tecnico_id"
                                     class="w-full border border-gray-300 rounded-md p-2 mb-4 text-gray-700 hidden">
+                                    <option value="">Seleccione un área</option>
                                     @foreach ($datatecnicos as $datatecnico)
                                         <option value="{{ $datatecnico->idTecnico }}"
                                             for="tecnico{{ $datatecnico->idTecnico }}"
@@ -111,11 +136,57 @@
                                     @endforeach
                                 </select>
 
+                                <!-- Lista de areas para asignar -->
+
+                                <select id="areas-lista" name="area_id"
+                                    class="w-full border border-gray-300 rounded-md p-2 mb-4 text-gray-700 hidden">
+                                    <option value="">Seleccione un área</option>
+                                    @foreach ($dataareas as $dataarea)
+                                        <option value="{{ $dataarea->id }}" for="area {{ $dataarea->id }}"
+                                            class="ml-2 text-sm text-gray-700">
+                                            {{ $dataarea->area_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                                <script>
+                                    document.querySelector('form').addEventListener('submit', function(e) {
+                                        const tecnico = document.getElementById('tecnicos-lista');
+                                        const area = document.getElementById('areas-lista');
+
+                                        // Si técnico está vacío, borra su atributo "name" para que no se envíe
+                                        if (!tecnico.value) {
+                                            tecnico.name = '';
+                                        }
+
+                                        // Si área está vacía, borra su atributo "name" para que no se envíe
+                                        if (!area.value) {
+                                            area.name = '';
+                                        }
+                                    });
+                                </script>
+
                                 <div class="flex justify-end space-x-2">
-                                    <button type="button" onclick="closeModal()"
-                                        class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancelar</button>
-                                    <button type="submit"
-                                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Asignar</button>
+                                    <button type="button" onclick="closeModal()" id="cancelarBtnAsignar"
+                                        class="btncancelar px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-200">Cancelar</button>
+                                    <button type="submit" id="asignarBtn"
+                                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                        disabled>Asignar</button>
+                                    <script>
+                                        const asignarBtn = document.getElementById('asignarBtn');
+                                        const cancelarBtnAsignar = document.getElementById('cancelarBtnAsignar');
+                                        const asignarForm = asignarBtn.closest('form');
+                                        asignarForm.addEventListener('submit', function() {
+                                            asignarBtn.disabled = true;
+                                            asignarBtn.classList.add('opacity-60', 'pointer-events-none');
+                                            cancelarBtnAsignar.disabled = true;
+                                            cancelarBtnAsignar.classList.add('opacity-60', 'pointer-events-none');
+                                        });
+                                        asignarForm.addEventListener('input', function() {
+                                            asignarBtn.disabled = false;
+                                            asignarBtn.classList.remove('opacity-60', 'pointer-events-none');
+                                        });
+                                    </script>
                                 </div>
                             </form>
                         </div>
@@ -147,10 +218,26 @@
                                     class="w-full border px-4 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 text-gray-700">{{ old('descripcion', $datas->contactoIncidencia) }}</textarea>
 
                                 <div class="flex justify-end space-x-2">
-                                    <button type="button" onclick="closeModal()"
-                                        class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancelar</button>
-                                    <button type="submit"
-                                        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Guardar</button>
+                                    <button type="button" onclick="closeModal()" id="cancelarBtnEditar"
+                                        class="btncancelar px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-200">Cancelar</button>
+                                    <button type="submit" id="guardarBtn"
+                                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                        disabled>Guardar</button>
+                                    <script>
+                                        const guardarBtn = document.getElementById('guardarBtn');
+                                        const cancelarBtnEditar = document.getElementById('cancelarBtnEditar');
+                                        const editarForm = guardarBtn.closest('form');
+                                        editarForm.addEventListener('submit', function() {
+                                            guardarBtn.disabled = true;
+                                            guardarBtn.classList.add('opacity-60', 'pointer-events-none');
+                                            cancelarBtnEditar.disabled = true;
+                                            cancelarBtnEditar.classList.add('opacity-60', 'pointer-events-none');
+                                        });
+                                        editarForm.addEventListener('input', function() {
+                                            guardarBtn.disabled = false;
+                                            guardarBtn.classList.remove('opacity-60', 'pointer-events-none');
+                                        });
+                                    </script>
                                 </div>
                             </form>
                         </div>
@@ -176,10 +263,26 @@
                                     class="w-full border px-4 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 text-gray-700"
                                     multiple>
                                 <div class="flex justify-end space-x-2">
-                                    <button type="button" onclick="closeModal()"
-                                        class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancelar</button>
-                                    <button type="submit"
-                                        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Subir</button>
+                                    <button type="button" onclick="closeModal()" id="cancelarBtnAdjuntar"
+                                        class="btncancelar px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-200">Cancelar</button>
+                                    <button type="submit" id="subirBtn"
+                                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                        disabled>Subir</button>
+                                    <script>
+                                        const subirBtn = document.getElementById('subirBtn');
+                                        const cancelarBtnAdjuntar = document.getElementById('cancelarBtnAdjuntar');
+                                        const subirForm = subirBtn.closest('form');
+                                        subirForm.addEventListener('submit', function() {
+                                            subirBtn.disabled = true;
+                                            subirBtn.classList.add('opacity-60', 'pointer-events-none');
+                                            cancelarBtnAdjuntar.disabled = true;
+                                            cancelarBtnAdjuntar.classList.add('opacity-60', 'pointer-events-none');
+                                        });
+                                        subirForm.addEventListener('input', function() {
+                                            subirBtn.disabled = false;
+                                            subirBtn.classList.remove('opacity-60', 'pointer-events-none');
+                                        });
+                                    </script>
                                 </div>
                                 @if ($errors->any())
                                     <div>
@@ -210,10 +313,26 @@
                                     placeholder="Escribe un comentario..."></textarea>
 
                                 <div class="flex justify-end space-x-2">
-                                    <button type="button" onclick="closeModal()"
-                                        class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancelar</button>
-                                    <button type="submit"
-                                        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Comentar</button>
+                                    <button type="button" onclick="closeModal()" id="cancelarBtnComentario"
+                                        class="btncancelar px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-200">Cancelar</button>
+                                    <button type="submit" id="comentarBtn"
+                                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                        disabled>Comentar</button>
+                                    <script>
+                                        const comentarBtn = document.getElementById('comentarBtn');
+                                        const cancelarBtnComentario = document.getElementById('cancelarBtnComentario');
+                                        const comentarForm = comentarBtn.closest('form');
+                                        comentarForm.addEventListener('submit', function() {
+                                            comentarBtn.disabled = true;
+                                            comentarBtn.classList.add('opacity-60', 'pointer-events-none');
+                                            cancelarBtnComentario.disabled = true;
+                                            cancelarBtnComentario.classList.add('opacity-60', 'pointer-events-none');
+                                        });
+                                        comentarForm.addEventListener('input', function() {
+                                            comentarBtn.disabled = false;
+                                            comentarBtn.classList.remove('opacity-60', 'pointer-events-none');
+                                        });
+                                    </script>
                                 </div>
                             </form>
                         </div>
@@ -244,10 +363,31 @@
                                 </select>
 
                                 <div class="flex justify-end space-x-2">
-                                    <button type="button" onclick="closeModal()"
-                                        class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancelar</button>
-                                    <button type="submit"
-                                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Asignar</button>
+                                    <button type="button" onclick="closeModal()" id="cancelarBtnEstado"
+                                        class="btncancelar px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-200">Cancelar</button>
+                                    <button type="submit" id="cambiarBtn"
+                                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                        disabled>Cambiar</button>
+                                    <script>
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            const cambiarBtn = document.getElementById('cambiarBtn');
+                                            if (cambiarBtn) {
+                                                const cambiarForm = cambiarBtn.closest('form');
+                                                if (cambiarForm) {
+                                                    cambiarForm.addEventListener('submit', function() {
+                                                        cambiarBtn.disabled = true;
+                                                        cambiarBtn.classList.add('opacity-60', 'pointer-events-none');
+                                                        cancelarBtnEstado.disabled = true;
+                                                        cancelarBtnEstado.classList.add('opacity-60', 'pointer-events-none');
+                                                    });
+                                                    cambiarForm.addEventListener('input', function() {
+                                                        cambiarBtn.disabled = false;
+                                                        cambiarBtn.classList.remove('opacity-60', 'pointer-events-none');
+                                                    });
+                                                }
+                                            }
+                                        });
+                                    </script>
                                 </div>
                             </form>
                         </div>
@@ -258,7 +398,7 @@
                         <a class="nav-link text-m" href="#"><i
                                 class="fa-solid fa-hand"></i>&nbsp;&nbsp;Resolver</a>
                     </li>
-                    
+
                     <div id="modalresolver"
                         class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
                         <div class="modal-content bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
@@ -268,19 +408,44 @@
                                 method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
-                                
+
                                 <label class="ml-2 block text-sm text-black">Seleccionar: </label>
                                 <input type="file" name="adjunto[]"
                                     class="w-full border px-4 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 text-gray-700"
                                     multiple>
                                 <textarea name="contenido" class="w-full p-2 border rounded text-black" rows="3"
                                     placeholder="Escribe un comentario..."></textarea>
-                                    <input type="hidden" name="estado_id" value="3">
+                                <input type="hidden" name="estado_id" value="3">
                                 <div class="flex justify-end space-x-2">
-                                    <button type="button" onclick="closeModal()"
-                                        class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancelar</button>
-                                    <button type="submit"
-                                        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Subir</button>
+                                    <button type="button" onclick="closeModal()" id="cancelarBtnResolver"
+                                        class="btncancelar px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-200">Cancelar</button>
+                                    <button type="submit" id="resolverBtn"
+                                        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                        disabled>Resolver</button>
+                                    <script>
+                                        const resolverBtn = document.getElementById('resolverBtn');
+                                        const resolverForm = resolverBtn.closest('form');
+                                        const cancelarBtnResolver = document.getElementById('cancelarBtnResolver');
+                                        const resolverFileInput = resolverForm.querySelector('input[type="file"][name="adjunto[]"]');
+
+                                        // Habilita el botón solo si hay al menos 2 archivos seleccionados
+                                        resolverFileInput.addEventListener('change', function() {
+                                            if (resolverFileInput.files.length >= 2) {
+                                                resolverBtn.disabled = false;
+                                                resolverBtn.classList.remove('opacity-60', 'pointer-events-none');
+                                                cancelarBtnResolver.disabled = false;
+                                                cancelarBtnResolver.classList.remove('opacity-60', 'pointer-events-none');
+                                            } else {
+                                                resolverBtn.disabled = true;
+                                                resolverBtn.classList.add('opacity-60', 'pointer-events-none');
+                                            }
+                                        });
+
+                                        resolverForm.addEventListener('submit', function() {
+                                            resolverBtn.disabled = true;
+                                            resolverBtn.classList.add('opacity-60', 'pointer-events-none');
+                                        });
+                                    </script>
                                 </div>
                                 @if ($errors->any())
                                     <div>
@@ -294,7 +459,7 @@
                             </form>
                         </div>
                     </div>
-                    
+
                     <!-- Una vez que esta resuelta la incidencia, se deshabilita todo en la vista -->
                     @if ($datas->estadoincidencia->descriEstadoIncidencia === 'Cerrado')
                         <script>
@@ -302,7 +467,7 @@
                                 // Deshabilita todos los elementos interactivos
                                 const elements = document.querySelectorAll('button, input, select, textarea, [tabindex]');
                                 elements.forEach(el => {
-                                     if (!el.classList.contains('close_Sesion')) {
+                                    if (!el.classList.contains('close_Sesion') && !el.classList.contains('btncancelar')) {
                                         el.setAttribute('disabled', 'disabled');
                                         el.classList.add('pointer-events-none', 'opacity-60');
                                     }
@@ -311,7 +476,7 @@
                                 document.body.classList.add('pointer-events-none');
                                 // Permite scroll y selección de texto
                                 document.body.classList.remove('pointer-events-none');
-                                
+
                             });
                         </script>
                     @endif
@@ -506,48 +671,22 @@
             });
         }
 
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeModal();
-            }
-        });
-
-        document.addEventListener('click', function(event) {
-            const modals = document.querySelectorAll('.modal');
-            modals.forEach(modal => {
-                const content = modal.querySelector('.modal-content');
-                if (!modal.classList.contains('hidden') && !content.contains(event.target)) {
-                    modal.classList.add('hidden');
-                    modal.classList.remove('flex'); // ¡IMPORTANTE! Remover también "flex"
-                }
-            });
-        });
-
-        document.getElementById('resolverFormulario').addEventListener('submit', function() {
-            // Selecciona todos los botones dentro del formulario y los desactiva
-            const botones = this.querySelectorAll('li');
-            botones.forEach(btn => {
-                btn.disabled = true; // Opcional
-            });
-        });
 
         const opcion1 = document.getElementById('opcion1');
         const opcion2 = document.getElementById('opcion2');
         const tecnicosLista = document.getElementById('tecnicos-lista');
+        const areasListas = document.getElementById('areas-lista');
 
         function actualizarVisibilidad() {
             if (opcion2.checked) {
-                tecnicosLista.style.display = 'block';
+                document.getElementById('tecnicos-lista').style.display = 'block';
+                document.getElementById('areas-lista').style.display = 'none';
+            } else if (opcion1.checked) {
+                document.getElementById('tecnicos-lista').style.display = 'none';
+                document.getElementById('areas-lista').style.display = 'block';
             } else {
-                tecnicosLista.style.display = 'none';
-            }
-        }
-
-        function actualizarVisibilidad() {
-            if (opcion2.checked) {
-                tecnicosLista.style.display = 'block';
-            } else {
-                tecnicosLista.style.display = 'none';
+                document.getElementById('tecnicos-lista').style.display = 'none';
+                document.getElementById('areas-lista').style.display = 'none';
             }
         }
 
