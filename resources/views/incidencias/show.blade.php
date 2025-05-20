@@ -553,11 +553,20 @@
                                                 'antes' => $cambios['antes'] ?? [],
                                                 'despues' => $cambios['despues'] ?? [],
                                             ],
+
                                             'tecnico' => [
                                                 'antes' => $cambios['tecnico']['antes'] ?? [],
                                                 'despues' => $cambios['tecnico']['despues'] ?? [],
                                             ],
+                                            'area' => [
+                                                'antes' => $cambios['tecnico']['antes'] ?? [],
+                                                'despues' => $cambios['tecnico']['despues'] ?? [],
+                                            ],
                                             'estado' => [
+                                                'antes' => $cambios['estado']['antes'] ?? null,
+                                                'despues' => $cambios['estado']['despues'] ?? null,
+                                            ],
+                                            'resonsable' => [
                                                 'antes' => $cambios['estado']['antes'] ?? null,
                                                 'despues' => $cambios['estado']['despues'] ?? null,
                                             ],
@@ -579,17 +588,29 @@
 
                                     {{-- Caso especial para técnico (cuando son strings planos) --}}
                                     @if (isset($cambios['tecnico']) && is_array($cambios['tecnico']))
-                                        @if (isset($cambios['tecnico']['antes']) && isset($cambios['tecnico']['despues']))
-                                            <li>
-                                                <strong>Técnico:</strong>
-                                                <span class="text-red-600">{{ $cambios['tecnico']['antes'] }}</span> →
-                                                <span
-                                                    class="text-green-600">{{ $cambios['tecnico']['despues'] }}</span>
-                                            </li>
-                                        @endif
+                                        <li>
+                                            <strong>Técnico:</strong>
+                                            <span class="text-red-600">
+                                                {{ $cambios['tecnico']['antes'] ?? 'Sin asignar' }}
+                                            </span> →
+                                            <span class="text-green-600">
+                                                {{ $cambios['tecnico']['despues'] ?? 'Sin asignar' }}
+                                            </span>
+                                        </li>
                                     @endif
 
-                                    {{-- Caso especial para estado (cuando son strings planos) --}}
+                                    @if (isset($cambios['area']) && is_array($cambios['area']))
+                                        <li>
+                                            <strong>Área:</strong>
+                                            <span class="text-red-600">
+                                                {{ $cambios['area']['antes'] ?? 'Sin asignar' }}
+                                            </span> →
+                                            <span class="text-green-600">
+                                                {{ $cambios['area']['despues'] ?? 'Sin asignar' }}
+                                            </span>
+                                        </li>
+                                    @endif
+
                                     @if (isset($cambios['estado']) && is_array($cambios['estado']))
                                         @if (isset($cambios['estado']['antes']) && isset($cambios['estado']['despues']))
                                             <li>

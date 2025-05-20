@@ -91,22 +91,35 @@ class Incidenciacontroller extends Controller
         $areaAnterior = $original['Area_idArea'] ?? null ? Area::find($original['Area_idArea']) : null;
 
         $incidencia->save();
-        Auditoria::create([
-            'accion' => 'Asignacion',
-            'modelo' => 'Incidencia',
-            'modelo_id' => $incidencia->idIncidencia,
-            'cambios' => json_encode([
-                'responsable' => [
-                    'antes' => $tecnicoAnterior ? $tecnicoAnterior->nombreTecnico : null,
-                    'despues' => $tecnicoNuevo ? $tecnicoNuevo->nombreTecnico : null,
-                ],
-                'area' => [
-                    'antes' => $areaAnterior ? $areaAnterior->nombreArea : null,
-                    'despues' => $areaNueva ? $areaNueva->nombreArea : null,
-                ],
-            ]),
-            'usuario_id' => Auth::user()->id,
-        ]);
+
+        $cambios = [];
+
+        // Verificar si cambió el técnico
+        if ($tecnicoAnterior?->idTecnico !== $tecnicoNuevo?->idTecnico) {
+            $cambios['tecnico'] = [
+                'antes' => $tecnicoAnterior?->nombreTecnico,
+                'despues' => $tecnicoNuevo?->nombreTecnico,
+            ];
+        }
+
+        // Verificar si cambió el área
+        if ($areaAnterior?->id !== $areaNueva?->id) {
+            $cambios['area'] = [
+                'antes' => $areaAnterior?->area_name,
+                'despues' => $areaNueva?->area_name,
+            ];
+        }
+
+        // Si hay cambios, se guarda en la auditoría
+        if (!empty($cambios)) {
+            Auditoria::create([
+                'accion' => 'Asignacion',
+                'modelo' => 'Incidencia',
+                'modelo_id' => $incidencia->idIncidencia,
+                'cambios' => json_encode($cambios),
+                'usuario_id' => Auth::id(),
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Responsable asignado correctamente.');
     }

@@ -19,7 +19,7 @@ class AuthController extends Controller
 
         if (Auth::attempt(['name' => $credentials['name'], 'password' => $credentials['password']])) {
             $request->session()->regenerate();
-            return redirect()->intended('users'); // Cambia a donde quieras redirigir tras login
+            return redirect()->intended('dashboard'); // Cambia 'dashboard' por la ruta a la que quieras redirigir al usuario después de iniciar sesión
         }
 
         return back()->withErrors([
