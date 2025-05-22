@@ -45,6 +45,8 @@ class Usercontroller extends Controller
         $user->remember_token = $request->_token;
 
         $user->save();
+
+        return redirect()->route('users.index')->with('Registro creado correctamente');
     }
 
     /**
@@ -75,7 +77,7 @@ class Usercontroller extends Controller
     {
         $user = User::findOrFail($id);
 
-        $request -> validate
+        $validate = $request -> validate
         ([
             'name' => 'required|string|max:255',
             'email' => 'required|string|max:255',
@@ -89,7 +91,7 @@ class Usercontroller extends Controller
 
         $user -> save();
 
-        return redirect()->route('users.index')->with('Registro actualizado correctamente');
+        return redirect()->route('users.index')->with('success', 'Usuario actualizado correctamente.');
 
     }
 
@@ -101,6 +103,6 @@ class Usercontroller extends Controller
         $user = User::findorfail($id);
         $user -> delete();
 
-        return view('users.index');
+        return view('users.index')->with('success', 'Usuario eliminado correctamente.');
     }
 }

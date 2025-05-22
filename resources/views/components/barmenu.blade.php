@@ -3,7 +3,7 @@
     <div class="max-w-7xl mx-auto flex justify-between items-center">
         <!-- Logo / Nombre -->
         <div class="flex items-center space-x-4">
-            <a><img src="{{ asset('images/logo-eglobal.png') }}" class="h-8 w-auto"></a>
+            <a href="{{ route('view.dashboard') }}"><img src="{{ asset('images/logo-eglobal.png') }}" class="h-8 w-auto"></a>
         </div>
 
         <!-- Usuario y Logout -->

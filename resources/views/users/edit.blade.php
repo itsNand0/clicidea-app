@@ -16,9 +16,9 @@
         <label for="email">Email</label>
         <input type="email" name="email" id="email" value="{{ $user->email }}" required>
         <label for="password">Contraseña</label>
-        <input type="password" name="password" id="password">
+        <input type="password" name="password" id="password" required>
         <label for="password_confirmation">Confirmar Contraseña</label>
-        <input type="password" name="password_confirmation" id="password_confirmation">
+        <input type="password" name="password_confirmation" id="password_confirmation" required>
         <button type="submit">Actualizar Usuario</button>
     </form>
 </body>
