@@ -38,9 +38,9 @@
             <ul class="list-disc list-inside text-left space-y-2 mb-6">
                 <li><strong>Responsable:</strong>
                     @if ($datas->usuario && $datas->usuario->cargo)
-                        {{ $datas->usuario->cargo->nombre_cargo}} - {{ $datas->usuario->name }}
+                        {{ $datas->usuario->cargo->nombre_cargo }} - {{ $datas->usuario->name }}
                     @elseif ($datas->usuario && $datas->usuario->area)
-                        {{ $datas->usuario->area->area_name}} - {{ $datas->usuario->name }}
+                        {{ $datas->usuario->area->area_name }} - {{ $datas->usuario->name }}
                     @else
                         <span class="text-gray-500 italic">Sin asignar</span>
                     @endif
@@ -130,7 +130,7 @@
 
                                 <!-- Lista de tecnicos para asignar -->
 
-                                <select id="tecnicos-lista" name="user_id"
+                                <select id="tecnicos-lista" name="user_cargo_id"
                                     class="w-full border border-gray-300 rounded-md p-2 mb-4 text-gray-700 hidden">
                                     <option value="">Seleccione un cargo</option>
                                     @foreach ($datacargos as $datacargo)
@@ -146,10 +146,10 @@
 
                                 <!-- Lista de areas para asignar -->
 
-                                <select id="areas-lista" name="user_id"
+                                <select id="areas-lista" name="user_area_id"
                                     class="w-full border border-gray-300 rounded-md p-2 mb-4 text-gray-700 hidden">
                                     <option value="">Seleccione un área</option>
-                                    
+
                                     @foreach ($dataareas as $dataarea)
                                         @foreach ($dataarea->users as $user)
                                             <option value="{{ $user->id }}" data-area="{{ $user->area_id }}">
@@ -532,7 +532,7 @@
 
                 <div class="max-h-96 overflow-y-auto w-80 border p-4 bg-white rounded-md shadow">
                     <p class="text-lg font-semibold text-gray-800 border-b pb-1 mb-2 mt-2">
-                        Registros.
+                        Registros
                     </p>
                     @if ($auditorias->isEmpty())
                         <p class="text-gray-500 italic">No hay registros de auditoría.</p>
@@ -550,27 +550,24 @@
                                 <ul class="ml-4 mt-1 text-sm">
                                     {{-- Caso especial para editar (cuando son strings planos) --}}
                                     @php
+
                                         $fuentes = [
                                             'directo' => [
                                                 'antes' => $cambios['antes'] ?? [],
                                                 'despues' => $cambios['despues'] ?? [],
                                             ],
 
-                                            'cargo' => [
-                                                'antes' => $cambios['antes'] ?? [],
-                                                'despues' => $cambios['despues'] ?? [],
-                                            ],
-                                            'area' => [
-                                                'antes' => $cambios['tecnico']['antes'] ?? [],
-                                                'despues' => $cambios['tecnico']['despues'] ?? [],
-                                            ],
                                             'estado' => [
                                                 'antes' => $cambios['estado']['antes'] ?? null,
                                                 'despues' => $cambios['estado']['despues'] ?? null,
                                             ],
-                                            'resonsable' => [
-                                                'antes' => $cambios['estado']['antes'] ?? null,
-                                                'despues' => $cambios['estado']['despues'] ?? null,
+                                            'cargo' => [
+                                                'antes' => $cambios['cargo']['antes'] ?? null,
+                                                'despues' => $cambios['cargo']['despues'] ?? null,
+                                            ],
+                                            'area' => [
+                                                'antes' => $cambios['area']['antes'] ?? null,
+                                                'despues' => $cambios['area']['despues'] ?? null,
                                             ],
                                         ];
                                     @endphp
@@ -588,31 +585,6 @@
                                         @endforeach
                                     @endif
 
-                                    {{-- Caso especial para técnico (cuando son strings planos) --}}
-                                    @if (isset($cambios['cargo']) && is_array($cambios['cargo']))
-                                        <li>
-                                            <strong>Cargo:</strong>
-                                            <span class="text-red-600">
-                                                {{ $cambios['cargo']['antes'] ?? 'Sin asignar' }}
-                                            </span> →
-                                            <span class="text-green-600">
-                                                {{ $cambios['cargo']['despues'] ?? 'Sin asignar' }}
-                                            </span>
-                                        </li>
-                                    @endif
-
-                                    @if (isset($cambios['area']) && is_array($cambios['area']))
-                                        <li>
-                                            <strong>Área:</strong>
-                                            <span class="text-red-600">
-                                                {{ $cambios['area']['antes'] ?? 'Sin asignar' }}
-                                            </span> →
-                                            <span class="text-green-600">
-                                                {{ $cambios['area']['despues'] ?? 'Sin asignar' }}
-                                            </span>
-                                        </li>
-                                    @endif
-
                                     @if (isset($cambios['estado']) && is_array($cambios['estado']))
                                         @if (isset($cambios['estado']['antes']) && isset($cambios['estado']['despues']))
                                             <li>
@@ -623,6 +595,35 @@
                                             </li>
                                         @endif
                                     @endif
+
+                                    @if (array_key_exists('cargo', $cambios))
+                                        @php
+                                            $antes = $cambios['cargo']['antes'] ?? 'Sin asignar';
+                                            $despues = $cambios['cargo']['despues'] ?? 'Sin asignar';
+                                        @endphp
+                                        @if ($antes !== $despues)
+                                            <li>
+                                                <strong>Cargo:</strong>
+                                                <span class="text-red-600">{{ $antes }}</span> →
+                                                <span class="text-green-600">{{ $despues }}</span>
+                                            </li>
+                                        @endif
+                                    @endif
+
+                                    @if (array_key_exists('area', $cambios))
+                                        @php
+                                            $antes = $cambios['area']['antes'] ?? 'Sin asignar';
+                                            $despues = $cambios['area']['despues'] ?? 'Sin asignar';
+                                        @endphp
+                                        @if ($antes !== $despues)
+                                            <li>
+                                                <strong>Área:</strong>
+                                                <span class="text-red-600">{{ $antes }}</span> →
+                                                <span class="text-green-600">{{ $despues }}</span>
+                                            </li>
+                                        @endif
+                                    @endif
+                                    
                                 </ul>
                             </div>
                         @endforeach

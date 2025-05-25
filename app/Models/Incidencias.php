@@ -41,4 +41,9 @@ class Incidencias extends Model
     {
         return $this->hasMany(Comentarios::class);
     }
+
+    public function cargo()
+    {
+        return $this->belongsTo(Cargo::class, 'Cargo_idCargo', 'id');
+    }
 }

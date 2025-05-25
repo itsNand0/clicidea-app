@@ -74,38 +74,44 @@ class Incidenciacontroller extends Controller
     }
 
     public function asignar(Request $request, $id)
-    {   
+    {
         $validate = $request->validate([
-            'user_id' => 'nullable|exists:users,id',
-            'cargo_id' => 'nullable|exists:cargo,idCargo',
-            'area_id' => 'nullable|exists:area,idArea',
+            'user_cargo_id' => 'nullable|exists:users,id',
+            'user_area_id' => 'nullable|exists:users,id',
         ]);
 
         $incidencia = Incidencias::findOrFail($id);
-        $incidencia->Usuario_idUsuario = $request->filled('user_id') ? $request->user_id : null;
+        $incidencia->Usuario_idUsuario = $request->filled('user_cargo_id')
+            ? $request->user_cargo_id
+            : ($request->filled('user_area_id') ? $request->user_area_id : null);
 
         $original = $incidencia->getOriginal();
 
-        $usuarioNuevo = $request->filled('user_id') ? User::find($request->user_id) : null;
+        $usuarioNuevo = null;
+        if ($request->filled('user_cargo_id')) {
+            $usuarioNuevo = User::find($request->user_cargo_id);
+        } elseif ($request->filled('user_area_id')) {
+            $usuarioNuevo = User::find($request->user_area_id);
+        }
         $usuarioAnterior = $original['Usuario_idUsuario'] ? User::find($original['Usuario_idUsuario']) : null;
 
         $incidencia->save();
 
         $cambios = [];
 
-        // Verificar si cambió el técnico
-        /*if ($usuarioAnterior?->id !== $usuarioNuevo?->id) {
+        // Verificar si cambió el cargo
+        if ($usuarioAnterior?->id !== $usuarioNuevo?->id) {
             $cambios['cargo'] = [
-                'antes' => $usuarioAnterior?->cargo->nombre_cargo,
-                'despues' => $usuarioNuevo?->cargo->nombre_cargo,
+                'antes' => $usuarioAnterior?->cargo?->nombre_cargo ?? null,
+                'despues' => $usuarioNuevo?->cargo?->nombre_cargo ?? null,
             ];
         }
 
-        // Verificar si cambió el técnico
+        // Verificar si cambió el area
         if ($usuarioAnterior?->id !== $usuarioNuevo?->id) {
             $cambios['area'] = [
-                'antes' => $usuarioAnterior?->area->area_name,
-                'despues' => $usuarioNuevo?->area->area_name,
+                'antes' => $usuarioAnterior?->area?->area_name ?? null,
+                'despues' => $usuarioNuevo?->area?->area_name ?? null,
             ];
         }
 
@@ -118,7 +124,7 @@ class Incidenciacontroller extends Controller
                 'cambios' => json_encode($cambios),
                 'usuario_id' => Auth::id(),
             ]);
-        }*/
+        }
 
         return redirect()->back()->with('success', 'Responsable asignado correctamente.');
     }
@@ -143,7 +149,7 @@ class Incidenciacontroller extends Controller
             ->with('usuario') // si tienes relación con User
             ->latest()
             ->get();
-        
+
         return view('incidencias.show', compact(['datas', 'datacargos', 'dataareas', 'auditorias', 'comentarios', 'estadosincidencias']));
     }
 
@@ -316,10 +322,10 @@ class Incidenciacontroller extends Controller
     }
 
     public function resolverIncidencia(Request $request, $id)
-    {   
+    {
         $this->cambiarEstado($request, $id);
         $this->updateFile($request, $id);
-        $this->comentarios($request, $id);  
+        $this->comentarios($request, $id);
 
         $incidencia = Incidencias::findorfail($id);
         $incidencia->fechaResolucionIncidencia = now();

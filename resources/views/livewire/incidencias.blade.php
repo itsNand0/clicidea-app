@@ -25,21 +25,15 @@
                     </tr>
                 </thead>
 
-                <tbody class="text-gray-700 text-sm font-light">
-
+                <tbody class="text-gray-700 text-sm font-light"> 
                     @forelse ($datas as $data)
-                        <tr class="border-b border-gray-200 hover:bg-gray-100">
-                            <td class="py-3 px-6">{{ $data->idIncidencia }}</td>
-                            <td class="py-3 px-6">
-                                @if (isset($data->cargo) && $data->cargo->users->isNotEmpty())
-                                    @foreach ($data->cargo->users as $user)
-                                    {{ $user->name }}
-                                @endforeach
-                                
-                                @elseif ($data->cargo)
-                                    {{ $data->cargo->nombre_cargo }}
-                                @elseif ($data->area)
-                                    {{ $data->area->area_name }}
+                    <tr class="border-b border-gray-200 hover:bg-gray-100">
+                        <td class="py-3 px-6">{{ $data->idIncidencia }}</td>
+                        <td class="py-3 px-6">
+                                @if (isset($data->usuario->cargo))
+                                {{ $data->usuario->cargo->nombre_cargo }}
+                                @elseif (isset($data->usuario->area))
+                                    {{ $data->usuario->area->area_name }}
                                 @else
                                     <span class="text-gray-500 italic">Sin asignar</span>
                                 @endif
@@ -60,7 +54,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="10" class="py-4 text-center text-gray-500">No se encontraron resultados.</td>
+                            <td colspan="10" class="py-4 text-center text-gray-500">No tiene incidencias pendientes</td>
                         </tr>
                     @endforelse
                 </tbody>
