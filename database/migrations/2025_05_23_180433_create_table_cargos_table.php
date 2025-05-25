@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('incidencia', function (Blueprint $table) {
-            $table->unsignedBigInteger('area_id')->nullable()->after('cliente_idCliente');
-            $table->foreign('area_id')->references('id')->on('areas')->onDelete('set null');
+        Schema::create('cargos', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('area_id')->nullable()->constrained();
+            $table->string('nombre_cargo');
+            $table->timestamps();
         });
     }
 
@@ -22,7 +24,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('incidencia', function (Blueprint $table) {
+        Schema::table('cargos', function (Blueprint $table) {
             //
         });
     }

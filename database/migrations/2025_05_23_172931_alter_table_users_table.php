@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('incidencia', function (Blueprint $table) {
-            // Luego volvemos a agregar la foreign key
-            $table->foreign('Area_idArea')->references('id')->on('areas')->onDelete('cascade');
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreignId('area_id')->nullable()->constrained()->afte('id');
         });
     }
 
@@ -22,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('incidencias', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             //
         });
     }

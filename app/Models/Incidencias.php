@@ -19,8 +19,7 @@ class Incidencias extends Model
         'EstadoIncidencia_idEstadoIncidencia',
         'fechaIncidencia',
         'adjuntoIncidencia',
-        'Tecnico_idTecnico',
-        'Area_idArea',
+        'Usuario_idUsuario',
     ];
 
     public function cliente()
@@ -28,23 +27,18 @@ class Incidencias extends Model
         return $this->belongsTo(Cliente::class, 'cliente_idCliente', 'idCliente');
     }
 
-    public function tecnico()
-    {
-        return $this->belongsTo(Tecnico::class, 'Tecnico_idTecnico', 'idTecnico');
-    }
-
     public function estadoIncidencia()
     {
         return $this->belongsTo(Estadoincidencia::class, 'EstadoIncidencia_idEstadoIncidencia', 'idEstadoIncidencia');
     }
 
+    public function usuario()
+    {
+        return $this->belongsTo(User::class, 'Usuario_idUsuario', 'id');
+    }
+
     public function comentarios()
     {
         return $this->hasMany(Comentarios::class);
-    }
-
-    public function area()
-    {
-        return $this->belongsTo(Area::class, 'Area_idArea', 'id');
     }
 }

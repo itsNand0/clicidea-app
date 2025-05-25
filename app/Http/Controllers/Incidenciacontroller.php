@@ -10,8 +10,10 @@ use App\Models\Tecnico;
 use App\Models\Area;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Auditoria;
+use App\Models\Cargo;
 use App\Models\Comentarios;
 use App\Models\Estadoincidencia;
+use App\Models\User;
 
 class Incidenciacontroller extends Controller
 {
@@ -51,7 +53,6 @@ class Incidenciacontroller extends Controller
         $data->descriIncidencia = $request->descripcion;
         $data->contactoIncidencia = $request->contacto;
         $data->fechaIncidencia = now();
-        $data->Tecnico_idTecnico = 1;
         $data->cliente_idCliente  = 1;
         $data->EstadoIncidencia_idEstadoIncidencia = 1;
         $archivos = [];
@@ -60,7 +61,8 @@ class Incidenciacontroller extends Controller
             foreach ($request->file('adjunto') as $file) {
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $file->storeAs('adjuntos', $filename, 'public');
-                $archivos[] = $filename;
+                $filePath = 'storage/adjuntos/' . $filename;
+                $archivos[] = $filePath;
             }
         }
 
@@ -72,41 +74,38 @@ class Incidenciacontroller extends Controller
     }
 
     public function asignar(Request $request, $id)
-    {
-        $request->validate([
-            'tecnico_id' => 'nullable|exists:tecnico,idTecnico',
-            'area_id' => 'nullable|exists:areas,id',
+    {   
+        $validate = $request->validate([
+            'user_id' => 'nullable|exists:users,id',
+            'cargo_id' => 'nullable|exists:cargo,idCargo',
+            'area_id' => 'nullable|exists:area,idArea',
         ]);
 
         $incidencia = Incidencias::findOrFail($id);
-        $incidencia->Tecnico_idTecnico = $request->filled('tecnico_id') ? $request->tecnico_id : null;
-        $incidencia->Area_idArea = $request->filled('area_id') ? $request->area_id : null;
+        $incidencia->Usuario_idUsuario = $request->filled('user_id') ? $request->user_id : null;
 
         $original = $incidencia->getOriginal();
 
-        $tecnicoNuevo = $request->filled('tecnico_id') ? Tecnico::find($request->tecnico_id) : null;
-        $tecnicoAnterior = $original['Tecnico_idTecnico'] ? Tecnico::find($original['Tecnico_idTecnico']) : null;
-
-        $areaNueva = $request->filled('area_id') ? Area::find($request->area_id) : null;
-        $areaAnterior = $original['Area_idArea'] ?? null ? Area::find($original['Area_idArea']) : null;
+        $usuarioNuevo = $request->filled('user_id') ? User::find($request->user_id) : null;
+        $usuarioAnterior = $original['Usuario_idUsuario'] ? User::find($original['Usuario_idUsuario']) : null;
 
         $incidencia->save();
 
         $cambios = [];
 
         // Verificar si cambió el técnico
-        if ($tecnicoAnterior?->idTecnico !== $tecnicoNuevo?->idTecnico) {
-            $cambios['tecnico'] = [
-                'antes' => $tecnicoAnterior?->nombreTecnico,
-                'despues' => $tecnicoNuevo?->nombreTecnico,
+        /*if ($usuarioAnterior?->id !== $usuarioNuevo?->id) {
+            $cambios['cargo'] = [
+                'antes' => $usuarioAnterior?->cargo->nombre_cargo,
+                'despues' => $usuarioNuevo?->cargo->nombre_cargo,
             ];
         }
 
-        // Verificar si cambió el área
-        if ($areaAnterior?->id !== $areaNueva?->id) {
+        // Verificar si cambió el técnico
+        if ($usuarioAnterior?->id !== $usuarioNuevo?->id) {
             $cambios['area'] = [
-                'antes' => $areaAnterior?->area_name,
-                'despues' => $areaNueva?->area_name,
+                'antes' => $usuarioAnterior?->area->area_name,
+                'despues' => $usuarioNuevo?->area->area_name,
             ];
         }
 
@@ -119,7 +118,7 @@ class Incidenciacontroller extends Controller
                 'cambios' => json_encode($cambios),
                 'usuario_id' => Auth::id(),
             ]);
-        }
+        }*/
 
         return redirect()->back()->with('success', 'Responsable asignado correctamente.');
     }
@@ -129,9 +128,10 @@ class Incidenciacontroller extends Controller
      */
     public function show(Request $request, $id)
     {
-        $datas = Incidencias::with(['cliente', 'tecnico', 'estadoincidencia', 'area'])->findorfail($id);
-        $datatecnicos = Tecnico::all();
+        $datas = Incidencias::with(['cliente', 'usuario', 'estadoincidencia'])->findorfail($id);
         $dataareas = Area::all();
+        $datacargos = Cargo::all();
+        $estadosincidencias = Estadoincidencia::all();
 
         $auditorias = Auditoria::where('modelo', 'Incidencia')
             ->where('modelo_id', $id)
@@ -143,9 +143,8 @@ class Incidenciacontroller extends Controller
             ->with('usuario') // si tienes relación con User
             ->latest()
             ->get();
-
-        $estadosincidencias = Estadoincidencia::all();
-        return view('incidencias.show', compact(['datas', 'datatecnicos', 'dataareas', 'auditorias', 'comentarios', 'estadosincidencias']));
+        
+        return view('incidencias.show', compact(['datas', 'datacargos', 'dataareas', 'auditorias', 'comentarios', 'estadosincidencias']));
     }
 
     /**
@@ -170,6 +169,7 @@ class Incidenciacontroller extends Controller
         $data->asuntoIncidencia = $request->asunto;
         $data->descriIncidencia = $request->descripcion;
         $data->contactoIncidencia = $request->contacto;
+        $data->fechaResolucionIncidencia = null;
 
         if ($request->has('asunto')) {
             $data->asuntoIncidencia = $request->asunto;
@@ -215,15 +215,12 @@ class Incidenciacontroller extends Controller
         // Inicializamos un array para los nuevos archivos
         $archivos = [];
 
-        // Si se adjuntan archivos, procesarlos
         if ($request->hasFile('adjunto')) {
             foreach ($request->file('adjunto') as $file) {
-                // Generar un nombre único para el archivo
                 $filename = time() . '_' . $file->getClientOriginalName();
-                // Almacenar el archivo en la carpeta pública
                 $file->storeAs('adjuntos', $filename, 'public');
-                // Añadir el nombre del archivo al array
-                $archivos[] = $filename;
+                $filePath = 'storage/adjuntos/' . $filename;
+                $archivos[] = $filePath;
             }
         }
 
@@ -319,10 +316,14 @@ class Incidenciacontroller extends Controller
     }
 
     public function resolverIncidencia(Request $request, $id)
-    {
+    {   
         $this->cambiarEstado($request, $id);
         $this->updateFile($request, $id);
-        $this->comentarios($request, $id);
+        $this->comentarios($request, $id);  
+
+        $incidencia = Incidencias::findorfail($id);
+        $incidencia->fechaResolucionIncidencia = now();
+        $incidencia->save();
 
         return redirect()->back()->with('success', 'Estado asignado correctamente.');
     }

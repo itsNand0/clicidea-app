@@ -26,12 +26,18 @@
                 </thead>
 
                 <tbody class="text-gray-700 text-sm font-light">
+
                     @forelse ($datas as $data)
                         <tr class="border-b border-gray-200 hover:bg-gray-100">
                             <td class="py-3 px-6">{{ $data->idIncidencia }}</td>
                             <td class="py-3 px-6">
-                                @if ($data->tecnico)
-                                    {{ $data->tecnico->nombreTecnico }}
+                                @if (isset($data->cargo) && $data->cargo->users->isNotEmpty())
+                                    @foreach ($data->cargo->users as $user)
+                                    {{ $user->name }}
+                                @endforeach
+                                
+                                @elseif ($data->cargo)
+                                    {{ $data->cargo->nombre_cargo }}
                                 @elseif ($data->area)
                                     {{ $data->area->area_name }}
                                 @else

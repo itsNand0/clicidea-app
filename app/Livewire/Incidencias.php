@@ -18,7 +18,7 @@ class Incidencias extends Component
 
      public function render()
     {
-        $datas = ModelsIncidencias::with(['cliente', 'tecnico', 'estadoincidencia', 'area'])
+        $datas = ModelsIncidencias::with(['cliente', 'estadoincidencia', 'usuario'])
             ->when($this->search != '', function ($query) {
                 $search = '%' . $this->search . '%';
                 $query->whereHas('estadoincidencia', function ($q) use ($search) {
@@ -27,11 +27,8 @@ class Incidencias extends Component
                 ->orWhereHas('cliente', function ($q) use ($search) {
                     $q->where('nombre', 'like', $search);
                 })
-                ->orWhereHas('tecnico', function ($q) use ($search) {
-                    $q->where('nombreTecnico', 'like', $search);
-                })
-                ->orWhereHas('area', function ($q) use ($search) {
-                    $q->where('area_name', 'like', $search);
+                ->orWhereHas('usuario', function ($q) use ($search) {
+                    $q->where('name', 'like', $search);
                 })
                 ->orWhere('usuarioIncidencia', 'like', $search);
             })

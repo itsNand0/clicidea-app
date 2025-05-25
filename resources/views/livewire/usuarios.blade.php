@@ -17,6 +17,9 @@
                     Email
                 </th>
                 <th scope="col" class="px-6 py-3">
+                    Cargo
+                </th>
+                <th scope="col" class="px-6 py-3">
                     Acciones
                 </th>
             </tr>
@@ -32,6 +35,15 @@
                     </td>
                     <td class="px-6 py-4">
                         {{ $user->email }}
+                    </td>
+                    <td class="px-6 py-4">
+                        @if (isset($user->area->area_name))
+                        Encargado de: {{ $user->area->area_name }}
+                        @elseif (isset($user->cargo->nombre_cargo))
+                            {{ $user->cargo->nombre_cargo }}
+                        @else
+                            Sin asignar
+                        @endif
                     </td>
                     <td class="px-6 py-4">
                         <a href="{{ route('users.show', $user->id) }}"

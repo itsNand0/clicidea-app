@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
+use App\Models\Cargo;
 use App\Models\User;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
@@ -12,8 +14,8 @@ class Usercontroller extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        $users =  User::all();
+    {   
+        $users = User::with(['area', 'cargo']);
         return view('users.index', compact('users'));
     }
 
@@ -21,15 +23,17 @@ class Usercontroller extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-    {
-        return view('users.create');
+    {   
+        $areas = Area::all();
+        $cargos = Cargo::all();
+        return view('users.create', compact('areas', 'cargos'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
+    {   
         $user = new User();
         $validate = $request -> validate
         ([
@@ -37,16 +41,19 @@ class Usercontroller extends Controller
             'email' => 'required|string|max:255',
             'password' => 'required|string|max:255',
             'password_confirmation' => 'required|string|max:255',
+            'area_id' => 'nullable|integer',
+            'cargo_id' => 'nullable|integer',
         ]);
         
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = $request->password;
         $user->remember_token = $request->_token;
-
+        $user->area_id = $request->area_id;
+        $user->cargo_id = $request->cargo_id;
         $user->save();
 
-        return redirect()->route('users.index')->with('Registro creado correctamente');
+        return redirect()->route('users.index')->with('Usuario creado correctamente');
     }
 
     /**

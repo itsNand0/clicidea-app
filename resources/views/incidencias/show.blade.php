@@ -37,10 +37,10 @@
 
             <ul class="list-disc list-inside text-left space-y-2 mb-6">
                 <li><strong>Responsable:</strong>
-                    @if ($datas->tecnico && $datas->tecnico->nombreTecnico)
-                        {{ $datas->tecnico->nombreTecnico }}
-                    @elseif ($datas->area && $datas->area->area_name)
-                        {{ $datas->area->area_name }}
+                    @if ($datas->usuario && $datas->usuario->cargo)
+                        {{ $datas->usuario->cargo->nombre_cargo}} - {{ $datas->usuario->name }}
+                    @elseif ($datas->usuario && $datas->usuario->area)
+                        {{ $datas->usuario->area->area_name}} - {{ $datas->usuario->name }}
                     @else
                         <span class="text-gray-500 italic">Sin asignar</span>
                     @endif
@@ -53,13 +53,14 @@
 
             @php
                 $archivos = json_decode($datas->adjuntoIncidencia, true);
+
             @endphp
 
             @if (!empty($archivos) && is_array($archivos))
                 @foreach ($archivos as $archivo)
                     @if (!empty($archivo))
                         <a class="inline-block font-handwriting text-lg text-gray-800 px-6 py-2 border-2 border-black rounded-md hover:bg-yellow-100 transition duration-300 relative before:content-[''] before:absolute before:inset-0 before:-translate-x-1 before:-translate-y-1 before:border-2 before:border-black before:rounded-md before:z-[-1]"
-                            href="{{ asset('storage/adjuntos/' . $archivo) }}" target="_blank">
+                            href="{{ asset($archivo) }}" target="_blank">
                             Ver archivo: {{ $archivo }}
                         </a>
                         <br><br />
@@ -88,6 +89,11 @@
                             }
                         }, 3000); // 3 segundos
                     </script>
+                @endif
+                @if (session('error'))
+                    <div class="text-red-500 text-sm mb-4">
+                        {{ session('error') }}
+                    </div>
                 @endif
                 <ul class="flex justify-between items-center space-x-2">
 
@@ -118,34 +124,38 @@
                                     <div class="flex items-center">
                                         <input id="opcion2" name="opcion" type="radio" value="2"
                                             class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300">
-                                        <label for="opcion2" class="ml-2 block text-sm text-gray-700">Usuario</label>
+                                        <label for="opcion2" class="ml-2 block text-sm text-gray-700">Cargo</label>
                                     </div>
                                 </div>
 
                                 <!-- Lista de tecnicos para asignar -->
 
-                                <select id="tecnicos-lista" name="tecnico_id"
+                                <select id="tecnicos-lista" name="user_id"
                                     class="w-full border border-gray-300 rounded-md p-2 mb-4 text-gray-700 hidden">
-                                    <option value="">Seleccione un área</option>
-                                    @foreach ($datatecnicos as $datatecnico)
-                                        <option value="{{ $datatecnico->idTecnico }}"
-                                            for="tecnico{{ $datatecnico->idTecnico }}"
-                                            class="ml-2 text-sm text-gray-700">
-                                            {{ $datatecnico->nombreTecnico }}
-                                        </option>
+                                    <option value="">Seleccione un cargo</option>
+                                    @foreach ($datacargos as $datacargo)
+                                        @foreach ($datacargo->users as $user)
+                                            <option value="{{ $user->id }}" data-cargo="{{ $user->cargo_id }}">
+                                                {{ $datacargo->nombre_cargo }} - {{ $user->name }}
+                                            </option>
+                                        @endforeach
                                     @endforeach
                                 </select>
 
+
+
                                 <!-- Lista de areas para asignar -->
 
-                                <select id="areas-lista" name="area_id"
+                                <select id="areas-lista" name="user_id"
                                     class="w-full border border-gray-300 rounded-md p-2 mb-4 text-gray-700 hidden">
                                     <option value="">Seleccione un área</option>
+                                    
                                     @foreach ($dataareas as $dataarea)
-                                        <option value="{{ $dataarea->id }}" for="area {{ $dataarea->id }}"
-                                            class="ml-2 text-sm text-gray-700">
-                                            {{ $dataarea->area_name }}
-                                        </option>
+                                        @foreach ($dataarea->users as $user)
+                                            <option value="{{ $user->id }}" data-area="{{ $user->area_id }}">
+                                                {{ $dataarea->area_name }} - {{ $user->name }}
+                                            </option>
+                                        @endforeach
                                     @endforeach
                                 </select>
 
@@ -416,6 +426,7 @@
                                 <textarea name="contenido" class="w-full p-2 border rounded text-black" rows="3"
                                     placeholder="Escribe un comentario..."></textarea>
                                 <input type="hidden" name="estado_id" value="3">
+                                <input type="hidden" name="fechaResolucionIncidencia" value="{{ now() }}">
                                 <div class="flex justify-end space-x-2">
                                     <button type="button" onclick="closeModal()" id="cancelarBtnResolver"
                                         class="btncancelar px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-200">Cancelar</button>
@@ -447,15 +458,6 @@
                                         });
                                     </script>
                                 </div>
-                                @if ($errors->any())
-                                    <div>
-                                        <ul>
-                                            @foreach ($errors->all() as $error)
-                                                <li>{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                @endif
                             </form>
                         </div>
                     </div>
@@ -554,9 +556,9 @@
                                                 'despues' => $cambios['despues'] ?? [],
                                             ],
 
-                                            'tecnico' => [
-                                                'antes' => $cambios['tecnico']['antes'] ?? [],
-                                                'despues' => $cambios['tecnico']['despues'] ?? [],
+                                            'cargo' => [
+                                                'antes' => $cambios['antes'] ?? [],
+                                                'despues' => $cambios['despues'] ?? [],
                                             ],
                                             'area' => [
                                                 'antes' => $cambios['tecnico']['antes'] ?? [],
@@ -587,14 +589,14 @@
                                     @endif
 
                                     {{-- Caso especial para técnico (cuando son strings planos) --}}
-                                    @if (isset($cambios['tecnico']) && is_array($cambios['tecnico']))
+                                    @if (isset($cambios['cargo']) && is_array($cambios['cargo']))
                                         <li>
-                                            <strong>Técnico:</strong>
+                                            <strong>Cargo:</strong>
                                             <span class="text-red-600">
-                                                {{ $cambios['tecnico']['antes'] ?? 'Sin asignar' }}
+                                                {{ $cambios['cargo']['antes'] ?? 'Sin asignar' }}
                                             </span> →
                                             <span class="text-green-600">
-                                                {{ $cambios['tecnico']['despues'] ?? 'Sin asignar' }}
+                                                {{ $cambios['cargo']['despues'] ?? 'Sin asignar' }}
                                             </span>
                                         </li>
                                     @endif
