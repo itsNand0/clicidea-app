@@ -15,24 +15,32 @@ class RolesandPermisions extends Seeder
      */
     public function run(): void
     {   
-        /* $user = User::find(4); // Cambia 1 por el ID del usuario que deseas asignar el rol
-        // Crear permisos
+        // Buscar el usuario por ID
+        $userId = 5; // Cambia este valor según el usuario deseado
+        $user = User::find($userId);
 
         if ($user) {
-            // Verifica si el rol 'admin users' existe, si no, crea el rol
-            $roleadmin = Role::firstOrCreate(['name' => 'admin users']);
+            // Crear o buscar el rol 'admin users'
+            $roleAdmin = Role::firstOrCreate(['name' => 'admin users']);
 
-            // Asigna el rol al usuario
-            $user->assignRole($roleadmin);
+            // Asignar el rol solo si el usuario no lo tiene
+            if (!$user->hasRole($roleAdmin)) {
+            $user->assignRole($roleAdmin);
+            echo "Rol 'admin users' asignado al usuario con ID {$userId}.\n";
+            } else {
+            echo "El usuario con ID {$userId} ya tiene el rol 'admin users'.\n";
+            }
+        } else {
+            echo "Usuario con ID {$userId} no encontrado.\n";
         }
-
+        /*
         $manageUsersPermission = Permission::delete(['name' => 'admin users']);
 
         // Crear rol 'admin'
         $adminRole = Role::create(['name' => 'admin']);
 
         // Asignar el permiso de 'admin user' al rol 'admin'
-        $adminRole->givePermissionTo($manageUsersPermission);*/
+        $adminRole->givePermissionTo($manageUsersPermission);
         $roleName = 1;
 
         // Intentamos encontrar el rol
@@ -44,6 +52,6 @@ class RolesandPermisions extends Seeder
             echo "El rol '{$roleName}' ha sido eliminado.\n";
         } else {
             echo "El rol '{$roleName}' no existe.\n";
-        }
+        }*/
     }
 }

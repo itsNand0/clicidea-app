@@ -7,7 +7,6 @@
                 <i class="fa-solid fa-plus"></i>
             </a>
         </div>
-
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white rounded shadow-md">
                 <thead>

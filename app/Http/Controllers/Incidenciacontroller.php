@@ -68,8 +68,8 @@ class Incidenciacontroller extends Controller
 
         $data->adjuntoIncidencia = json_encode($archivos);
 
-        $data->save(); // Guardar la incidencia en la base de datos
-        // Redirigir o mostrar un mensaje de éxito
+        $data->save(); 
+
         return redirect()->route('incidencias.show', ['id' => $data->idIncidencia])->with('success', 'Incidencia creada correctamente.');
     }
 
@@ -141,12 +141,12 @@ class Incidenciacontroller extends Controller
 
         $auditorias = Auditoria::where('modelo', 'Incidencia')
             ->where('modelo_id', $id)
-            ->with('usuario') // si tienes relación con User
+            ->with('usuario') 
             ->latest()
             ->get();
 
         $comentarios = Comentarios::where('incidencia_id', $id)
-            ->with('usuario') // si tienes relación con User
+            ->with('usuario') 
             ->latest()
             ->get();
 
@@ -192,7 +192,6 @@ class Incidenciacontroller extends Controller
         // Guardar los cambios en la base de datos
         $data->save();
 
-        // Auditoría: se ejecuta después de guardar
         Auditoria::create([
             'accion' => 'actualización',
             'modelo' => 'Incidencia',
@@ -204,7 +203,6 @@ class Incidenciacontroller extends Controller
             'usuario_id' => Auth::user()->id,
         ]);
 
-        // Redirigir con un mensaje de éxito
         return redirect()->route('incidencias.show', ['id' => $data->idIncidencia])->with('success', 'Incidencia actualizada correctamente.');
     }
 
@@ -264,7 +262,7 @@ class Incidenciacontroller extends Controller
         $datas = Incidencias::findorfail($id);
         $auditorias = Auditoria::where('modelo', 'Incidencia')
             ->where('modelo_id', $id)
-            ->with('usuario') // Asegúrate que la relación esté bien definida
+            ->with('usuario') 
             ->latest()
             ->get();
 

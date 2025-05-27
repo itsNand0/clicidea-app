@@ -70,10 +70,12 @@ class Usercontroller extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(Request $request, $id)
-    {
+    {   
+        $areas = Area::all();
+        $cargos = Cargo::all();
         $user = User::findorfail($id);
         
-        return view('users.edit', compact('user'));
+        return view('users.edit', compact('user', 'areas', 'cargos'));
         
     }
 
@@ -90,11 +92,15 @@ class Usercontroller extends Controller
             'email' => 'required|string|max:255',
             'password' => 'required|string|max:255',
             'password_confirmation' => 'required|string|max:255',
+            'area_id' => 'nullable|integer',
+            'cargo_id' => 'nullable|integer',
         ]);
 
         $user->name = $request -> input('name');
         $user->email = $request -> input('email');
         $user->password = $request -> input('password');
+        $user->cargo_id = $request -> input('cargo_id');
+        $user->area_id = $request -> input('area_id');
 
         $user -> save();
 

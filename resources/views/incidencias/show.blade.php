@@ -717,7 +717,7 @@
         opcion1.addEventListener('change', actualizarVisibilidad);
         opcion2.addEventListener('change', actualizarVisibilidad);
 
-        // Ejecutar al cargar la página
+       
         actualizarVisibilidad();
     </script>
 </body>

@@ -14,22 +14,7 @@
     <p>Email: {{ $user->email }}</p>
     <a href="{{ route('users.index') }}">Volver a la lista</a>
 
-    <!-- <script>
-        const options = {
-            method: 'GET',
-            _token: 'mxZCY7h57DTYReKLj5riHYGDsU5Q2Xivc4zifAGl'
-        };
-
-        fetch('https://cms.eglobalt.com.py/dashboard/atms_general', options)
-            .then(res => res.json())
-            .then(response => {
-                console.log('Respuesta de la API:', response);
-                
-            })
-            .catch(error => {
-                console.error('Error al obtener datos:', error);
-            });
-    </script> --> 
+    
 </body>
 
 </html>
