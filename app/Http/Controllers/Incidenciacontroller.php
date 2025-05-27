@@ -332,6 +332,14 @@ class Incidenciacontroller extends Controller
         return redirect()->back()->with('success', 'Estado asignado correctamente.');
     }
 
+    public function justshow(string $id)
+    {
+        $datas = Incidencias::with(['cliente', 'usuario', 'estadoincidencia'])->findorfail($id);
+
+        return view('incidencias.justshow', compact(['datas']));
+    
+    }
+
 
     /**
      * Remove the specified resource from storage.

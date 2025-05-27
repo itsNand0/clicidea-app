@@ -25,6 +25,7 @@ Route::post('/', [AuthController::class, 'login']);
     Route::put('/incidencias/{id}/resolver', [Incidenciacontroller::class, 'resolverIncidencia'])->name('incidencias.resolverIncidencia');
     Route::put('/incidencias/{id}/update-file', [IncidenciaController::class, 'updateFile'])->name('incidencias.updateFile');
     Route::get('/dashboard', function () {return view('dashboard');})->name('view.dashboard');
+    Route::get('/incidencias/justshow/{id}', [IncidenciaController::class, 'justshow'])->name('incidencias.justshow');
 //});
 
 Route::post('/logout', function () {

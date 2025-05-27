@@ -13,13 +13,9 @@
 <body>
     <x-Barmenu />
 
-    <div class="flex min-h-screen"> <!-- Asegura que Sidebar y contenido estén en línea -->
+    <div class="flex min-h-screen"> 
+        <div class="flex-1 p-8"> 
 
-        <x-Sidebar /> <!-- Sidebar fijo al lado izquierdo -->
-
-        <div class="flex-1 p-8"> <!-- Contenido principal ocupa el resto del espacio -->
-
-            <!-- Contenido principal -->
             <div class="flex items-center justify-between mb-4">
                 <h1 class="text-2xl font-bold">INCIDENCIAS</h1>
             </div>
