@@ -48,13 +48,13 @@ class Incidenciacontroller extends Controller
             'adjunto.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $data->usuarioIncidencia = Auth::user()->name;
-        $data->asuntoIncidencia = $request->asunto;
-        $data->descriIncidencia = $request->descripcion;
-        $data->contactoIncidencia = $request->contacto;
-        $data->fechaIncidencia = now();
-        $data->cliente_idCliente  = 1;
-        $data->EstadoIncidencia_idEstadoIncidencia = 1;
+        $data->usuarioincidencia = Auth::user()->name;
+        $data->asuntoincidencia = $request->asunto;
+        $data->descriincidencia = $request->descripcion;
+        $data->contactoincidencia = $request->contacto;
+        $data->fechaincidencia = now();
+        $data->cliente_idcliente  = 1;
+        $data->estadoincidencia_idestadoincidencia = 1;
         $archivos = [];
 
         if ($request->hasFile('adjunto')) {
@@ -66,11 +66,11 @@ class Incidenciacontroller extends Controller
             }
         }
 
-        $data->adjuntoIncidencia = json_encode($archivos);
+        $data->adjuntoincidencia = json_encode($archivos);
 
         $data->save(); 
 
-        return redirect()->route('incidencias.show', ['id' => $data->idIncidencia])->with('success', 'Incidencia creada correctamente.');
+        return redirect()->route('incidencias.show', ['id' => $data->idincidencia])->with('success', 'Incidencia creada correctamente.');
     }
 
     public function asignar(Request $request, $id)
@@ -81,7 +81,7 @@ class Incidenciacontroller extends Controller
         ]);
 
         $incidencia = Incidencias::findOrFail($id);
-        $incidencia->Usuario_idUsuario = $request->filled('user_cargo_id')
+        $incidencia->usuario_idusuario = $request->filled('user_cargo_id')
             ? $request->user_cargo_id
             : ($request->filled('user_area_id') ? $request->user_area_id : null);
 
@@ -93,9 +93,11 @@ class Incidenciacontroller extends Controller
         } elseif ($request->filled('user_area_id')) {
             $usuarioNuevo = User::find($request->user_area_id);
         }
-        $usuarioAnterior = $original['Usuario_idUsuario'] ? User::find($original['Usuario_idUsuario']) : null;
 
         $incidencia->save();
+        $usuarioAnterior = $original['usuario_idusuario'] ? User::find($original['usuario_idusuario']) : null;
+
+        
 
         $cambios = [];
 
@@ -120,7 +122,7 @@ class Incidenciacontroller extends Controller
             Auditoria::create([
                 'accion' => 'Asignacion',
                 'modelo' => 'Incidencia',
-                'modelo_id' => $incidencia->idIncidencia,
+                'modelo_id' => $incidencia->idincidencia,
                 'cambios' => json_encode($cambios),
                 'usuario_id' => Auth::id(),
             ]);
@@ -150,7 +152,7 @@ class Incidenciacontroller extends Controller
             ->latest()
             ->get();
 
-        return view('incidencias.show', compact(['datas', 'datacargos', 'dataareas', 'auditorias', 'comentarios', 'estadosincidencias']));
+        return view('incidencias.show', compact(['datas', 'datacargos', 'dataareas', 'comentarios', 'estadosincidencias', 'auditorias']));
     }
 
     /**
@@ -169,33 +171,35 @@ class Incidenciacontroller extends Controller
             'contacto' => 'nullable|string|max:255',
         ]);
 
-        $original = $data->getOriginal();
 
         // Asignación de los valores a la incidencia
-        $data->asuntoIncidencia = $request->asunto;
-        $data->descriIncidencia = $request->descripcion;
-        $data->contactoIncidencia = $request->contacto;
-        $data->fechaResolucionIncidencia = null;
+        $data->asuntoincidencia = $request->asunto;
+        $data->descriincidencia = $request->descripcion;
+        $data->contactoincidencia = $request->contacto;
+        $data->fecharesolucionincidencia = null;
 
         if ($request->has('asunto')) {
-            $data->asuntoIncidencia = $request->asunto;
+            $data->asuntoincidencia = $request->asunto;
         }
 
         if ($request->has('descripcion')) {
-            $data->descriIncidencia = $request->descripcion;
+            $data->descriincidencia = $request->descripcion;
         }
 
         if ($request->has('contacto')) {
-            $data->contactoIncidencia = $request->contacto;
+            $data->contactoincidencia = $request->contacto;
         }
+
+        $original = $data->getOriginal();
 
         // Guardar los cambios en la base de datos
         $data->save();
+        
 
         Auditoria::create([
             'accion' => 'actualización',
             'modelo' => 'Incidencia',
-            'modelo_id' => $data->idIncidencia,
+            'modelo_id' => $data->idincidencia,
             'cambios' => json_encode([
                 'antes' => $original,
                 'despues' => $data->getChanges(),
@@ -203,11 +207,11 @@ class Incidenciacontroller extends Controller
             'usuario_id' => Auth::user()->id,
         ]);
 
-        return redirect()->route('incidencias.show', ['id' => $data->idIncidencia])->with('success', 'Incidencia actualizada correctamente.');
+        return redirect()->route('incidencias.show', ['id' => $data->idincidencia])->with('success', 'Incidencia actualizada correctamente.');
     }
 
     public function updateFile(Request $request, string $id)
-    {
+    {   
         // Encuentra la incidencia
         $data = Incidencias::findOrFail($id);
 
@@ -228,24 +232,25 @@ class Incidenciacontroller extends Controller
             }
         }
 
-        $original = $data->getOriginal();
-
         // Recuperar los archivos anteriores
-        $archivosAnteriores = json_decode($data->adjuntoIncidencia, true) ?? [];
+        $archivosAnteriores = json_decode($data->adjuntoincidencia, true) ?? [];
 
         // Combinar los archivos antiguos con los nuevos
         $archivosFinales = array_merge($archivosAnteriores, $archivos);
 
         // Asignar la lista final de archivos a la incidencia
-        $data->adjuntoIncidencia = json_encode($archivosFinales);
+        $data->adjuntoincidencia = json_encode($archivosFinales);
 
+        $original = $data->getOriginal();
         // Guardar los cambios en la base de datos
         $data->save();
+
+        
 
         Auditoria::create([
             'accion' => 'Adjuntos',
             'modelo' => 'Incidencia',
-            'modelo_id' => $data->idIncidencia,
+            'modelo_id' => $data->idincidencia,
             'cambios' => json_encode([
                 'antes' => $original,
                 'despues' => $data->getChanges(),
@@ -254,7 +259,7 @@ class Incidenciacontroller extends Controller
         ]);
 
         // Redirigir con un mensaje de éxito
-        return redirect()->route('incidencias.show', ['id' => $data->idIncidencia])->with('success', 'Incidencia actualizada correctamente.');
+        return redirect()->route('incidencias.show', ['id' => $data->idincidencia])->with('success', 'Incidencia actualizada correctamente.');
     }
 
     public function getAuditoria($id)
@@ -290,28 +295,28 @@ class Incidenciacontroller extends Controller
     public function cambiarEstado(Request $request, $id)
     {
         $request->validate([
-            'estado_id' => 'required|exists:estadoincidencia,idEstadoIncidencia',
+            'estado_id' => 'required|exists:estadoincidencia,idestadoincidencia',
         ]);
 
         $incidencia = Incidencias::findorfail($id);
-        $incidencia->EstadoIncidencia_idEstadoIncidencia = $request->estado_id;
+        $incidencia->estadoincidencia_idestadoincidencia = $request->estado_id;
 
         $original = $incidencia->getOriginal();
 
         $estadoNuevo = Estadoincidencia::find($request->estado_id);
-        $estadoAnterior = Estadoincidencia::find($original['EstadoIncidencia_idEstadoIncidencia']);
+        $estadoAnterior = Estadoincidencia::find($original['estadoincidencia_idestadoincidencia']);
 
         $incidencia->save();
 
         Auditoria::create([
             'accion' => 'Cambio de estado',
             'modelo' => 'Incidencia',
-            'modelo_id' => $incidencia->idIncidencia,
+            'modelo_id' => $incidencia->idincidencia,
             'cambios' => json_encode([
-                'estado' => [
-                    'antes' => $estadoAnterior ? $estadoAnterior->descriEstadoIncidencia : null,
-                    'despues' => $estadoNuevo ? $estadoNuevo->descriEstadoIncidencia : null,
-                ],
+            'estado' => [
+                'antes' => $estadoAnterior ? $estadoAnterior->nombre_estadoincidencia ?? $estadoAnterior->descriestadoincidencia : null,
+                'despues' => $estadoNuevo ? $estadoNuevo->nombre_estadoincidencia ?? $estadoNuevo->descriestadoincidencia : null,
+            ],
             ]),
             'usuario_id' => Auth::user()->id,
         ]);
@@ -326,7 +331,7 @@ class Incidenciacontroller extends Controller
         $this->comentarios($request, $id);
 
         $incidencia = Incidencias::findorfail($id);
-        $incidencia->fechaResolucionIncidencia = now();
+        $incidencia->fecharesolucionincidencia = now();
         $incidencia->save();
 
         return redirect()->back()->with('success', 'Estado asignado correctamente.');

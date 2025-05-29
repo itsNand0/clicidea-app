@@ -27,8 +27,8 @@
 
             <div class="flex justify-between items-center mb-3">
                 <h1 class="text-sm text-right text-gray-600 w-1/3">
-                    Creado por: {{ $datas->usuarioIncidencia }}<br>
-                    Fecha: {{ $datas->fechaIncidencia }}
+                    Creado por: {{ $datas->usuarioincidencia }}<br>
+                    Fecha: {{ $datas->fechaincidencia }}
                 </h1>
             </div>
 
@@ -45,13 +45,13 @@
                     @endif
                 </li>
                 <li><strong>Contrato:</strong> {{ $datas->cliente->nombre }}</li>
-                <li><strong>Asunto:</strong> {{ $datas->asuntoIncidencia }}</li>
-                <li><strong>Descripción:</strong> {{ $datas->descriIncidencia }}</li>
-                <li><strong>Contacto:</strong> {{ $datas->contactoIncidencia }}</li>
+                <li><strong>Asunto:</strong> {{ $datas->asuntoincidencia }}</li>
+                <li><strong>Descripción:</strong> {{ $datas->descriincidencia }}</li>
+                <li><strong>Contacto:</strong> {{ $datas->contactoincidencia }}</li>
             </ul>
 
             @php
-                $archivos = json_decode($datas->adjuntoIncidencia, true);
+                $archivos = json_decode($datas->adjuntoincidencia, true);
 
             @endphp
 
@@ -59,8 +59,8 @@
                 @foreach ($archivos as $archivo)
                     @if (!empty($archivo))
                         <a class="inline-block font-handwriting text-lg text-gray-800 px-6 py-2 border-2 border-black rounded-md hover:bg-yellow-100 transition duration-300 relative before:content-[''] before:absolute before:inset-0 before:-translate-x-1 before:-translate-y-1 before:border-2 before:border-black before:rounded-md before:z-[-1]"
-                            href="{{ asset($archivo) }}" target="_blank">
-                            Ver archivo: {{ $archivo }}
+                            href="{{ asset(  $archivo )}}" target="_blank">
+                            Ver archivo: {{  $archivo }}
                         </a>
                         <br><br />
                     @endif
@@ -108,7 +108,7 @@
                         <div class="modal-content bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
                             <h2 class="text-xl font-semibold mb-4 text-gray-700">Selecciona una
                                 opcion</h2>
-                            <form action="{{ route('incidencias.asignar', $datas->idIncidencia) }}" method="POST">
+                            <form action="{{ route('incidencias.asignar', $datas->idincidencia) }}" method="POST">
                                 @csrf
                                 @method('PUT')
                                 <label class="block mb-2 text-sm font-medium text-gray-700">Asignar a:</label>
@@ -211,20 +211,20 @@
                         class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
                         <div class="modal-content bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
                             <h2 class="text-xl font-semibold mb-4 text-gray-700">Modificar Detalle</h2>
-                            <form action="{{ route('incidencias.update', $datas->idIncidencia) }}" method="POST">
+                            <form action="{{ route('incidencias.update', $datas->idincidencia) }}" method="POST">
                                 @csrf
                                 @method('PUT')
 
                                 <label class="ml-2 block text-sm text-black">Asunto: </label>
                                 <input type="text" name="asunto"
                                     class="w-full border px-4 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 text-gray-700"
-                                    value="{{ $datas->asuntoIncidencia }}">
+                                    value="{{ $datas->asuntoincidencia }}">
                                 <label class="ml-2 block text-sm text-black">Descipcion: </label>
                                 <textarea name="descripcion"
-                                    class="w-full border px-4 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 text-gray-700">{{ old('descripcion', $datas->descriIncidencia) }}</textarea>
+                                    class="w-full border px-4 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 text-gray-700">{{ old('descripcion', $datas->descriincidencia) }}</textarea>
                                 <label class="ml-2 block text-sm text-black">Contacto: </label>
                                 <textarea name="contacto"
-                                    class="w-full border px-4 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 text-gray-700">{{ old('descripcion', $datas->contactoIncidencia) }}</textarea>
+                                    class="w-full border px-4 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 text-gray-700">{{ old('descripcion', $datas->contactoincidencia) }}</textarea>
 
                                 <div class="flex justify-end space-x-2">
                                     <button type="button" onclick="closeModal()" id="cancelarBtnEditar"
@@ -262,7 +262,7 @@
                         class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
                         <div class="modal-content bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
                             <h2 class="text-xl font-semibold mb-4 text-gray-700">Nuevos Archivos</h2>
-                            <form action="{{ route('incidencias.updateFile', $datas->idIncidencia) }}" method="POST"
+                            <form action="{{ route('incidencias.updateFile', $datas->idincidencia) }}" method="POST"
                                 enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
@@ -315,7 +315,7 @@
                     <div id="modalcomentario"
                         class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
                         <div class="modal-content bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-                            <form action="{{ route('comentarios.store', $datas->idIncidencia) }}" method="POST"
+                            <form action="{{ route('comentarios.store', $datas->idincidencia) }}" method="POST"
                                 class="mb-4">
                                 @csrf
                                 <textarea name="contenido" class="w-full p-2 border rounded text-black" rows="3"
@@ -357,16 +357,16 @@
                         class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
                         <div class="modal-content bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
                             <h2 class="text-xl font-semibold mb-4 text-gray-700">Selecciona Estado</h2>
-                            <form action="{{ route('incidencias.cambiarEstado', $datas->idIncidencia) }}"
+                            <form action="{{ route('incidencias.cambiarEstado', $datas->idincidencia) }}"
                                 method="POST">
                                 @csrf
                                 <select name="estado_id"
                                     class="w-full border border-gray-300 rounded-md p-2 mb-4 text-gray-700">
                                     @foreach ($estadosincidencias as $estadoincidencia)
-                                        <option value="{{ $estadoincidencia->idEstadoIncidencia }}"
-                                            for="estadosincidencias{{ $estadoincidencia->idEstadoIncidencia }}"
+                                        <option value="{{ $estadoincidencia->idestadoincidencia }}"
+                                            for="estadosincidencias{{ $estadoincidencia->idestadoincidencia }}"
                                             class="ml-2 text-sm text-gray-700">
-                                            {{ $estadoincidencia->descriEstadoIncidencia }}
+                                            {{ $estadoincidencia->descriestadoincidencia }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -413,7 +413,7 @@
                         <div class="modal-content bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
                             <h2 class="text-xl font-semibold mb-4 text-gray-700">Nuevos Archivos</h2>
                             <form id="resolverFormulario"
-                                action="{{ route('incidencias.resolverIncidencia', $datas->idIncidencia) }}"
+                                action="{{ route('incidencias.resolverIncidencia', $datas->idincidencia) }}"
                                 method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
@@ -425,7 +425,7 @@
                                 <textarea name="contenido" class="w-full p-2 border rounded text-black" rows="3"
                                     placeholder="Escribe un comentario..."></textarea>
                                 <input type="hidden" name="estado_id" value="3">
-                                <input type="hidden" name="fechaResolucionIncidencia" value="{{ now() }}">
+                                <input type="hidden" name="fecharesolucionincidencia" value="{{ now() }}">
                                 <div class="flex justify-end space-x-2">
                                     <button type="button" onclick="closeModal()" id="cancelarBtnResolver"
                                         class="btncancelar px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-200">Cancelar</button>
@@ -462,7 +462,7 @@
                     </div>
 
                     <!-- Una vez que esta resuelta la incidencia, se deshabilita todo en la vista -->
-                    @if ($datas->estadoincidencia->descriEstadoIncidencia === 'Cerrado')
+                    @if ($datas->estadoincidencia->descriestadoincidencia === 'Cerrado')
                         <script>
                             document.addEventListener('DOMContentLoaded', function() {
                                 // Deshabilita todos los elementos interactivos
@@ -488,19 +488,19 @@
 
                 <div class="overflow-hidden w-[500px] border p-4 bg-white rounded-md shadow">
                     <div class="bg-blue-600 text-white font-semibold px-4 py-2 rounded-md shadow mb-4">
-                        <i>INCIDENCIA - #{{ $datas->idIncidencia }}</i>
+                        <i>INCIDENCIA - #{{ $datas->idincidencia }}</i>
                     </div>
 
                     <div
                         class="px-6 py-1 rounded-full text-base text-center
-                            @switch($datas->estadoincidencia->descriEstadoIncidencia)
+                            @switch($datas->estadoincidencia->descriestadoincidencia)
                                 @case('En proceso') bg-green-200 text-gray-800 @break
                                 @case('Pendiente') bg-yellow-200 text-gray-800 @break
                                 @case('Cerrado') bg-red-200 text-gray-800 @break
                                 @default bg-gray-200 text-gray-800
                             @endswitch
                         ">
-                        {{ $datas->estadoincidencia->descriEstadoIncidencia }}
+                        {{ $datas->estadoincidencia->descriestadoincidencia }}
                     </div>
 
                     <p class="text-lg font-semibold text-gray-800 border-b pb-1 mb-2 mt-2">
@@ -584,13 +584,16 @@
                                         @endforeach
                                     @endif
 
-                                    @if (isset($cambios['estado']) && is_array($cambios['estado']))
-                                        @if (isset($cambios['estado']['antes']) && isset($cambios['estado']['despues']))
+                                    @if (isset($cambios['estado']) && (isset($cambios['estado']['antes']) || isset($cambios['estado']['despues'])))
+                                        @php
+                                            $antes = $cambios['estado']['antes'] ?? 'Sin estado';
+                                            $despues = $cambios['estado']['despues'] ?? 'Sin estado';
+                                        @endphp
+                                        @if ($antes !== $despues)
                                             <li>
                                                 <strong>Estado:</strong>
-                                                <span class="text-red-600">{{ $cambios['estado']['antes'] }}</span> →
-                                                <span
-                                                    class="text-green-600">{{ $cambios['estado']['despues'] }}</span>
+                                                <span class="text-red-600">{{ $antes ?? 'Sin estado' }}</span> →
+                                                <span class="text-green-600">{{ $despues ?? 'Sin estado' }}</span>
                                             </li>
                                         @endif
                                     @endif
@@ -628,6 +631,7 @@
                         @endforeach
                     @endif
                 </div>
+                
             </div>
 
 

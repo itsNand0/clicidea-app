@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Auditoria extends Model
 {
     protected $table = 'auditorias';
-    protected $primaryKey = 'id ';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
         'accion',

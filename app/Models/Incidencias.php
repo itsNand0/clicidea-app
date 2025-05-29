@@ -7,34 +7,34 @@ use Illuminate\Database\Eloquent\Model;
 class Incidencias extends Model
 {
     protected $table = 'incidencia';
-    protected $primaryKey = 'idIncidencia';
+    protected $primaryKey = 'idincidencia';
     public $timestamps = false;
 
     protected $fillable = [
-        'cliente_idCliente',
-        'usuarioIncidencia',
-        'asuntoIncidencia',
-        'descriIncidencia',
-        'contactoIncidencia',
-        'EstadoIncidencia_idEstadoIncidencia',
+        'cliente_idcliente',
+        'usuarioincidencia',
+        'asuntoincidencia',
+        'descrincidencia',
+        'contactoincidencia',
+        'estadoincidencia_idestadoincidencia',
         'fechaIncidencia',
-        'adjuntoIncidencia',
-        'Usuario_idUsuario',
+        'adjuntoincidencia',
+        'usuario_idusuario',
     ];
 
     public function cliente()
     {
-        return $this->belongsTo(Cliente::class, 'cliente_idCliente', 'idCliente');
+        return $this->belongsTo(Cliente::class, 'cliente_idcliente', 'idcliente');
     }
 
     public function estadoIncidencia()
     {
-        return $this->belongsTo(Estadoincidencia::class, 'EstadoIncidencia_idEstadoIncidencia', 'idEstadoIncidencia');
+        return $this->belongsTo(Estadoincidencia::class, 'estadoincidencia_idestadoincidencia', 'idestadoincidencia');
     }
 
     public function usuario()
     {
-        return $this->belongsTo(User::class, 'Usuario_idUsuario', 'id');
+        return $this->belongsTo(User::class, 'usuario_idusuario', 'id');
     }
 
     public function comentarios()
