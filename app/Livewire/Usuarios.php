@@ -26,7 +26,14 @@ class Usuarios extends Component
                 $search = '%' . $this->search . '%';
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', $search)
-                        ->orWhere('email', 'like', $search);
+                        ->orWhere('email', 'like', $search)
+                        ->orWhereHas('cargo', function ($q) use ($search) {
+                            $q->where('nombre_cargo', 'like', $search);
+                                
+                        })
+                        ->orWhereHas('area', function ($q) use ($search) {
+                                    $q->where('area_name', 'like', $search);
+                                });
                 });
             })
             ->paginate(10);

@@ -43,12 +43,12 @@
                         @endif
                     </li>
                     <li><strong>Contrato:</strong> {{ $datas->cliente->nombre }}</li>
-                    <li><strong>Asunto:</strong> {{ $datas->asuntoIncidencia }}</li>
-                    <li><strong>Descripción:</strong> {{ $datas->descriIncidencia }}</li>
-                    <li><strong>Contacto:</strong> {{ $datas->contactoIncidencia }}</li>
+                    <li><strong>Asunto:</strong> {{ $datas->asuntoincidencia }}</li>
+                    <li><strong>Descripción:</strong> {{ $datas->descriincidencia }}</li>
+                    <li><strong>Contacto:</strong> {{ $datas->contactoincidencia }}</li>
                 </ul>
                 @php
-                    $archivos = json_decode($datas->adjuntoIncidencia, true);
+                    $archivos = json_decode($datas->adjuntoincidencia, true);
                 @endphp
                 <div class="w-full flex flex-col items-center">
                     @if (!empty($archivos) && is_array($archivos))

@@ -88,9 +88,10 @@ class Incidencias extends Component
 
                     $query->where(function ($q) use ($search) {
                         $q->whereHas('estadoincidencia', function ($q) use ($search) {
-                            $q->where('descriEstadoIncidencia', 'like', $search);
+                            $q->where('descriestadoincidencia', 'like', $search);
                         })
                             ->orWhereHas('cliente', function ($q) use ($search) {
+                                
                                 $q->where('nombre', 'like', $search);
                             })
 
@@ -103,7 +104,7 @@ class Incidencias extends Component
                                     $q->where('area_name', 'like', $search);
                                 });
                             })
-                            ->orWhere('usuarioIncidencia', 'like', $search);
+                            ->orWhere('usuarioincidencia', 'like', $search);
                     });
                 })
                 ->paginate(10);

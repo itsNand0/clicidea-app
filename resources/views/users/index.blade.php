@@ -14,7 +14,6 @@
 
 <body>
     <x-barmenu />
-    <x-Sidebar />
     <div class="flex-1 p-8">
         <!-- Contenido principal -->
         <h1 class="text-2xl font-bold">Usuarios</h1>
