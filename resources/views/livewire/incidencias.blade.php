@@ -3,9 +3,14 @@
         <div class="flex justify-between items-center mb-4">
             <input type="text" placeholder="Buscar" class="border p-2 rounded-lg mb-4"
                 wire:model.live.debounce.300ms="search">
-            <a href="{{ route('incidencias.create') }}" class="bg-lime-600 text-white px-4 py-2 rounded-lg">
-                <i class="fa-solid fa-plus"></i>
-            </a>
+            <div class="flex gap-2">
+                <a href="{{ route('incidencias.create') }}" class="bg-lime-600 text-white px-4 py-2 rounded-lg">
+                    <i class="fa-solid fa-plus"></i>
+                </a>
+                <a href="{{ route('incidencias.exportarExcel') }}" class="bg-lime-600 text-white px-4 py-2 rounded-lg">
+                    <i class="fa-solid fa-file-excel"></i>
+                </a>
+            </div>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white rounded shadow-md">

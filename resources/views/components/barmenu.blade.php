@@ -6,7 +6,7 @@
         </button>
         <div id="side-menu" class="fixed top-0 left-0 h-screen z-50 hidden mt-12">
             <div class="group flex flex-col bg-gray-800 text-white transition-all duration-300 ease-in-out w-16 hover:w-64 overflow-hidden h-full">
-            <nav class="flex flex-col space-y-4 mt-16 pl-4">
+            <nav class="flex flex-col space-y-4 mt-6 pl-4">
                 <a href="/dashboard" class="flex items-center space-x-4">
                     <span class="px-2 py-1 fa-solid fa-house"></span>
                     <span class="opacity-0 group-hover:opacity-100 transition-opacity">Dashboard</span>

@@ -4,16 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Cliente;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Validate;
 use App\Models\Incidencias;
 use App\Models\Tecnico;
 use App\Models\Area;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Auditoria;
 use App\Models\Cargo;
 use App\Models\Comentarios;
 use App\Models\Estadoincidencia;
 use App\Models\User;
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Incidenciacontroller extends Controller
 {
@@ -194,7 +197,9 @@ class Incidenciacontroller extends Controller
 
         // Guardar los cambios en la base de datos
         $data->save();
-        
+        // Registrar la auditoría
+        // Aquí se registra la auditoría de los cambios realizados
+        // Se guarda el modelo, el id del modelo, los cambios realizados y el usuario que
 
         Auditoria::create([
             'accion' => 'actualización',
@@ -344,6 +349,48 @@ class Incidenciacontroller extends Controller
         return view('incidencias.justshow', compact(['datas']));
     
     }
+
+    public function exportarExcel()
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Encabezados
+
+        // Encabezados en negrita
+        $sheet->fromArray(['ID', 'Responsable', 'Estado', 'Contrato', 'Creado por', 'Asunto', 'Descripcion', 'Contacto', 'Fecha de creacion'], NULL, 'A1');
+        // Aplicar negrita a la fila de encabezados
+        $sheet->getStyle('A1:I1')->getFont()->setBold(true);
+
+        $incidencias = Incidencias::with(['cliente', 'usuario', 'estadoincidencia'])->get();
+        $row = 2;
+
+        foreach ($incidencias as $incidencia) {
+            $sheet->fromArray([
+                $incidencia->idincidencia,
+                $incidencia->usuario->name,
+                $incidencia->estadoincidencia->descriestadoincidencia,
+                $incidencia->cliente->nombre,
+                $incidencia->usuarioincidencia,
+                $incidencia->asuntoincidencia,
+                $incidencia->descriincidencia,
+                $incidencia->contactoincidencia,
+                $incidencia->fechaincidencia,
+            ], NULL, 'A' . $row);
+            $row++;
+        }
+
+        $writer = new Xlsx($spreadsheet);
+
+        // Descargar el archivo
+        $filename = 'incidencias.xlsx';
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+
+        $writer->save("php://output");
+        exit;
+    }
+    
 
 
     /**
