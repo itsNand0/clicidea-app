@@ -10,8 +10,21 @@ use Livewire\WithPagination;
 
 class Incidencias extends Component
 {
-    use WithPagination; // Habilita la paginación en Livewire
-    public $search = ""; // Variable para el campo de búsqueda
+    use WithPagination; 
+    public $search = ""; 
+    public $sortField = 'idincidencia'; 
+    public $sortDirection = 'asc'; 
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+    }
+    
 
     public function updatingSearch()
     {
@@ -33,6 +46,7 @@ class Incidencias extends Component
 
         if ($isAdmin) {
             // El administrador ve todo los registros
+
             $datas = ModelsIncidencias::with(['cliente', 'estadoincidencia', 'usuario'])
                 ->when($this->search !== '', function ($query) {
                     $search = '%' . $this->search . '%';
@@ -56,6 +70,7 @@ class Incidencias extends Component
                             ->orWhere('usuarioincidencia', 'like', $search);
                     });
                 })
+                ->orderBy($this->sortField, $this->sortDirection)
                 ->paginate(10);
 
             return view('livewire.incidencias', compact('datas'));

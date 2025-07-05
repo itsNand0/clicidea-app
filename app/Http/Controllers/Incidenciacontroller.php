@@ -355,8 +355,6 @@ class Incidenciacontroller extends Controller
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        // Encabezados
-
         // Encabezados en negrita
         $sheet->fromArray(['ID', 'Responsable', 'Estado', 'Contrato', 'Creado por', 'Asunto', 'Descripcion', 'Contacto', 'Fecha de creacion'], NULL, 'A1');
         // Aplicar negrita a la fila de encabezados
