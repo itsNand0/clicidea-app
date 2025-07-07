@@ -122,6 +122,7 @@ class Incidencias extends Component
                             ->orWhere('usuarioincidencia', 'like', $search);
                     });
                 })
+                ->orderBy($this->sortField, $this->sortDirection)
                 ->paginate(10);
 
             return view('livewire.incidencias', compact('datas'));

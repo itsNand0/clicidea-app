@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/', [AuthController::class, 'login']);
 
-//Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(function () {
     Route::resource('users', Usercontroller::class);
     Route::resource('incidencias', Incidenciacontroller::class);
     Route::get('/exportarExcel', [IncidenciaController::class, 'exportarExcel'])->name('incidencias.exportarExcel');
@@ -27,7 +27,7 @@ Route::post('/', [AuthController::class, 'login']);
     Route::put('/incidencias/{id}/update-file', [IncidenciaController::class, 'updateFile'])->name('incidencias.updateFile');
     Route::get('/dashboard', function () {return view('dashboard');})->name('view.dashboard');
     Route::get('/incidencias/justshow/{id}', [IncidenciaController::class, 'justshow'])->name('incidencias.justshow');
-//});
+});
 
 Route::post('/logout', function () {
     Auth::logout();

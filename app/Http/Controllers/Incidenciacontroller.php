@@ -356,9 +356,9 @@ class Incidenciacontroller extends Controller
         $sheet = $spreadsheet->getActiveSheet();
 
         // Encabezados en negrita
-        $sheet->fromArray(['ID', 'Responsable', 'Estado', 'Contrato', 'Creado por', 'Asunto', 'Descripcion', 'Contacto', 'Fecha de creacion'], NULL, 'A1');
+        $sheet->fromArray(['#', 'Responsable', 'Estado', 'Contrato', 'Creado por', 'Asunto', 'Descripcion', 'Contacto', 'Fecha de creacion','Resolucion'], NULL, 'A1');
         // Aplicar negrita a la fila de encabezados
-        $sheet->getStyle('A1:I1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:J1')->getFont()->setBold(true);
 
         $incidencias = Incidencias::with(['cliente', 'usuario', 'estadoincidencia'])->get();
         $row = 2;
@@ -374,6 +374,7 @@ class Incidenciacontroller extends Controller
                 $incidencia->descriincidencia,
                 $incidencia->contactoincidencia,
                 $incidencia->fechaincidencia,
+                $incidencia->fecharesolucionincidencia ? $incidencia->fecharesolucionincidencia : 'Pendiente',
             ], NULL, 'A' . $row);
             $row++;
         }

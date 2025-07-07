@@ -10,7 +10,7 @@ class AuthController extends Controller
 {
     public function showLoginForm()
     {
-        return view('auth.login'); // Asegúrate de tener la vista en resources/views/auth/login.blade.php
+        return view('auth.login'); 
     }
 
     public function login(Request $request)
@@ -19,7 +19,7 @@ class AuthController extends Controller
 
         if (Auth::attempt(['name' => $credentials['name'], 'password' => $credentials['password']])) {
             $request->session()->regenerate();
-            return redirect()->intended('dashboard'); // Cambia 'dashboard' por la ruta a la que quieras redirigir al usuario después de iniciar sesión
+            return redirect()->intended('dashboard'); 
         }
 
         return back()->withErrors([

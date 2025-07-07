@@ -7,15 +7,25 @@
         <div id="side-menu" class="fixed top-0 left-0 h-screen z-50 hidden mt-12">
             <div class="group flex flex-col bg-gray-800 text-white transition-all duration-300 ease-in-out w-16 hover:w-64 overflow-hidden h-full">
             <nav class="flex flex-col space-y-4 mt-6 pl-4">
+                <div x-data="{ open: false }" class="relative">
+                    <button @click="open = !open" class="flex items-center space-x-4 w-full focus:outline-none">
+                        <span class="px-2 py-1 fa-solid fa-gears"></span>
+                        <span class="opacity-0 group-hover:opacity-100 transition-opacity">Administrar</span>
+                        <span class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity fa-solid" :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"></span>
+                    </button>
+                    <div x-show="open" @click.away="open = false" class="pl-8 mt-2 flex flex-col space-y-2">
+                        <a href="/users" class="flex items-center space-x-4">
+                            <span class="px-2 py-1 fa-solid fa-users"></span>
+                            <span class="opacity-0 group-hover:opacity-100 transition-opacity">Usuarios</span>
+                        </a>
+                    </div>
+                </div>
                 <a href="/dashboard" class="flex items-center space-x-4">
                     <span class="px-2 py-1 fa-solid fa-house"></span>
                     <span class="opacity-0 group-hover:opacity-100 transition-opacity">Dashboard</span>
                 </a>
-                <a href="/users" class="flex items-center space-x-4">
-                    <span class="px-2 py-1 fa-solid fa-users"></span>
-                    <span class="opacity-0 group-hover:opacity-100 transition-opacity">Usuarios</span>
-                </a>
             </nav>
+            <script src="//unpkg.com/alpinejs" defer></script>
             </div>
         </div>
         <script>
