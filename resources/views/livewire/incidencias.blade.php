@@ -1,13 +1,16 @@
 <div>
     <main class="p-6">
-        <div class="flex justify-between items-center mb-4">
-            <input type="text" placeholder="Buscar" class="border p-2 rounded-lg mb-4"
+        <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-2">
+            <input type="text" placeholder="Buscar"
+                class="border p-2 rounded-lg w-full md:w-auto text-sm md:text-base"
                 wire:model.live.debounce.300ms="search">
-            <div class="flex gap-2">
-                <a href="{{ route('incidencias.create') }}" class="bg-lime-600 text-white px-4 py-2 rounded-lg">
+            <div class="flex gap-2 w-full md:w-auto justify-end">
+                <a href="{{ route('incidencias.create') }}"
+                    class="bg-lime-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base flex items-center justify-center">
                     <i class="fa-solid fa-plus"></i>
                 </a>
-                <a href="{{ route('incidencias.exportarExcel') }}" class="bg-lime-600 text-white px-4 py-2 rounded-lg">
+                <a href="{{ route('incidencias.exportarExcel') }}"
+                    class="bg-lime-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base flex items-center justify-center">
                     <i class="fa-solid fa-file-excel"></i>
                 </a>
             </div>
