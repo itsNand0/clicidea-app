@@ -363,11 +363,13 @@
                                 <select name="estado_id"
                                     class="w-full border border-gray-300 rounded-md p-2 mb-4 text-gray-700">
                                     @foreach ($estadosincidencias as $estadoincidencia)
-                                        <option value="{{ $estadoincidencia->idestadoincidencia }}"
-                                            for="estadosincidencias{{ $estadoincidencia->idestadoincidencia }}"
-                                            class="ml-2 text-sm text-gray-700">
-                                            {{ $estadoincidencia->descriestadoincidencia }}
-                                        </option>
+                                        @if ($estadoincidencia->descriestadoincidencia !== 'Cerrado')
+                                            <option value="{{ $estadoincidencia->idestadoincidencia }}"
+                                                for="estadosincidencias{{ $estadoincidencia->idestadoincidencia }}"
+                                                class="ml-2 text-sm text-gray-700">
+                                                {{ $estadoincidencia->descriestadoincidencia }}
+                                            </option>
+                                        @endif
                                     @endforeach
                                 </select>
 

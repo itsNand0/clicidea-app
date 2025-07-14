@@ -67,7 +67,8 @@ class Incidencias extends Component
                                     $q->where('area_name', 'like', $search);
                                 });
                             })
-                            ->orWhere('usuarioincidencia', 'like', $search);
+                            ->orWhere('usuarioincidencia', 'like', $search)
+                            ->orWhere('idincidencia', 'like', $search);
                     });
                 })
                 ->orderBy($this->sortField, $this->sortDirection)
