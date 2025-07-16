@@ -1,4 +1,3 @@
-<!-- resources/views/users/index.blade.php -->
 <!DOCTYPE html>
 <html lang="es">
 
@@ -8,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <title>Usuarios</title>
+    <title>Clientes</title>
     @livewireStyles
 </head>
 
@@ -17,7 +16,7 @@
     <main class="max-w-5xl mx-auto mt-8 p-6 bg-white rounded-xl shadow-md">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
             <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-2">
-                <i class="fa-solid fa-user-tie text-blue-600"></i> Usuarios
+                <i class="fa-solid fa-users text-blue-600"></i> Clientes
             </h1>
             @if (session('success'))
                 <div id="success-alert"
@@ -35,7 +34,7 @@
             @endif
         </div>
         <div class="mt-4">
-            @livewire('usuarios')
+            @livewire('clientes')
         </div>
     </main>
     @livewireScripts

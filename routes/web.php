@@ -2,10 +2,8 @@
 
 use App\Http\Controllers\Usercontroller;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Clientecontroller;
 use App\Http\Controllers\Incidenciacontroller;
-use App\Http\Controllers\Tecnicocontroller;
-use App\Models\Comentarios;
-use App\Models\Incidencias;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,6 +15,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('users', Usercontroller::class);
     Route::resource('incidencias', Incidenciacontroller::class);
     Route::get('/exportarExcel', [IncidenciaController::class, 'exportarExcel'])->name('incidencias.exportarExcel');
+    Route::get('/index', [Clientecontroller::class, 'index'])->name('clientes.index');
     Route::get('/incidencias/create', [IncidenciaController::class, 'create'])->name('incidencias.create');
     Route::get('/incidencias/{id}', [IncidenciaController::class, 'show'])->name('incidencias.show');
     Route::put('/incidencias/{id}/asignar', [IncidenciaController::class, 'asignar'])->name('incidencias.asignar');

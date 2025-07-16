@@ -30,7 +30,8 @@
                         <ul x-show="open"
                             class="absolute z-10 w-full bg-white border border-gray-300 rounded mt-1 max-h-60 overflow-y-auto shadow-lg">
                             <template x-for="item in filtered" :key="item">
-                                <li @click="select(item)" class="px-4 py-2 hover:bg-blue-100 cursor-pointer" x-text="item">
+                                <li @click="select(item)" class="px-4 py-2 hover:bg-blue-100 cursor-pointer"
+                                    x-text="item">
                                 </li>
                             </template>
                             <li x-show="filtered.length === 0" class="px-4 py-2 text-gray-400">Sin resultados</li>
@@ -58,7 +59,8 @@
                     <div>
                         <label class="block text-gray-700 font-semibold mb-1">Imagen o Adjunto</label>
                         <input type="file" name="adjunto[]"
-                            class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" multiple>
+                            class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            multiple>
                     </div>
                 </div>
             </div>
@@ -84,9 +86,7 @@
             return {
                 open: false,
                 search: '',
-                items: [
-                    '',
-                ],
+                items: @json($clientes->pluck('nombre')->toArray()), // Cambia 'nombre' por el campo que deseas mostrar
                 get filtered() {
                     return this.items.filter(i => i.toLowerCase().includes(this.search.toLowerCase()));
                 },

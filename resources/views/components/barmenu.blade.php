@@ -15,8 +15,12 @@
                     </button>
                     <div x-show="open" @click.away="open = false" class="pl-8 mt-2 flex flex-col space-y-2">
                         <a href="/users" class="flex items-center space-x-4">
-                            <span class="px-2 py-1 fa-solid fa-users"></span>
+                            <span class="px-2 py-1 fa-solid fa-user-tie"></span>
                             <span class="opacity-0 group-hover:opacity-100 transition-opacity">Usuarios</span>
+                        </a>
+                        <a href="{{ route('clientes.index') }}" class="flex items-center space-x-4">
+                            <span class="px-2 py-1 fa-solid fa-users"></span>
+                            <span class="opacity-0 group-hover:opacity-100 transition-opacity">Clientes</span>
                         </a>
                     </div>
                 </div>

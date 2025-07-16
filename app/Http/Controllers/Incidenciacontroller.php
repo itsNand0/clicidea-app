@@ -33,7 +33,8 @@ class Incidenciacontroller extends Controller
      */
     public function create()
     {
-        return view('incidencias.create');
+        $clientes = Cliente::all(); 
+        return view('incidencias.create', compact('clientes'));
     }
 
     /**
@@ -56,7 +57,7 @@ class Incidenciacontroller extends Controller
         $data->descriincidencia = $request->descripcion;
         $data->contactoincidencia = $request->contacto;
         $data->fechaincidencia = now();
-        $data->cliente_idcliente  = 1;
+        $data->cliente_idcliente  = $request->contrato;
         $data->estadoincidencia_idestadoincidencia = 1;
         $archivos = [];
 
