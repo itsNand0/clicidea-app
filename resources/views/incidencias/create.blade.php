@@ -21,7 +21,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-5">
                     <!-- Menú desplegable del contrato -->
-                    <div x-data="dropdown()" class="relative w-full">
+                    <div x-data="dropdown()" class="relative w-full" @click.away="open = false">
                         <label class="block text-gray-700 font-semibold mb-1">Contrato</label>
                         <input type="text" x-model="search" name="contrato" @focus="open = true"
                             @keydown.escape="open = false" placeholder="Contrato"

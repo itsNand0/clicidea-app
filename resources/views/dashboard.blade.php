@@ -12,7 +12,7 @@
 
 <body class="bg-gray-100 min-h-screen font-sans">
     <x-Barmenu />
-    <main class="max-w-8xl mx-auto mt-6 p-6 bg-white rounded-xl shadow-md">
+    <main class="max-w-7xl mx-auto mt-6 p-6 bg-white rounded-xl shadow-md">
         <div class="flex items-center justify-between mb-6">
             <h1 class="text-3xl font-bold text-gray-800 flex items-center gap-2 ml-6">
                 <i class="fa-solid fa-list-check text-blue-600"></i> Incidencias

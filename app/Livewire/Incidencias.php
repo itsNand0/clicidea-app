@@ -15,6 +15,26 @@ class Incidencias extends Component
     public $sortField = 'idincidencia'; 
     public $sortDirection = 'asc'; 
 
+    public $visibleColumns = [
+        'usuario' => true,
+        'usuarioincidencia' => true,
+        'estado' => true,
+        'contrato' => true,
+        'asunto' => true,
+        'descripcion' => true,
+        'contacto' => true,
+        'fecha' => true,
+        'resolucion' => true,
+        'acciones' => true,
+    ];
+
+    public function toggleColumn($column)
+    {
+        if (array_key_exists($column, $this->visibleColumns)) {
+            $this->visibleColumns[$column] = !$this->visibleColumns[$column];
+        }
+    }
+
     public function sortBy($field)
     {
         if ($this->sortField === $field) {
@@ -74,7 +94,8 @@ class Incidencias extends Component
                 ->orderBy($this->sortField, $this->sortDirection)
                 ->paginate(10);
 
-            return view('livewire.incidencias', compact('datas'));
+            return view('livewire.incidencias', compact('datas'))
+                ->with('visibleColumns', $this->visibleColumns);
         } else {
 
             // Obtener los cargos relacionados al área del usuario (por si es encargado de área)
@@ -126,7 +147,8 @@ class Incidencias extends Component
                 ->orderBy($this->sortField, $this->sortDirection)
                 ->paginate(10);
 
-            return view('livewire.incidencias', compact('datas'));
+            return view('livewire.incidencias', compact('datas'))
+                ->with('visibleColumns', $this->visibleColumns);
         }
     }
 }
