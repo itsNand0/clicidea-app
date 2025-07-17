@@ -5,25 +5,28 @@
             <div
                 class="group flex flex-col bg-gray-800 text-white transition-all duration-300 ease-in-out w-10 hover:w-64 overflow-hidden h-full">
                 <nav class="flex flex-col space-y-4 mt-2 pl-auto">
-                    <div x-data="{ open: false }" class="relative">
-                        <a href="/dashboard" class="flex items-center space-x-4">
-                            <span class="px-2 py-1 fa-solid fa-house"></span>
-                            <span class="opacity-0 group-hover:opacity-100 transition-opacity">Dashboard</span>
+                    <div x-data="{ searchOpen: false }" class="relative">
+                        <a href="#" class="flex items-center space-x-3">
+                            <span class="px-2 py-1 fa-solid fa-magnifying-glass"></span>
+                            <input type="text" placeholder="Buscar ID"
+                                class="bg-gray-700 text-white placeholder-gray-400 focus:outline-none rounded-md"
+                                @focus="searchOpen = true" @keydown.escape="searchOpen = false">
                         </a>
                         <hr class="my-2 border-gray-700 opacity-50">
-                        <button @click="open = !open" class="flex items-center space-x-4 w-full focus:outline-none">
-                            <span class="px-2 py-1 fa-solid fa-gears"></span>
-                            <span class="opacity-0 group-hover:opacity-100 transition-opacity">Administrar</span>
-                            <span class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity fa-solid"
-                                :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"></span>
-                        </button>
-                        <div x-show="open" @click.away="open = false" class="pl-8 mt-2 flex flex-col space-y-2">
-                            <a href="/users" class="flex items-center space-x-4">
-                                <span class="px-2 py-1 fa-solid fa-user-tie"></span>
+                        <div class="space-y-2 group">
+                            <a href="/dashboard"
+                                class="flex items-center space-x-3 px-2 py-2 rounded-md hover:bg-gray-700 hover:text-white transition-colors duration-200">
+                                <span class="w-6 text-center"><i class="fa-solid fa-house"></i></span>
+                                <span class="opacity-0 group-hover:opacity-100 transition-opacity">Incidencias</span>
+                            </a>
+                            <a href="/users"
+                                class="flex items-center space-x-3 px-2 py-2 rounded-md hover:bg-gray-700 hover:text-white transition-colors duration-200">
+                                <span class="w-6 text-center"><i class="fa-solid fa-user-tie"></i></span>
                                 <span class="opacity-0 group-hover:opacity-100 transition-opacity">Usuarios</span>
                             </a>
-                            <a href="{{ route('clientes.index') }}" class="flex items-center space-x-4">
-                                <span class="px-2 py-1 fa-solid fa-users"></span>
+                            <a href="{{ route('clientes.index') }}"
+                                class="flex items-center space-x-3 px-2 py-2 rounded-md hover:bg-gray-700 hover:text-white transition-colors duration-200">
+                                <span class="w-6 text-center"><i class="fa-solid fa-users"></i></span>
                                 <span class="opacity-0 group-hover:opacity-100 transition-opacity">Clientes</span>
                             </a>
                         </div>
@@ -31,19 +34,7 @@
                 </nav>
             </div>
         </div>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const menuToggle = document.getElementById('menu-toggle');
-                const sideMenu = document.getElementById('side-menu');
 
-                menuToggle.addEventListener('click', function() {
-                    sideMenu.classList.toggle('w-64');
-                });
-
-                // Ensure the side menu always shows icons when not expanded
-                sideMenu.classList.add('w-16');
-            });
-        </script>
         <!-- Logo / Nombre -->
         <div class="flex items-center space-x-4">
             <a href="{{ route('view.dashboard') }}"><img src="{{ asset('images/logo-eglobal.png') }}"
@@ -69,3 +60,17 @@
         </div>
     </div>
 </nav>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.querySelector('input[placeholder="Buscar ID"]');
+
+        searchInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                const query = searchInput.value.trim();
+                if (query) {
+                    window.location.href = `/buscar-incidencia?id=${encodeURIComponent(query)}`;
+                }
+            }
+        });
+    });
+</script>

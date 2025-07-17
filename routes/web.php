@@ -26,6 +26,15 @@ Route::middleware('auth')->group(function () {
     Route::put('/incidencias/{id}/update-file', [IncidenciaController::class, 'updateFile'])->name('incidencias.updateFile');
     Route::get('/dashboard', function () {return view('dashboard');})->name('view.dashboard');
     Route::get('/incidencias/justshow/{id}', [IncidenciaController::class, 'justshow'])->name('incidencias.justshow');
+    Route::get('/buscar-incidencia', function (Illuminate\Http\Request $request) {
+        $id = $request->query('id');
+
+        if ($id && App\Models\Incidencias::find($id)) {
+            return redirect()->route('incidencias.show', ['id' => $id]);
+        }
+
+        return redirect()->back()->with('error', 'Incidencia no encontrada.');
+    })->name('buscar.incidencia');
 });
 
 Route::post('/logout', function () {

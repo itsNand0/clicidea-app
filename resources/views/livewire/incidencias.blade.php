@@ -57,7 +57,7 @@
                                 class="cursor-pointer py-3 px-6 text-left border-r border-white">Estado</th>
                         @endif
                         @if ($visibleColumns['contrato'])
-                            <th wire:click="sortBy('cliente_idcliente') class="py-3 px-6 text-left border-r
+                            <th wire:click="sortBy('cliente_idcliente')" class="py-3 px-6 text-left border-r
                                 border-white">Contrato</th>
                         @endif
                         @if ($visibleColumns['usuarioincidencia'])

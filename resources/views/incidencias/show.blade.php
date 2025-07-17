@@ -362,6 +362,7 @@
                                 @csrf
                                 <select name="estado_id"
                                     class="w-full border border-gray-300 rounded-md p-2 mb-4 text-gray-700">
+                                    <option value=""class="ml-2 text-sm text-gray-700">Seleccione un opcion</option>
                                     @foreach ($estadosincidencias as $estadoincidencia)
                                         @if ($estadoincidencia->descriestadoincidencia !== 'Cerrado')
                                             <option value="{{ $estadoincidencia->idestadoincidencia }}"
@@ -467,19 +468,21 @@
                     @if ($datas->estadoincidencia->descriestadoincidencia === 'Cerrado')
                         <script>
                             document.addEventListener('DOMContentLoaded', function() {
-                                // Deshabilita todos los elementos interactivos
-                                const elements = document.querySelectorAll('button, input, select, textarea, [tabindex]');
-                                elements.forEach(el => {
-                                    if (!el.classList.contains('close_Sesion') && !el.classList.contains('btncancelar')) {
-                                        el.setAttribute('disabled', 'disabled');
+                                // IDs de los elementos a deshabilitar
+                                const ids = [
+                                    'opcionasignar',
+                                    'opcioneditar',
+                                    'opcionadjuntar',
+                                    'opcioncomentar',
+                                    'opcionresolver'
+                                ];
+                                ids.forEach(id => {
+                                    const el = document.getElementById(id);
+                                    if (el) {
                                         el.classList.add('pointer-events-none', 'opacity-60');
+                                        el.setAttribute('aria-disabled', 'true');
                                     }
                                 });
-                                // Opcional: bloquea clicks en toda la página
-                                document.body.classList.add('pointer-events-none');
-                                // Permite scroll y selección de texto
-                                document.body.classList.remove('pointer-events-none');
-
                             });
                         </script>
                     @endif
