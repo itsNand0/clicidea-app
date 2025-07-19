@@ -61,7 +61,7 @@ class Incidencias extends Component
         $isAdmin = DB::table('model_has_roles')
             ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
             ->where('model_has_roles.model_id', $user->id)
-            ->where('roles.name', 'admin users')
+            ->where('roles.name', 'admin')
             ->exists();
 
         if ($isAdmin) {

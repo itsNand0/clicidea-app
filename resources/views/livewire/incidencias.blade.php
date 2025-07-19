@@ -33,12 +33,19 @@
                 </div>
             </div>
             <div class="flex gap-2">
+                
+                @can('incidencias.crear')
                 <a href="{{ route('incidencias.create') }}" class="bg-lime-600 text-white px-4 py-2 rounded-lg">
                     <i class="fa-solid fa-plus"></i>
                 </a>
+                @endcan
+
+                @can('incidencias.exportarExcel')
                 <a href="{{ route('incidencias.exportarExcel') }}" class="bg-lime-600 text-white px-4 py-2 rounded-lg">
                     <i class="fa-solid fa-file-excel"></i>
                 </a>
+                @endcan
+
             </div>
 
         </div>

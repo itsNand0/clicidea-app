@@ -95,7 +95,6 @@
                     </div>
                 @endif
                 <ul class="flex justify-between items-center space-x-2">
-
                     <li id="opcionasignar"
                         class="nav-item border border-gray-500 px-4 py-1 rounded-md hover:bg-gray-700">
                         <a id="opcionasignar" class="nav-link text-m " href="#"><i
@@ -103,6 +102,7 @@
                     </li>
 
                     <!-- Modal (oculto por defecto) -->
+                    @can('incidencias.asignar')
                     <div id="modalasignar"
                         class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
                         <div class="modal-content bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
@@ -200,6 +200,7 @@
                             </form>
                         </div>
                     </div>
+                    @endcan
 
                     <li id='opcioneditar'
                         class="nav-item border border-gray-500 px-3 py-1 rounded-md hover:bg-gray-700">
@@ -207,6 +208,7 @@
                             Editar</a>
                     </li>
 
+                    @can('incidencias.editar')
                     <div id="modaleditar"
                         class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
                         <div class="modal-content bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
@@ -251,6 +253,7 @@
                             </form>
                         </div>
                     </div>
+                    @endcan
 
                     <li id="opcionadjuntar"
                         class="nav-item border border-gray-500 px-3 py-1 rounded-md hover:bg-gray-700">
@@ -362,7 +365,7 @@
                                 @csrf
                                 <select name="estado_id"
                                     class="w-full border border-gray-300 rounded-md p-2 mb-4 text-gray-700">
-                                    <option value=""class="ml-2 text-sm text-gray-700">Seleccione un opcion</option>
+                                    <option value="">Selecciona un estado</option>
                                     @foreach ($estadosincidencias as $estadoincidencia)
                                         @if ($estadoincidencia->descriestadoincidencia !== 'Cerrado')
                                             <option value="{{ $estadoincidencia->idestadoincidencia }}"
@@ -468,22 +471,18 @@
                     @if ($datas->estadoincidencia->descriestadoincidencia === 'Cerrado')
                         <script>
                             document.addEventListener('DOMContentLoaded', function() {
-                                // IDs de los elementos a deshabilitar
-                                const ids = [
-                                    'opcionasignar',
-                                    'opcioneditar',
-                                    'opcionadjuntar',
-                                    'opcioncomentar',
-                                    'opcionresolver'
-                                ];
-                                ids.forEach(id => {
-                                    const el = document.getElementById(id);
-                                    if (el) {
+                                // Deshabilita todos los elementos interactivos excepto el select y botón de estado
+                                const elements = document.querySelectorAll('button, input, textarea, [tabindex], select');
+                                elements.forEach(el => {
+                                    // Permite cambiar el estado aunque esté Cerrado
+                                    if (el.name === 'estado_id' || el.id === 'cambiarBtn' || el.id === 'cancelarBtnEstado') {
+                                        el.removeAttribute('disabled');
+                                        el.classList.remove('pointer-events-none', 'opacity-60');
+                                    } else if (!el.classList.contains('close_Sesion') && !el.classList.contains('btncancelar')) {
+                                        el.setAttribute('disabled', 'disabled');
                                         el.classList.add('pointer-events-none', 'opacity-60');
-                                        el.setAttribute('aria-disabled', 'true');
                                     }
                                 });
-                            });
                         </script>
                     @endif
                 </ul>

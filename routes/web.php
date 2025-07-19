@@ -12,29 +12,59 @@ Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/', [AuthController::class, 'login']);
 
 Route::middleware('auth')->group(function () {
-    Route::resource('users', Usercontroller::class);
-    Route::resource('incidencias', Incidenciacontroller::class);
-    Route::get('/exportarExcel', [IncidenciaController::class, 'exportarExcel'])->name('incidencias.exportarExcel');
-    Route::get('/index', [Clientecontroller::class, 'index'])->name('clientes.index');
-    Route::get('/incidencias/create', [IncidenciaController::class, 'create'])->name('incidencias.create');
-    Route::get('/incidencias/{id}', [IncidenciaController::class, 'show'])->name('incidencias.show');
-    Route::put('/incidencias/{id}/asignar', [IncidenciaController::class, 'asignar'])->name('incidencias.asignar');
-    Route::get('/incidencias/{id}/auditoria', [IncidenciaController::class, 'getAuditoria'])->name('incidencias.auditoria');
-    Route::post('/incidencias/{id}/comentario', [Incidenciacontroller::class, 'comentarios'])->name('comentarios.store');
-    Route::post('/incidencias/{id}/cambiar_estado', [Incidenciacontroller::class, 'cambiarEstado'])->name('incidencias.cambiarEstado');
-    Route::put('/incidencias/{id}/resolver', [Incidenciacontroller::class, 'resolverIncidencia'])->name('incidencias.resolverIncidencia');
-    Route::put('/incidencias/{id}/update-file', [IncidenciaController::class, 'updateFile'])->name('incidencias.updateFile');
+
+    Route::middleware(['auth', 'permission:users.ver'])->group(function () {
+        Route::resource('users', Usercontroller::class);
+    });
+
+    Route::middleware(['auth', 'permission:incidencias.ver'])->group(function () {
+        Route::resource('incidencias', Incidenciacontroller::class);
+        Route::get('/incidencias/{id}/auditoria', [IncidenciaController::class, 'getAuditoria'])->name('incidencias.auditoria');
+        Route::get('/incidencias/{id}', [IncidenciaController::class, 'show'])->name('incidencias.show');
+        Route::post('/incidencias/{id}/comentario', [Incidenciacontroller::class, 'comentarios'])->name('comentarios.store');
+        Route::put('/incidencias/{id}/update-file', [IncidenciaController::class, 'updateFile'])->name('incidencias.updateFile');
+        Route::get('/incidencias/justshow/{id}', [IncidenciaController::class, 'justshow'])->name('incidencias.justshow');
+    });
+
+    Route::middleware(['auth', 'permission:incidencias.exportarExcel'])->group(function () {
+        Route::get('/exportarExcel', [IncidenciaController::class, 'exportarExcel'])->name('incidencias.exportarExcel');
+    });
+
+    Route::middleware(['auth', 'permission:clientes.ver'])->group(function () {
+        Route::get('/index', [Clientecontroller::class, 'index'])->name('clientes.index');
+    });
+
+    Route::middleware(['auth', 'permission:incidencias.crear'])->group(function () {
+        Route::get('/incidencias/create', [IncidenciaController::class, 'create'])->name('incidencias.create');
+    });
+    
+    Route::middleware(['auth', 'permission:incidencias.asignar'])->group(function () {
+        Route::put('/incidencias/{id}/asignar', [IncidenciaController::class, 'asignar'])->name('incidencias.asignar');
+    });
+    
+    Route::middleware(['auth', 'permission:incidencias.cambiarEstado'])->group(function () {
+        Route::post('/incidencias/{id}/cambiar_estado', [Incidenciacontroller::class, 'cambiarEstado'])->name('incidencias.cambiarEstado');
+    });
+    
+    Route::middleware(['auth', 'permission:incidencias.resolver'])->group(function () {
+        Route::put('/incidencias/{id}/resolver', [Incidenciacontroller::class, 'resolverIncidencia'])->name('incidencias.resolverIncidencia');
+    });
+
+    
     Route::get('/dashboard', function () {return view('dashboard');})->name('view.dashboard');
-    Route::get('/incidencias/justshow/{id}', [IncidenciaController::class, 'justshow'])->name('incidencias.justshow');
-    Route::get('/buscar-incidencia', function (Illuminate\Http\Request $request) {
-        $id = $request->query('id');
 
-        if ($id && App\Models\Incidencias::find($id)) {
-            return redirect()->route('incidencias.show', ['id' => $id]);
-        }
+    Route::middleware(['auth', 'permission:incidencias.crear'])->group(function () {
+        Route::get('/buscar-incidencia', function (Illuminate\Http\Request $request) {
+            $id = $request->query('id');
 
-        return redirect()->back()->with('error', 'Incidencia no encontrada.');
-    })->name('buscar.incidencia');
+            if ($id && App\Models\Incidencias::find($id)) {
+                return redirect()->route('incidencias.show', ['id' => $id]);
+            }
+
+            return redirect()->back()->with('error', 'Incidencia no encontrada.');
+        })->name('buscar.incidencia');
+    });
+    
 });
 
 Route::post('/logout', function () {

@@ -14,21 +14,31 @@
                         </a>
                         <hr class="my-2 border-gray-700 opacity-50">
                         <div class="space-y-2 group">
+
+                            @can('incidencias.ver')
                             <a href="/dashboard"
                                 class="flex items-center space-x-3 px-2 py-2 rounded-md hover:bg-gray-700 hover:text-white transition-colors duration-200">
                                 <span class="w-6 text-center"><i class="fa-solid fa-house"></i></span>
                                 <span class="opacity-0 group-hover:opacity-100 transition-opacity">Incidencias</span>
                             </a>
+                            @endcan                            
+
+                            @can('users.ver')
                             <a href="/users"
                                 class="flex items-center space-x-3 px-2 py-2 rounded-md hover:bg-gray-700 hover:text-white transition-colors duration-200">
                                 <span class="w-6 text-center"><i class="fa-solid fa-user-tie"></i></span>
                                 <span class="opacity-0 group-hover:opacity-100 transition-opacity">Usuarios</span>
                             </a>
+                            @endcan
+
+                            @can('clientes.ver')
                             <a href="{{ route('clientes.index') }}"
                                 class="flex items-center space-x-3 px-2 py-2 rounded-md hover:bg-gray-700 hover:text-white transition-colors duration-200">
                                 <span class="w-6 text-center"><i class="fa-solid fa-users"></i></span>
                                 <span class="opacity-0 group-hover:opacity-100 transition-opacity">Clientes</span>
                             </a>
+                            @endcan
+
                         </div>
                     </div>
                 </nav>

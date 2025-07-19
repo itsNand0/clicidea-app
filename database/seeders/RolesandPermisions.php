@@ -16,42 +16,46 @@ class RolesandPermisions extends Seeder
     public function run(): void
     {   
         // Buscar el usuario por ID
-        $userId = 5; // Cambia este valor según el usuario deseado
-        $user = User::find($userId);
+        // $userId = 5; // Cambia este valor según el usuario deseado
+        // $user = User::find($userId);
 
-        if ($user) {
-            // Crear o buscar el rol 'admin users'
-            $roleAdmin = Role::firstOrCreate(['name' => 'admin users']);
+        // if ($user) {
+        //     // Crear o buscar el rol 'admin users'
+        //     $roleAdmin = Role::firstOrCreate(['name' => 'admin users']);
 
-            // Asignar el rol solo si el usuario no lo tiene
-            if (!$user->hasRole($roleAdmin)) {
-            $user->assignRole($roleAdmin);
-            echo "Rol 'admin users' asignado al usuario con ID {$userId}.\n";
-            } else {
-            echo "El usuario con ID {$userId} ya tiene el rol 'admin users'.\n";
-            }
-        } else {
-            echo "Usuario con ID {$userId} no encontrado.\n";
-        }
-        /*
-        $manageUsersPermission = Permission::delete(['name' => 'admin users']);
+        //     // Asignar el rol solo si el usuario no lo tiene
+        //     if (!$user->hasRole($roleAdmin)) {
+        //     $user->assignRole($roleAdmin);
+        //     echo "Rol 'admin users' asignado al usuario con ID {$userId}.\n";
+        //     } else {
+        //     echo "El usuario con ID {$userId} ya tiene el rol 'admin users'.\n";
+        //     }
+        // } else {
+        //     echo "Usuario con ID {$userId} no encontrado.\n";
+        // }
 
-        // Crear rol 'admin'
-        $adminRole = Role::create(['name' => 'admin']);
+        $roladmin = Role::create(['name' => 'admin']);
+        $rolrencar = Role::create(['name' => 'encargado']);
+        $roloperador = Role::create(['name' => 'operador']);
 
-        // Asignar el permiso de 'admin user' al rol 'admin'
-        $adminRole->givePermissionTo($manageUsersPermission);
-        $roleName = 1;
+        Permission::create(['name' => 'users.ver'])->syncRoles([$roladmin]);
+        Permission::create(['name' => 'users.crear'])->syncRoles([$roladmin]);
+        Permission::create(['name' => 'users.editar'])->syncRoles([$roladmin]);
+        Permission::create(['name' => 'users.eliminar'])->syncRoles([$roladmin]);
 
-        // Intentamos encontrar el rol
-        $role = Permission::findById($roleName);
+        Permission::create(['name' => 'incidencias.ver'])->syncRoles([$roladmin, $rolrencar, $roloperador]);
+        Permission::create(['name' => 'incidencias.crear'])->syncRoles([$roladmin, $rolrencar]);
+        Permission::create(['name' => 'incidencias.editar'])->syncRoles([$roladmin, $rolrencar]);
+        Permission::create(['name' => 'incidencias.eliminar'])->syncRoles([$roladmin, $rolrencar]);
+        Permission::create(['name' => 'incidencias.exportarExcel'])->syncRoles([$roladmin, $rolrencar]);
+        Permission::create(['name' => 'incidencias.asignar'])->syncRoles([$roladmin, $rolrencar]);
+        Permission::create(['name' => 'incidencias.resolver'])->syncRoles([$roladmin, $rolrencar, $roloperador]);
+        Permission::create(['name' => 'incidencias.cambiarEstado'])->syncRoles([$roladmin, $rolrencar, $roloperador]);
+        Permission::create(['name' => 'incidencias.comentarios'])->syncRoles([$roladmin, $rolrencar, $roloperador]);
 
-        if ($role) {
-            // Eliminar el rol
-            $role->delete();
-            echo "El rol '{$roleName}' ha sido eliminado.\n";
-        } else {
-            echo "El rol '{$roleName}' no existe.\n";
-        }*/
+        Permission::create(['name' => 'clientes.ver'])->syncRoles([$roladmin]);
+        Permission::create(['name' => 'clientes.crear'])->syncRoles([$roladmin]);
+        Permission::create(['name' => 'clientes.editar'])->syncRoles([$roladmin]);
+        Permission::create(['name' => 'clientes.eliminar'])->syncRoles([$roladmin]);
     }
 }

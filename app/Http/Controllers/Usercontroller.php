@@ -7,6 +7,7 @@ use App\Models\Cargo;
 use App\Models\User;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class Usercontroller extends Controller
 {
@@ -26,7 +27,8 @@ class Usercontroller extends Controller
     {   
         $areas = Area::all();
         $cargos = Cargo::all();
-        return view('users.create', compact('areas', 'cargos'));
+        $roles = Role::all();
+        return view('users.create', compact('areas', 'cargos', 'roles'));
     }
 
     /**
@@ -34,26 +36,29 @@ class Usercontroller extends Controller
      */
     public function store(Request $request)
     {   
-        $user = new User();
-        $validate = $request -> validate
-        ([
+        $validate = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|max:255',
-            'password' => 'required|string|max:255',
-            'password_confirmation' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
             'area_id' => 'nullable|integer',
             'cargo_id' => 'nullable|integer',
+            'role' => 'nullable|string|exists:roles,name',
         ]);
         
+        $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->password = $request->password;
-        $user->remember_token = $request->_token;
+        $user->password = bcrypt($request->password);
         $user->area_id = $request->area_id;
         $user->cargo_id = $request->cargo_id;
         $user->save();
 
-        return redirect()->route('users.index')->with('Usuario creado correctamente');
+        // Asignar rol después de guardar el usuario
+        if ($request->role) {
+            $user->assignRole($request->role);
+        }
+
+        return redirect()->route('users.index')->with('success', 'Usuario creado correctamente');
     }
 
     /**
@@ -74,9 +79,10 @@ class Usercontroller extends Controller
         $areas = Area::all();
         $cargos = Cargo::all();
         $user = User::findorfail($id);
-        
-        return view('users.edit', compact('user', 'areas', 'cargos'));
-        
+        $roles = Role::all();
+
+        return view('users.edit', compact('user', 'areas', 'cargos', 'roles'));
+
     }
 
     /**
@@ -85,27 +91,38 @@ class Usercontroller extends Controller
     public function update(Request $request, string $id)
     {
         $user = User::findOrFail($id);
-
-        $validate = $request -> validate
-        ([
+        $validate = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|max:255',
-            'password' => 'required|string|max:255',
-            'password_confirmation' => 'required|string|max:255',
-            'area_id' => 'nullable|integer',
+            'email' => 'required|string|email|max:255',
+            'password' => 'nullable|string|min:8|confirmed',
             'cargo_id' => 'nullable|integer',
+            'area_id' => 'nullable|integer',
+            'role' => 'nullable|string|exists:roles,name',
         ]);
 
-        $user->name = $request -> input('name');
-        $user->email = $request -> input('email');
-        $user->password = $request -> input('password');
-        $user->cargo_id = $request -> input('cargo_id');
-        $user->area_id = $request -> input('area_id');
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        
+        // Solo actualizar la contraseña si se proporciona
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->input('password'));
+        }
+        
+        $user->cargo_id = $request->input('cargo_id');
+        $user->area_id = $request->input('area_id');
 
-        $user -> save();
+        $user->save();
+
+        // Asignar rol después de guardar el usuario
+        if ($request->filled('role')) {
+            // Sincronizar roles (esto removerá roles anteriores y asignará el nuevo)
+            $user->syncRoles([$request->input('role')]);
+        } elseif ($request->has('role') && empty($request->input('role'))) {
+            // Si se envía un valor vacío, remover todos los roles
+            $user->syncRoles([]);
+        }
 
         return redirect()->route('users.index')->with('success', 'Usuario actualizado correctamente.');
-
     }
 
     /**
