@@ -3,6 +3,7 @@
 use App\Http\Controllers\Usercontroller;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Clientecontroller;
+use App\Http\Controllers\ImportController;
 use App\Http\Controllers\Incidenciacontroller;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['auth', 'permission:users.ver'])->group(function () {
         Route::resource('users', Usercontroller::class);
     });
+
+    Route::post('/import-sedes', [ImportController::class, 'importSedes'])->name('import.sedes');
 
     Route::middleware(['auth', 'permission:incidencias.ver'])->group(function () {
         Route::resource('incidencias', Incidenciacontroller::class);

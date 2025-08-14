@@ -43,7 +43,6 @@ class Clientes extends Component
             ->exists();
 
         if ($isAdmin) {
-            // El administrador ve todo los registros
 
             $datas = ModelsClientes::query()
                 ->when($this->search !== '', function ($query) {
