@@ -41,7 +41,7 @@ class Incidenciacontroller extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
+    {   
         // Validar los datos de entrada
         $data = new Incidencias();
         $validate = $request->validate([
