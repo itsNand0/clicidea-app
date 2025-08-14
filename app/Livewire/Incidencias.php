@@ -69,26 +69,26 @@ class Incidencias extends Component
 
             $datas = ModelsIncidencias::with(['cliente', 'estadoincidencia', 'usuario'])
                 ->when($this->search !== '', function ($query) {
-                    $search = '%' . $this->search . '%';
+                    $searchTerm = $this->search;
 
-                    $query->where(function ($q) use ($search) {
-                        $q->whereHas('estadoincidencia', function ($q) use ($search) {
-                            $q->where('descriestadoincidencia', 'like', $search);
+                    $query->where(function ($q) use ($searchTerm) {
+                        $q->whereHas('estadoincidencia', function ($q) use ($searchTerm) {
+                            $q->where('descriestadoincidencia', 'ILIKE', '%' . $searchTerm . '%');
                         })
-                            ->orWhereHas('cliente', function ($q) use ($search) {
-                                $q->where('nombre', 'like', $search);
+                            ->orWhereHas('cliente', function ($q) use ($searchTerm) {
+                                $q->where('nombre', 'ILIKE', '%' . $searchTerm . '%');
                             })
-                            ->orWhereHas('usuario', function ($q) use ($search) {
-                                $q->where('name', 'like', $search);
-                                $q->orWhereHas('cargo', function ($q) use ($search) {
-                                    $q->where('nombre_cargo', 'like', $search);
-                                });
-                                $q->orWhereHas('area', function ($q) use ($search) {
-                                    $q->where('area_name', 'like', $search);
+                            ->orWhereHas('usuario', function ($q) use ($searchTerm) {
+                                $q->where('name', 'ILIKE', '%' . $searchTerm . '%')
+                                ->orWhereHas('cargo', function ($q) use ($searchTerm) {
+                                    $q->where('nombre_cargo', 'ILIKE', '%' . $searchTerm . '%');
+                                })
+                                ->orWhereHas('area', function ($q) use ($searchTerm) {
+                                    $q->where('area_name', 'ILIKE', '%' . $searchTerm . '%');
                                 });
                             })
-                            ->orWhere('usuarioincidencia', 'like', $search)
-                            ->orWhere('idincidencia', 'like', $search);
+                            ->orWhere('usuarioincidencia', 'ILIKE', '%' . $searchTerm . '%')
+                            ->orWhere('idincidencia', 'LIKE', '%' . $searchTerm . '%');
                     });
                 })
                 ->orderBy($this->sortField, $this->sortDirection)
@@ -121,27 +121,26 @@ class Incidencias extends Component
                 )
 
                 ->when($this->search != '', function ($query) {
-                    $search = '%' . $this->search . '%';
+                    $searchTerm = $this->search;
 
-                    $query->where(function ($q) use ($search) {
-                        $q->whereHas('estadoincidencia', function ($q) use ($search) {
-                            $q->where('descriestadoincidencia', 'like', $search);
+                    $query->where(function ($q) use ($searchTerm) {
+                        $q->whereHas('estadoincidencia', function ($q) use ($searchTerm) {
+                            $q->where('descriestadoincidencia', 'ILIKE', '%' . $searchTerm . '%');
                         })
-                            ->orWhereHas('cliente', function ($q) use ($search) {
-                                
-                                $q->where('nombre', 'like', $search);
+                            ->orWhereHas('cliente', function ($q) use ($searchTerm) {
+                                $q->where('nombre', 'ILIKE', '%' . $searchTerm . '%');
                             })
 
-                            ->orWhereHas('usuario', function ($q) use ($search) {
-                                $q->where('name', 'like', $search);
-                                $q->orWhereHas('cargo', function ($q) use ($search) {
-                                    $q->where('nombre_cargo', 'like', $search);
-                                });
-                                $q->orWhereHas('area', function ($q) use ($search) {
-                                    $q->where('area_name', 'like', $search);
+                            ->orWhereHas('usuario', function ($q) use ($searchTerm) {
+                                $q->where('name', 'ILIKE', '%' . $searchTerm . '%')
+                                ->orWhereHas('cargo', function ($q) use ($searchTerm) {
+                                    $q->where('nombre_cargo', 'ILIKE', '%' . $searchTerm . '%');
+                                })
+                                ->orWhereHas('area', function ($q) use ($searchTerm) {
+                                    $q->where('area_name', 'ILIKE', '%' . $searchTerm . '%');
                                 });
                             })
-                            ->orWhere('usuarioincidencia', 'like', $search);
+                            ->orWhere('usuarioincidencia', 'ILIKE', '%' . $searchTerm . '%');
                     });
                 })
                 ->orderBy($this->sortField, $this->sortDirection)

@@ -23,17 +23,16 @@ class Usuarios extends Component
     {
         $users = User::query()
             ->when($this->search != '', function ($query) {
-                $search = '%' . $this->search . '%';
+                $search = '%' . strtolower($this->search) . '%';
                 $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', $search)
-                        ->orWhere('email', 'like', $search)
+                    $q->whereRaw('LOWER(name) LIKE ?', [$search])
+                        ->orWhereRaw('LOWER(email) LIKE ?', [$search])
                         ->orWhereHas('cargo', function ($q) use ($search) {
-                            $q->where('nombre_cargo', 'like', $search);
-                                
+                            $q->whereRaw('LOWER(nombre_cargo) LIKE ?', [$search]);
                         })
                         ->orWhereHas('area', function ($q) use ($search) {
-                                    $q->where('area_name', 'like', $search);
-                                });
+                            $q->whereRaw('LOWER(area_name) LIKE ?', [$search]);
+                        });
                 });
             })
             ->paginate(10);
