@@ -8,7 +8,7 @@
                     class="bg-lime-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base flex items-center justify-center">
                     <i class="fa-solid fa-plus"></i>
                 </a>
-                <a href="#"
+                <a href="{{ route('clientes.exportarExcelCliente') }}"
                     class="bg-lime-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base flex items-center justify-center">
                     <i class="fa-solid fa-file-excel"></i>
                 </a>

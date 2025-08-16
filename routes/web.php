@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware(['auth', 'permission:incidencias.exportarExcel'])->group(function () {
+        Route::get('/clientes/exportarExcelCliente', [Clientecontroller::class, 'exportarExcelCliente'])->name('clientes.exportarExcelCliente');
         Route::get('/exportarExcel', [IncidenciaController::class, 'exportarExcel'])->name('incidencias.exportarExcel');
     });
 

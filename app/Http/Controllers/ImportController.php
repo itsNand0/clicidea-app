@@ -25,15 +25,14 @@ class ImportController extends Controller
                 if ($index === 0) {
                     continue;
                 }
-
-                $nombrezona = $row[0];
-                $atmid = $row[1];
-                $nombresede = $row[2];
+                //$atm_id = $row[1] ?? null; // Asignar null si no hay valor
+                $nombresede = $row[1] ?? null;
+                $zona = $row[0] ?? null;
 
                 Cliente::create([
-                    'atm_id' => $atmid,
-                    'zona' => $nombrezona,
+                    //'atm_id' => $atm_id,
                     'nombre' => $nombresede,
+                    'zona' => $zona,
                 ]);
             }
         } catch (\Exception $e) {
