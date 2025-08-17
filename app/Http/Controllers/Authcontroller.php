@@ -15,15 +15,15 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->only('name', 'password');
+        $credentials = $request->only('usuario', 'password');
 
-        if (Auth::attempt(['name' => $credentials['name'], 'password' => $credentials['password']])) {
+        if (Auth::attempt(['usuario' => $credentials['usuario'], 'password' => $credentials['password']])) {
             $request->session()->regenerate();
             return redirect()->intended('dashboard'); 
         }
 
         return back()->withErrors([
-            'name' => 'Las credenciales no coinciden.',
+            'usuario' => 'Las credenciales no coinciden.',
         ])->withInput();
     }
 }

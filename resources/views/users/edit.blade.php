@@ -20,6 +20,7 @@
                 @method('PUT')
 
                 <div class="grid grid-cols-2 gap-8">
+
                     <div class="flex items-center space-x-4">
                         <label for="name" class="w-40 text-right text-sm font-medium text-gray-700">Nombre</label>
                         <input type="text" name="name" id="name" value="{{ $user->name }}" required
@@ -27,21 +28,14 @@
                     </div>
 
                     <div class="flex items-center space-x-4">
+                        <label for="usuario" class="w-40 text-right text-sm font-medium text-gray-700">Usuario</label>
+                        <input type="text" name="usuario" id="usuario" value="{{ $user->usuario }}" required
+                            class="flex-1 px-4 py-2 border rounded-lg shadow-sm border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <div class="flex items-center space-x-4">
                         <label for="email" class="w-40 text-right text-sm font-medium text-gray-700">Email</label>
                         <input type="email" name="email" id="email" value="{{ $user->email }}" required
-                            class="flex-1 px-4 py-2 border rounded-lg shadow-sm border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
-
-                    <div class="flex items-center space-x-4">
-                        <label for="password" class="w-40 text-right text-sm font-medium text-gray-700">Contraseña</label>
-                        <input type="password" name="password" id="password"
-                            class="flex-1 px-4 py-2 border rounded-lg shadow-sm border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
-
-                    <div class="flex items-center space-x-4">
-                        <label for="password_confirmation" class="w-40 text-right text-sm font-medium text-gray-700">Confirmar
-                            Contraseña</label>
-                        <input type="password" name="password_confirmation" id="password_confirmation"
                             class="flex-1 px-4 py-2 border rounded-lg shadow-sm border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
 
@@ -55,6 +49,19 @@
                                     {{ ucfirst($role->name) }}</option>
                             @endforeach
                         </select>
+                    </div>
+
+                    <div class="flex items-center space-x-4">
+                        <label for="password" class="w-40 text-right text-sm font-medium text-gray-700">Contraseña</label>
+                        <input type="password" name="password" id="password"
+                            class="flex-1 px-4 py-2 border rounded-lg shadow-sm border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <div class="flex items-center space-x-4">
+                        <label for="password_confirmation" class="w-40 text-right text-sm font-medium text-gray-700">Confirmar
+                            Contraseña</label>
+                        <input type="password" name="password_confirmation" id="password_confirmation"
+                            class="flex-1 px-4 py-2 border rounded-lg shadow-sm border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
                 </div>
 

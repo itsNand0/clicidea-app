@@ -38,6 +38,7 @@ class Usercontroller extends Controller
     {   
         $validate = $request->validate([
             'name' => 'required|string|max:255',
+            'usuario' => 'required|string|max:255|unique:users,usuario',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'area_id' => 'nullable|integer',
@@ -47,6 +48,7 @@ class Usercontroller extends Controller
         
         $user = new User();
         $user->name = $request->name;
+        $user->usuario = $request->usuario;
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
         $user->area_id = $request->area_id;
@@ -93,6 +95,7 @@ class Usercontroller extends Controller
         $user = User::findOrFail($id);
         $validate = $request->validate([
             'name' => 'required|string|max:255',
+            'usuario' => 'required|string|max:255|unique:users,usuario,' . $user->id,
             'email' => 'required|string|email|max:255',
             'password' => 'nullable|string|min:8|confirmed',
             'cargo_id' => 'nullable|integer',
@@ -101,6 +104,7 @@ class Usercontroller extends Controller
         ]);
 
         $user->name = $request->input('name');
+        $user->usuario = $request->input('usuario');
         $user->email = $request->input('email');
         
         // Solo actualizar la contraseña si se proporciona
