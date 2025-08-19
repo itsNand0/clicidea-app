@@ -52,7 +52,8 @@ class Incidenciacontroller extends Controller
             'adjunto.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $data->usuarioincidencia = Auth::user()->name;
+        $data->usuarioincidencia = Auth::user()->name; // Creador de la incidencia
+        $data->usuario_idusuario = 0; // Responsable de la incidencia
         $data->asuntoincidencia = $request->asunto;
         $data->descriincidencia = $request->descripcion;
         $data->contactoincidencia = $request->contacto;

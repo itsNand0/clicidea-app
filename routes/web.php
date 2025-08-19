@@ -19,6 +19,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::post('/import-sedes', [ImportController::class, 'importSedes'])->name('import.sedes');
+    Route::post('/import-incidencias', [ImportController::class, 'importIncidencias'])->name('import.incidencias');
 
     Route::middleware(['auth', 'permission:incidencias.ver'])->group(function () {
         Route::resource('incidencias', Incidenciacontroller::class);

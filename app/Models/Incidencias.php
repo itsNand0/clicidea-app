@@ -17,7 +17,8 @@ class Incidencias extends Model
         'descrincidencia',
         'contactoincidencia',
         'estadoincidencia_idestadoincidencia',
-        'fechaIncidencia',
+        'fechaincidencia',
+        'fecharesolucionincidencia',
         'adjuntoincidencia',
         'usuario_idusuario',
     ];

@@ -14,41 +14,58 @@
                         <label class="block mb-2"><input type="checkbox" wire:click="toggleColumn('usuario')"
                                 {{ $visibleColumns['usuario'] ? 'checked' : '' }}> Responsable</label>
                         <label class="block mb-2"><input type="checkbox" wire:click="toggleColumn('estado')"
-                            {{ $visibleColumns['estado'] ? 'checked' : '' }}> Estado</label>
+                                {{ $visibleColumns['estado'] ? 'checked' : '' }}> Estado</label>
                         <label class="block mb-2"><input type="checkbox" wire:click="toggleColumn('contrato')"
-                            {{ $visibleColumns['contrato'] ? 'checked' : '' }}> Contrato</label>
+                                {{ $visibleColumns['contrato'] ? 'checked' : '' }}> Contrato</label>
                         <label class="block mb-2"><input type="checkbox" wire:click="toggleColumn('usuarioincidencia')"
-                            {{ $visibleColumns['usuarioincidencia'] ? 'checked' : '' }}> Autor</label>
+                                {{ $visibleColumns['usuarioincidencia'] ? 'checked' : '' }}> Autor</label>
                         <label class="block mb-2"><input type="checkbox" wire:click="toggleColumn('asunto')"
-                            {{ $visibleColumns['asunto'] ? 'checked' : '' }}> Asunto</label>
+                                {{ $visibleColumns['asunto'] ? 'checked' : '' }}> Asunto</label>
                         <label class="block mb-2"><input type="checkbox" wire:click="toggleColumn('descripcion')"
-                            {{ $visibleColumns['descripcion'] ? 'checked' : '' }}> Descripcion</label>
+                                {{ $visibleColumns['descripcion'] ? 'checked' : '' }}> Descripcion</label>
                         <label class="block mb-2"><input type="checkbox" wire:click="toggleColumn('contacto')"
-                            {{ $visibleColumns['contacto'] ? 'checked' : '' }}> Contacto</label>
+                                {{ $visibleColumns['contacto'] ? 'checked' : '' }}> Contacto</label>
                         <label class="block mb-2"><input type="checkbox" wire:click="toggleColumn('fecha')"
-                            {{ $visibleColumns['fecha'] ? 'checked' : '' }}> Fecha</label>
+                                {{ $visibleColumns['fecha'] ? 'checked' : '' }}> Fecha</label>
                         <label class="block mb-2"><input type="checkbox" wire:click="toggleColumn('resolucion')"
-                            {{ $visibleColumns['resolucion'] ? 'checked' : '' }}> Resolucion</label>
+                                {{ $visibleColumns['resolucion'] ? 'checked' : '' }}> Resolucion</label>
                     </div>
                 </div>
             </div>
             <div class="flex gap-2">
-                
+
                 @can('incidencias.crear')
-                <a href="{{ route('incidencias.create') }}" class="bg-lime-600 text-white px-4 py-2 rounded-lg">
-                    <i class="fa-solid fa-plus"></i>
-                </a>
+                    <a href="{{ route('incidencias.create') }}" class="bg-lime-600 text-white px-4 py-2 rounded-lg">
+                        <i class="fa-solid fa-plus"></i>
+                    </a>
                 @endcan
 
                 @can('incidencias.exportarExcel')
-                <a href="{{ route('incidencias.exportarExcel') }}" class="bg-lime-600 text-white px-4 py-2 rounded-lg">
-                    <i class="fa-solid fa-file-excel"></i>
-                </a>
+                    <a href="{{ route('incidencias.exportarExcel') }}" class="bg-lime-600 text-white px-4 py-2 rounded-lg">
+                        <i class="fa-solid fa-file-excel"></i>
+                    </a>
                 @endcan
 
+                {{-- <form action="{{ route('import.incidencias') }}" method="POST" enctype="multipart/form-data"
+                    class="mb-4">
+                    @csrf
+                    <input type="file" name="file" class="border p-2 rounded-lg">
+                    <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-lg">Importar
+                        Incidencias</button>
+                </form> --}}
             </div>
-
         </div>
+
+        @if ($errors->any())
+                    <div class="text-red-500">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white rounded shadow-md">
                 <thead class="hidden md:table-header-group">
@@ -64,8 +81,10 @@
                                 class="cursor-pointer py-3 px-6 text-left border-r border-white">Estado</th>
                         @endif
                         @if ($visibleColumns['contrato'])
-                            <th wire:click="sortBy('cliente_idcliente')" class="py-3 px-6 text-left border-r
-                                border-white">Contrato</th>
+                            <th wire:click="sortBy('cliente_idcliente')"
+                                class="py-3 px-6 text-left border-r
+                                border-white">
+                                Contrato</th>
                         @endif
                         @if ($visibleColumns['usuarioincidencia'])
                             <th wire:click="sortBy('usuarioincidencia')"
@@ -101,6 +120,8 @@
                                         {{ $data->usuario->cargo->nombre_cargo }}
                                     @elseif (isset($data->usuario->area))
                                         {{ $data->usuario->area->area_name }}
+                                    @elseif (isset($data->usuario->name))
+                                        {{ $data->usuario->name }}
                                     @else
                                         <span class="text-gray-500 italic">Sin asignar</span>
                                     @endif

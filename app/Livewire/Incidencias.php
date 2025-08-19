@@ -10,10 +10,10 @@ use Livewire\WithPagination;
 
 class Incidencias extends Component
 {
-    use WithPagination; 
-    public $search = ""; 
-    public $sortField = 'idincidencia'; 
-    public $sortDirection = 'asc'; 
+    use WithPagination;
+    public $search = "";
+    public $sortField = 'idincidencia';
+    public $sortDirection = 'asc';
 
     public $visibleColumns = [
         'usuario' => true,
@@ -44,7 +44,7 @@ class Incidencias extends Component
             $this->sortDirection = 'asc';
         }
     }
-    
+
 
     public function updatingSearch()
     {
@@ -80,12 +80,12 @@ class Incidencias extends Component
                             })
                             ->orWhereHas('usuario', function ($q) use ($searchTerm) {
                                 $q->where('name', 'ILIKE', '%' . $searchTerm . '%')
-                                ->orWhereHas('cargo', function ($q) use ($searchTerm) {
-                                    $q->where('nombre_cargo', 'ILIKE', '%' . $searchTerm . '%');
-                                })
-                                ->orWhereHas('area', function ($q) use ($searchTerm) {
-                                    $q->where('area_name', 'ILIKE', '%' . $searchTerm . '%');
-                                });
+                                    ->orWhereHas('cargo', function ($q) use ($searchTerm) {
+                                        $q->where('nombre_cargo', 'ILIKE', '%' . $searchTerm . '%');
+                                    })
+                                    ->orWhereHas('area', function ($q) use ($searchTerm) {
+                                        $q->where('area_name', 'ILIKE', '%' . $searchTerm . '%');
+                                    });
                             })
                             ->orWhere('usuarioincidencia', 'ILIKE', '%' . $searchTerm . '%')
                             ->orWhere('idincidencia', 'LIKE', '%' . $searchTerm . '%');
@@ -94,8 +94,7 @@ class Incidencias extends Component
                 ->orderBy($this->sortField, $this->sortDirection)
                 ->paginate(10);
 
-            return view('livewire.incidencias', compact('datas'))
-                ->with('visibleColumns', $this->visibleColumns);
+            return view('livewire.incidencias', compact('datas'));
         } else {
 
             // Obtener los cargos relacionados al área del usuario (por si es encargado de área)
@@ -133,12 +132,12 @@ class Incidencias extends Component
 
                             ->orWhereHas('usuario', function ($q) use ($searchTerm) {
                                 $q->where('name', 'ILIKE', '%' . $searchTerm . '%')
-                                ->orWhereHas('cargo', function ($q) use ($searchTerm) {
-                                    $q->where('nombre_cargo', 'ILIKE', '%' . $searchTerm . '%');
-                                })
-                                ->orWhereHas('area', function ($q) use ($searchTerm) {
-                                    $q->where('area_name', 'ILIKE', '%' . $searchTerm . '%');
-                                });
+                                    ->orWhereHas('cargo', function ($q) use ($searchTerm) {
+                                        $q->where('nombre_cargo', 'ILIKE', '%' . $searchTerm . '%');
+                                    })
+                                    ->orWhereHas('area', function ($q) use ($searchTerm) {
+                                        $q->where('area_name', 'ILIKE', '%' . $searchTerm . '%');
+                                    });
                             })
                             ->orWhere('usuarioincidencia', 'ILIKE', '%' . $searchTerm . '%');
                     });
@@ -146,8 +145,7 @@ class Incidencias extends Component
                 ->orderBy($this->sortField, $this->sortDirection)
                 ->paginate(10);
 
-            return view('livewire.incidencias', compact('datas'))
-                ->with('visibleColumns', $this->visibleColumns);
+            return view('livewire.incidencias', compact('datas'));
         }
     }
 }
