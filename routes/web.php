@@ -37,6 +37,11 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['auth', 'permission:clientes.ver'])->group(function () {
         Route::get('/index', [Clientecontroller::class, 'index'])->name('clientes.index');
+        Route::get('/clientes', [Clientecontroller::class, 'create'])->name('clientes.create');
+        Route::post('/clientes', [Clientecontroller::class, 'store'])->name('clientes.store');
+        Route::get('/clientes/{id}/edit', [Clientecontroller::class, 'edit'])->name('clientes.edit');
+        Route::put('/clientes/{id}', [Clientecontroller::class, 'update'])->name('clientes.update');
+        Route::delete('/clientes/{id}', [Clientecontroller::class, 'destroy'])->name('clientes.destroy');
     });
 
     Route::middleware(['auth', 'permission:incidencias.crear'])->group(function () {

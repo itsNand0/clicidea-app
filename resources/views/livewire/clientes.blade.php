@@ -4,7 +4,7 @@
             <input type="text" placeholder="Buscar" class="border p-2 rounded-lg w-full md:w-auto text-sm md:text-base"
                 wire:model.live.debounce.300ms="search">
             <div class="flex gap-2 w-full md:w-auto justify-end">
-                <a href="#"
+                <a href="{{ route('clientes.create') }}"
                     class="bg-lime-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-sm md:text-base flex items-center justify-center">
                     <i class="fa-solid fa-plus"></i>
                 </a>
@@ -15,11 +15,13 @@
             </div>
         </div>
 
+        {{-- 
         <form action="{{ route('import.sedes') }}" method="POST" enctype="multipart/form-data" class="mb-4">
             @csrf
             <input type="file" name="file" class="border p-2 rounded-lg">
             <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-lg">Importar Sedes</button>
         </form>
+        --}}
 
         @if ($errors->any())
             <div class="text-red-500">
@@ -52,12 +54,12 @@
                             <td class="py-3 px-6">{{ $data->idcliente }}</td>
                             <td class="py-3 px-6">{{ $data->atm_id }}</td>
                             <td class="py-3 px-6">{{ $data->nombre }}</td>
-                            <td class="py-3 px-6">{{ $data->zona }}</td>
+                            <td class="py-3 px-6">{{ $data->zona }}</td>c
                             <td class="px-6 py-4">
-                                <a href="#"
-                                    class="bg-gray-500 text-white text-xs px-2 py-1 rounded hover:bg-lime-500 fa-solid fa-eye"></a>
-                                <a href="#"
+                                <a href="{{ route('clientes.edit', $data->idcliente) }}"
                                     class="bg-gray-500 text-white text-xs px-2 py-1 rounded hover:bg-cyan-400 fa-solid fa-pen-to-square"></a>
+                                <button wire:click="confirmDelete({{ $data->idcliente }})"
+                                    class="bg-red-500 text-white text-xs px-2 py-1 rounded hover:bg-red-400 fa-solid fa-trash"></button>
                             </td>
                         </tr>
                     @empty
