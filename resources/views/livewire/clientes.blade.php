@@ -54,7 +54,7 @@
                             <td class="py-3 px-6">{{ $data->idcliente }}</td>
                             <td class="py-3 px-6">{{ $data->atm_id }}</td>
                             <td class="py-3 px-6">{{ $data->nombre }}</td>
-                            <td class="py-3 px-6">{{ $data->zona }}</td>c
+                            <td class="py-3 px-6">{{ $data->zona }}</td>
                             <td class="px-6 py-4">
                                 <a href="{{ route('clientes.edit', $data->idcliente) }}"
                                     class="bg-gray-500 text-white text-xs px-2 py-1 rounded hover:bg-cyan-400 fa-solid fa-pen-to-square"></a>

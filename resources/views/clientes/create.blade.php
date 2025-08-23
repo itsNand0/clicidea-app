@@ -6,14 +6,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <title>Crear Cliente</title>
 </head>
 
 <body class="bg-gray-100 min-h-screen flex flex-col">
-    <x-BarMenu />
     
-    <div class="flex-grow flex items-center justify-center px-4">
+    <!-- Incluir la barra de navegación -->
+    <x-barmenu />
+    
+    <div class="flex-grow flex items-center justify-center px-4 pt-16">
         <div class="bg-white p-10 rounded-2xl shadow-lg w-full max-w-4xl">
             <!-- Header -->
             <div class="mb-8 text-center">
