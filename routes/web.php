@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Clientecontroller;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\Incidenciacontroller;
+use App\Http\Controllers\EstadisticasController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -62,6 +63,11 @@ Route::middleware('auth')->group(function () {
 
     
     Route::get('/dashboard', function () {return view('dashboard');})->name('view.dashboard');
+    
+    // Ruta para estadísticas
+    Route::middleware(['auth', 'permission:incidencias.ver'])->group(function () {
+        Route::get('/estadisticas', [EstadisticasController::class, 'index'])->name('estadisticas.index');
+    });
 
     Route::middleware(['auth', 'permission:incidencias.crear'])->group(function () {
         Route::get('/buscar-incidencia', function (Illuminate\Http\Request $request) {

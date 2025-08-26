@@ -97,6 +97,17 @@
 
                     <!-- Navigation Links -->
                     <nav class="flex-1 py-4 space-y-1 overflow-y-auto">
+                         @can('incidencias.crear')
+                        <a href="{{ route('estadisticas.index') }}" 
+                           class="flex items-center space-x-3 px-3 py-2.5 mx-2 rounded-md hover:bg-gray-700 transition-colors duration-200 group {{ request()->is('estadisticas*') ? 'bg-gray-700 text-white' : 'text-gray-300' }}">
+                            <div class="flex-shrink-0 w-6 h-6 flex items-center justify-center">
+                                <i class="fa-solid fa-chart-pie text-current"></i>
+                            </div>
+                            <span class="text-sm font-medium transition-all duration-300" 
+                                  :class="sideMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'"
+                                  style="transition-delay: 100ms;">Estadísticas</span>
+                        </a>
+                        @endcan
                         
                         @can('incidencias.ver')
                         <a href="/dashboard" 
@@ -232,6 +243,15 @@
                    class="flex items-center space-x-3 px-3 py-3 rounded-lg hover:bg-gray-700 transition-colors duration-200 {{ request()->is('users*') ? 'bg-gray-700 text-white' : 'text-gray-300' }}">
                     <i class="fa-solid fa-user-tie w-5 text-current"></i>
                     <span class="text-sm font-medium">Usuarios</span>
+                </a>
+                @endcan
+
+                @can('incidencias.ver')
+                <a href="{{ route('estadisticas.index') }}" 
+                   @click="closeMobileMenu()"
+                   class="flex items-center space-x-3 px-3 py-3 rounded-lg hover:bg-gray-700 transition-colors duration-200 {{ request()->is('estadisticas*') ? 'bg-gray-700 text-white' : 'text-gray-300' }}">
+                    <i class="fa-solid fa-chart-pie w-5 text-current"></i>
+                    <span class="text-sm font-medium">Estadísticas</span>
                 </a>
                 @endcan
 
