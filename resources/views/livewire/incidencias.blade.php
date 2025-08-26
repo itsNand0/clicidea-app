@@ -32,7 +32,12 @@
                     </div>
                 </div>
             </div>
-            <div class="flex gap-2">
+            <div class="flex items-center gap-2">
+                <!-- Filtro para mostrar estados cerrados -->
+                <label class="flex items-center text-sm text-gray-700 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer">
+                    <input type="checkbox" wire:model.live="showClosed" class="mr-2 rounded text-blue-600 focus:ring-blue-500 focus:ring-2">
+                    <span class="font-medium">Mostrar cerrados</span>
+                </label>
 
                 @can('incidencias.crear')
                     <a href="{{ route('incidencias.create') }}" class="bg-lime-600 text-white px-4 py-2 rounded-lg">
@@ -45,14 +50,6 @@
                         <i class="fa-solid fa-file-excel"></i>
                     </a>
                 @endcan
-
-                {{-- <form action="{{ route('import.incidencias') }}" method="POST" enctype="multipart/form-data"
-                    class="mb-4">
-                    @csrf
-                    <input type="file" name="file" class="border p-2 rounded-lg">
-                    <button type="submit" class="bg-lime-600 text-white px-4 py-2 rounded-lg">Importar
-                        Incidencias</button>
-                </form> --}}
             </div>
         </div>
 

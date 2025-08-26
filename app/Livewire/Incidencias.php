@@ -14,6 +14,7 @@ class Incidencias extends Component
     public $search = "";
     public $sortField = 'idincidencia';
     public $sortDirection = 'asc';
+    public $showClosed = false; // Filtro para mostrar estados cerrados
 
     public $visibleColumns = [
         'usuario' => true,
@@ -49,6 +50,11 @@ class Incidencias extends Component
     public function updatingSearch()
     {
         $this->resetPage(); // Reinicia la paginación al buscar
+    }
+
+    public function updatingShowClosed()
+    {
+        $this->resetPage(); // Reinicia la paginación al cambiar filtro de cerrados
     }
 
     public function render()
@@ -89,6 +95,12 @@ class Incidencias extends Component
                             })
                             ->orWhere('usuarioincidencia', 'ILIKE', '%' . $searchTerm . '%')
                             ->orWhere('idincidencia', 'LIKE', '%' . $searchTerm . '%');
+                    });
+                })
+                ->when(!$this->showClosed, function ($query) {
+                    // Filtrar estados cerrados cuando showClosed es false
+                    $query->whereHas('estadoincidencia', function ($q) {
+                        $q->where('descriestadoincidencia', 'NOT ILIKE', '%Cerrado%');
                     });
                 })
                 ->orderBy($this->sortField, $this->sortDirection)
@@ -140,6 +152,12 @@ class Incidencias extends Component
                                     });
                             })
                             ->orWhere('usuarioincidencia', 'ILIKE', '%' . $searchTerm . '%');
+                    });
+                })
+                ->when(!$this->showClosed, function ($query) {
+                    // Filtrar estados cerrados cuando showClosed es false
+                    $query->whereHas('estadoincidencia', function ($q) {
+                        $q->where('descriestadoincidencia', 'NOT ILIKE', '%Cerrado%');
                     });
                 })
                 ->orderBy($this->sortField, $this->sortDirection)

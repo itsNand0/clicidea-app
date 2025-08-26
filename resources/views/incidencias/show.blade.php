@@ -7,6 +7,7 @@
     <title>Detalle incidencia</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
         .font-handwriting {
@@ -209,9 +210,9 @@
                         <!-- Badge de estado responsive -->
                         <div class="px-4 sm:px-6 py-2 rounded-full text-sm sm:text-base text-center mb-4
                                 @switch($datas->estadoincidencia->descriestadoincidencia)
-                                    @case('In Progress') bg-green-200 text-green-800 @break
-                                    @case('Pending') bg-yellow-200 text-yellow-800 @break
-                                    @case('Closed') bg-red-200 text-red-800 @break
+                                    @case('En Progreso') bg-green-200 text-green-800 @break
+                                    @case('Pendiente') bg-yellow-200 text-yellow-800 @break
+                                    @case('Cerrado') bg-red-200 text-red-800 @break
                                     @default bg-gray-200 text-gray-800
                                 @endswitch">
                             {{ $datas->estadoincidencia->descriestadoincidencia }}
@@ -500,7 +501,7 @@
                 <select name="estado_id" class="w-full border border-gray-300 rounded-md p-2 mb-4 text-gray-700 text-sm">
                     <option value="">Selecciona un estado</option>
                     @foreach ($estadosincidencias as $estadoincidencia)
-                        @if ($estadoincidencia->descriestadoincidencia !== 'Closed')
+                        @if ($estadoincidencia->descriestadoincidencia !== 'Cerrado')
                             <option value="{{ $estadoincidencia->idestadoincidencia }}">
                                 {{ $estadoincidencia->descriestadoincidencia }}
                             </option>
@@ -682,7 +683,7 @@
         });
 
         // Deshabilitar interfaz si está cerrado
-        @if ($datas->estadoincidencia->descriestadoincidencia === 'Closed')
+        @if ($datas->estadoincidencia->descriestadoincidencia === 'Cerrado')
         document.addEventListener('DOMContentLoaded', function() {
             const elements = document.querySelectorAll('button, input, textarea, select');
             elements.forEach(el => {

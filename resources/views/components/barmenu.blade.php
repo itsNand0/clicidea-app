@@ -218,7 +218,7 @@
             <div class="space-y-1 px-4">
                 
                 @can('incidencias.ver')
-                <a href="/dashboard" 
+                <a href="{{ route('view.dashboard') }}" 
                    @click="closeMobileMenu()"
                    class="flex items-center space-x-3 px-3 py-3 rounded-lg hover:bg-gray-700 transition-colors duration-200 {{ request()->is('dashboard') ? 'bg-gray-700 text-white' : 'text-gray-300' }}">
                     <i class="fa-solid fa-house w-5 text-current"></i>
