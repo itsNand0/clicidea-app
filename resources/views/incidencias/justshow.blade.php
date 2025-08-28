@@ -6,6 +6,7 @@
     <title>Detalle incidencia</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
@@ -27,8 +28,8 @@
                 class="bg-paper bg-cover border border-gray-300 shadow-xl rounded-xl p-4 sm:p-6 md:p-8 font-handwriting text-gray-800 w-full h-auto flex flex-col justify-center items-center">
                 <div class="flex flex-col sm:flex-row justify-between items-center mb-3 w-full">
                     <h1 class="text-sm text-gray-600 text-center sm:text-right w-full sm:w-1/3 mb-2 sm:mb-0">
-                        Creado por: {{ $datas->usuarioIncidencia }}<br>
-                        Fecha: {{ $datas->fechaIncidencia }}
+                        Creado por: {{ $datas->usuarioincidencia }}<br>
+                        Fecha: {{ $datas->fechaincidencia }}
                     </h1>
                 </div>
                 <h2 class="text-3xl text-center mb-4 w-full">Detalles de la Incidencia</h2>

@@ -33,8 +33,8 @@ class Incidenciacontroller extends Controller
      */
     public function create()
     {
-        $clientes = Cliente::all(); 
-        return view('incidencias.create', compact('clientes'));
+        // Ya no necesitamos pasar clientes porque el componente Livewire los maneja
+        return view('incidencias.create');
     }
 
     /**

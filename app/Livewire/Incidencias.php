@@ -12,8 +12,8 @@ class Incidencias extends Component
 {
     use WithPagination;
     public $search = "";
-    public $sortField = 'idincidencia';
-    public $sortDirection = 'asc';
+    public $sortField = 'fechaincidencia';
+    public $sortDirection = 'desc';
     public $showClosed = false; // Filtro para mostrar estados cerrados
 
     public $visibleColumns = [

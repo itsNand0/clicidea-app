@@ -105,7 +105,7 @@
                             </div>
                             <span class="text-sm font-medium transition-all duration-300" 
                                   :class="sideMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'"
-                                  style="transition-delay: 100ms;">Estadísticas</span>
+                                  style="transition-delay: 100ms;">Dashboard</span>
                         </a>
                         @endcan
                         
