@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <title>Editar Cliente</title>
 </head>
@@ -168,13 +169,6 @@
                        class="flex-1 bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors duration-200 flex items-center justify-center gap-2 font-medium">
                         <i class="fa-solid fa-arrow-left"></i>
                         Cancelar
-                    </a>
-
-                    <!-- Botón para ver incidencias del cliente (opcional) -->
-                    <a href="{{ route('clientes.index') }}"
-                       class="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors duration-200 flex items-center justify-center gap-2 font-medium">
-                        <i class="fa-solid fa-list"></i>
-                        Ver Incidencias
                     </a>
                 </div>
             </form>

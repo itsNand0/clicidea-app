@@ -368,7 +368,7 @@ class Incidenciacontroller extends Controller
         foreach ($incidencias as $incidencia) {
             $sheet->fromArray([
                 $incidencia->idincidencia,
-                $incidencia->usuario->name,
+                $incidencia->usuario->name ?? 'Sin asignar',
                 $incidencia->estadoincidencia->descriestadoincidencia,
                 $incidencia->cliente->nombre,
                 $incidencia->usuarioincidencia,
