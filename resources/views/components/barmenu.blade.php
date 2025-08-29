@@ -42,6 +42,9 @@
                 <!-- User Actions -->
                 <div class="flex items-center space-x-2 sm:space-x-4">
                     @auth
+                        <!-- Campana de notificaciones -->
+                        @livewire('notificaciones-campana')
+                        
                         <div class="hidden sm:flex items-center space-x-2">
                             <div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
                                 <i class="fa-solid fa-user text-gray-300 text-sm"></i>

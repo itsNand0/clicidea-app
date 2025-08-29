@@ -14,6 +14,9 @@ use App\Models\Cargo;
 use App\Models\Comentarios;
 use App\Models\Estadoincidencia;
 use App\Models\User;
+use App\Notifications\IncidenciaAsignada;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Log;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -102,7 +105,21 @@ class Incidenciacontroller extends Controller
         $incidencia->save();
         $usuarioAnterior = $original['usuario_idusuario'] ? User::find($original['usuario_idusuario']) : null;
 
-        
+        // 🔔 ENVIAR NOTIFICACIÓN AL USUARIO ASIGNADO
+        if ($usuarioNuevo && $usuarioNuevo->id !== $original['usuario_idusuario']) {
+            try {
+                $usuarioNuevo->notify(new IncidenciaAsignada($incidencia, Auth::user()));
+                
+                // Log para debugging
+                Log::info('Notificación enviada', [
+                    'incidencia_id' => $incidencia->idincidencia,
+                    'usuario_asignado' => $usuarioNuevo->name,
+                    'asignado_por' => Auth::user()->name
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Error al enviar notificación: ' . $e->getMessage());
+            }
+        }
 
         $cambios = [];
 
