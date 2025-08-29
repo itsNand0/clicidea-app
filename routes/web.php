@@ -6,6 +6,7 @@ use App\Http\Controllers\Clientecontroller;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\Incidenciacontroller;
 use App\Http\Controllers\EstadisticasController;
+use App\Http\Controllers\PWAController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -89,4 +90,14 @@ Route::post('/logout', function () {
     request()->session()->regenerateToken();
     return redirect('/'); 
 })->name('logout');
+
+// Rutas PWA (solo las que no son archivos estáticos)
+Route::get('/pwa/install', [PWAController::class, 'install'])->name('pwa.install');
+Route::get('/pwa/diagnostics', function() {
+    return view('pwa.diagnostics');
+})->name('pwa.diagnostics');
+
+// API para PWA (sin middleware auth para evitar 419)
+Route::post('/pwa/register-push-token', [PWAController::class, 'registerPushToken'])->name('pwa.register-push-token');
+Route::post('/pwa/test-push', [PWAController::class, 'testPush'])->name('pwa.test-push');
 

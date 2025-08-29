@@ -6,6 +6,9 @@
 
         <title>Laravel</title>
 
+        <!-- PWA Meta Tags -->
+        <x-pwa-meta />
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
@@ -273,5 +276,8 @@
         @if (Route::has('login'))
             <div class="h-14.5 hidden lg:block"></div>
         @endif
+        
+        <!-- Botón de instalación PWA -->
+        <x-pwa-install-button />
     </body>
 </html>

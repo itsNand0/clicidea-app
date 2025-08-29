@@ -1,0 +1,7 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="512" height="512" rx="64" fill="#3B82F6"/>
+<path d="M256 128C252.687 128 250 130.687 250 134V378C250 381.313 252.687 384 256 384C259.313 384 262 381.313 262 378V134C262 130.687 259.313 128 256 128Z" fill="white"/>
+<path d="M128 256C128 252.687 130.687 250 134 250H378C381.313 250 384 252.687 384 256C384 259.313 381.313 262 378 262H134C130.687 262 128 259.313 128 256Z" fill="white"/>
+<circle cx="256" cy="256" r="85" stroke="white" stroke-width="12" fill="none"/>
+<text x="256" y="420" text-anchor="middle" fill="white" font-family="Arial" font-size="42" font-weight="bold">ClicIdea</text>
+</svg>

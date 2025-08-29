@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +18,7 @@ class AuthController extends Controller
 
         if (Auth::attempt(['usuario' => $credentials['usuario'], 'password' => $credentials['password']])) {
             $request->session()->regenerate();
-            return redirect()->intended('dashboard'); 
+            return redirect()->intended(route('view.dashboard')); 
         }
 
         return back()->withErrors([
