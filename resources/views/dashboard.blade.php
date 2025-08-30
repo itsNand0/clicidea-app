@@ -25,7 +25,7 @@
     </main>
     
     <!-- PWA Scripts -->
-    <script src="/js/pwa.js"></script>
+    <script src="/js/pwa-final.js"></script>
     
     @livewireScripts
 </body>
