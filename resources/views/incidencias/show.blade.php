@@ -7,7 +7,6 @@
     <title>Detalle incidencia</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
         .font-handwriting {
@@ -299,28 +298,32 @@
 
                                             @if (array_key_exists('cargo', $cambios))
                                                 @php
-                                                    $antes = $cambios['cargo']['antes'] ?? 'Sin asignar';
-                                                    $despues = $cambios['cargo']['despues'] ?? 'Sin asignar';
+                                                    $antesCargo = $cambios['cargo']['antes'] ?? null;
+                                                    $despuesCargo = $cambios['cargo']['despues'] ?? null;
+                                                    $antesUser = $cambios['responsable']['antes'] ?? '';
+                                                    $despuesUser = $cambios['responsable']['despues'] ?? '';
                                                 @endphp
-                                                @if ($antes !== $despues)
+                                                @if ($antesCargo || $despuesCargo)
                                                     <li class="break-words">
                                                         <strong>Cargo:</strong>
-                                                        <span class="text-red-600">{{ $antes }}</span> →
-                                                        <span class="text-green-600">{{ $despues }}</span>
+                                                        <span class="text-red-600">{{ $antesCargo ?? null }}{{ $antesUser ? ' - ' . $antesUser : '' }}</span> →
+                                                        <span class="text-green-600">{{ $despuesCargo ?? null }}{{ $despuesUser ? ' - ' . $despuesUser : '' }}</span>
                                                     </li>
                                                 @endif
                                             @endif
 
                                             @if (array_key_exists('area', $cambios))
                                                 @php
-                                                    $antes = $cambios['area']['antes'] ?? 'Sin asignar';
-                                                    $despues = $cambios['area']['despues'] ?? 'Sin asignar';
+                                                    $antesArea = $cambios['area']['antes'] ?? null;
+                                                    $despuesArea = $cambios['area']['despues'] ?? null;
+                                                    $antesUser = $cambios['responsable']['antes'] ?? '';
+                                                    $despuesUser = $cambios['responsable']['despues'] ?? '';
                                                 @endphp
-                                                @if ($antes !== $despues)
+                                                @if ($antesArea || $despuesArea)
                                                     <li class="break-words">
                                                         <strong>Área:</strong>
-                                                        <span class="text-red-600">{{ $antes }}</span> →
-                                                        <span class="text-green-600">{{ $despues }}</span>
+                                                        <span class="text-red-600">{{ $antesArea ?? null }}{{ $antesUser ? ' - ' . $antesUser : '' }}</span> →
+                                                        <span class="text-green-600">{{ $despuesArea ?? null }}{{ $despuesUser ? ' - ' . $despuesUser : '' }}</span>
                                                     </li>
                                                 @endif
                                             @endif
@@ -334,8 +337,6 @@
             </div>
         </div>
     </div>
-
-    <!-- MODALES (mantengo la misma funcionalidad pero con mejores estilos responsive) -->
     
     <!-- Modal Asignar -->
     @can('incidencias.asignar')

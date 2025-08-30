@@ -123,24 +123,29 @@ class Incidenciacontroller extends Controller
 
         $cambios = [];
 
-        // Verificar si cambió el cargo
+        // Registrar siempre el cambio de responsable
+        // Detectar cambios en responsable, cargo o área
+        $responsableAntes = $usuarioAnterior?->name ?? 'Sin responsable';
+        $responsableDespues = $usuarioNuevo?->name ?? 'Sin responsable';
+        $cargoAntes = $usuarioAnterior?->cargo?->nombre_cargo ?? null;
+        $cargoDespues = $usuarioNuevo?->cargo?->nombre_cargo ?? null;
+        $areaAntes = $usuarioAnterior?->area?->area_name ?? null;
+        $areaDespues = $usuarioNuevo?->area?->area_name ?? null;
+
+        // Registrar auditoría si cambia el usuario responsable, aunque cargo y área sean iguales
         if ($usuarioAnterior?->id !== $usuarioNuevo?->id) {
+            $cambios['responsable'] = [
+                'antes' => $responsableAntes,
+                'despues' => $responsableDespues,
+            ];
             $cambios['cargo'] = [
-                'antes' => $usuarioAnterior?->cargo?->nombre_cargo ?? null,
-                'despues' => $usuarioNuevo?->cargo?->nombre_cargo ?? null,
+                'antes' => $cargoAntes,
+                'despues' => $cargoDespues,
             ];
-        }
-
-        // Verificar si cambió el area
-        if ($usuarioAnterior?->id !== $usuarioNuevo?->id) {
             $cambios['area'] = [
-                'antes' => $usuarioAnterior?->area?->area_name ?? null,
-                'despues' => $usuarioNuevo?->area?->area_name ?? null,
+                'antes' => $areaAntes,
+                'despues' => $areaDespues,
             ];
-        }
-
-        // Si hay cambios, se guarda en la auditoría
-        if (!empty($cambios)) {
             Auditoria::create([
                 'accion' => 'Asignacion',
                 'modelo' => 'Incidencia',
