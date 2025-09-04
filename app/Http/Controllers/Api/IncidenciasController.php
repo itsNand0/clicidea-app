@@ -40,6 +40,7 @@ class IncidenciasController extends Controller
         try {
             $validate = $request->validate([
                 'atm_id' => 'required|integer',
+                'usuario_idusuario' => 'nullable|integer',
                 'asunto' => 'required|string',
                 'descripcion' => 'required|string',
                 'contacto' => 'required|string',
@@ -47,7 +48,7 @@ class IncidenciasController extends Controller
 
             $data = new Incidencias();
             $data->usuarioincidencia = User::find(26)->name; //usuario: Automatizacion de sistema
-            $data->usuario_idusuario = 0; // Responsable de la incidencia
+            $data->usuario_idusuario = $request->usuario_idusuario; //usuario responsable de la incidencia
             $data->asuntoincidencia = $request->asunto;
             $data->descriincidencia = $request->descripcion;
             $data->contactoincidencia = $request->contacto;
