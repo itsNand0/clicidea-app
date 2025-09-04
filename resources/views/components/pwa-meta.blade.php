@@ -16,5 +16,4 @@
 <link rel="apple-touch-icon" href="/images/icons/icon-192x192.svg">
 <link rel="icon" type="image/svg+xml" href="/images/icons/icon-192x192.svg">
 
-<!-- PWA Install Script -->
-<script src="/js/pwa-install.js" defer></script>
+<!-- PWA JavaScript se maneja en pwa-final.js -->
