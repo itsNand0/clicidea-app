@@ -34,28 +34,28 @@ class RolesandPermisions extends Seeder
         //     echo "Usuario con ID {$userId} no encontrado.\n";
         // }
 
-        $roladmin = Role::create(['name' => 'admin']);
-        $rolrencar = Role::create(['name' => 'encargado']);
-        $roloperador = Role::create(['name' => 'operador']);
+        $roladmin = Role::firstOrCreate(['name' => 'admin']);
+        $rolrencar = Role::firstOrCreate(['name' => 'encargado']);
+        $roloperador = Role::firstOrCreate(['name' => 'operador']);
 
-        Permission::create(['name' => 'users.ver'])->syncRoles([$roladmin]);
-        Permission::create(['name' => 'users.crear'])->syncRoles([$roladmin]);
-        Permission::create(['name' => 'users.editar'])->syncRoles([$roladmin]);
-        Permission::create(['name' => 'users.eliminar'])->syncRoles([$roladmin]);
+        Permission::firstOrCreate(['name' => 'users.ver'])->syncRoles([$roladmin]);
+        Permission::firstOrCreate(['name' => 'users.crear'])->syncRoles([$roladmin]);
+        Permission::firstOrCreate(['name' => 'users.editar'])->syncRoles([$roladmin]);
+        Permission::firstOrCreate(['name' => 'users.eliminar'])->syncRoles([$roladmin]);
 
-        Permission::create(['name' => 'incidencias.ver'])->syncRoles([$roladmin, $rolrencar, $roloperador]);
-        Permission::create(['name' => 'incidencias.crear'])->syncRoles([$roladmin, $rolrencar]);
-        Permission::create(['name' => 'incidencias.editar'])->syncRoles([$roladmin, $rolrencar]);
-        Permission::create(['name' => 'incidencias.eliminar'])->syncRoles([$roladmin, $rolrencar]);
-        Permission::create(['name' => 'incidencias.exportarExcel'])->syncRoles([$roladmin, $rolrencar]);
-        Permission::create(['name' => 'incidencias.asignar'])->syncRoles([$roladmin, $rolrencar]);
-        Permission::create(['name' => 'incidencias.resolver'])->syncRoles([$roladmin, $rolrencar, $roloperador]);
-        Permission::create(['name' => 'incidencias.cambiarEstado'])->syncRoles([$roladmin, $rolrencar, $roloperador]);
-        Permission::create(['name' => 'incidencias.comentarios'])->syncRoles([$roladmin, $rolrencar, $roloperador]);
+        Permission::firstOrCreate(['name' => 'incidencias.ver'])->syncRoles([$roladmin, $rolrencar, $roloperador]);
+        Permission::firstOrCreate(['name' => 'incidencias.crear'])->syncRoles([$roladmin, $rolrencar]);
+        Permission::firstOrCreate(['name' => 'incidencias.editar'])->syncRoles([$roladmin, $rolrencar, $roloperador]);
+        Permission::firstOrCreate(['name' => 'incidencias.eliminar'])->syncRoles([$roladmin, $rolrencar]);
+        Permission::firstOrCreate(['name' => 'incidencias.exportarExcel'])->syncRoles([$roladmin, $rolrencar]);
+        Permission::firstOrCreate(['name' => 'incidencias.asignar'])->syncRoles([$roladmin, $rolrencar]);
+        Permission::firstOrCreate(['name' => 'incidencias.resolver'])->syncRoles([$roladmin, $rolrencar, $roloperador]);
+        Permission::firstOrCreate(['name' => 'incidencias.cambiarEstado'])->syncRoles([$roladmin, $rolrencar, $roloperador]);
+        Permission::firstOrCreate(['name' => 'incidencias.comentarios'])->syncRoles([$roladmin, $rolrencar, $roloperador]);
 
-        Permission::create(['name' => 'clientes.ver'])->syncRoles([$roladmin]);
-        Permission::create(['name' => 'clientes.crear'])->syncRoles([$roladmin]);
-        Permission::create(['name' => 'clientes.editar'])->syncRoles([$roladmin]);
-        Permission::create(['name' => 'clientes.eliminar'])->syncRoles([$roladmin]);
+        Permission::firstOrCreate(['name' => 'clientes.ver'])->syncRoles([$roladmin]);
+        Permission::firstOrCreate(['name' => 'clientes.crear'])->syncRoles([$roladmin]);
+        Permission::firstOrCreate(['name' => 'clientes.editar'])->syncRoles([$roladmin]);
+        Permission::firstOrCreate(['name' => 'clientes.eliminar'])->syncRoles([$roladmin]);
     }
 }

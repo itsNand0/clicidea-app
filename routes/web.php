@@ -24,12 +24,21 @@ Route::middleware('auth')->group(function () {
     Route::post('/import-incidencias', [ImportController::class, 'importIncidencias'])->name('import.incidencias');
 
     Route::middleware(['auth', 'permission:incidencias.ver'])->group(function () {
-        Route::resource('incidencias', Incidenciacontroller::class);
+        Route::get('/incidencias', [Incidenciacontroller::class, 'index'])->name('incidencias.index');
+        Route::get('/incidencias/{id}', [Incidenciacontroller::class, 'show'])->name('incidencias.show');
         Route::get('/incidencias/{id}/auditoria', [IncidenciaController::class, 'getAuditoria'])->name('incidencias.auditoria');
-        Route::get('/incidencias/{id}', [IncidenciaController::class, 'show'])->name('incidencias.show');
+        Route::get('/incidencias/justshow/{id}', [IncidenciaController::class, 'justshow'])->name('incidencias.justshow');
+    });
+
+    Route::middleware(['auth', 'permission:incidencias.editar'])->group(function () {
+        Route::get('/incidencias/{id}/edit', [Incidenciacontroller::class, 'edit'])->name('incidencias.edit');
+        Route::put('/incidencias/{id}', [Incidenciacontroller::class, 'update'])->name('incidencias.update');
         Route::post('/incidencias/{id}/comentario', [Incidenciacontroller::class, 'comentarios'])->name('comentarios.store');
         Route::put('/incidencias/{id}/update-file', [IncidenciaController::class, 'updateFile'])->name('incidencias.updateFile');
-        Route::get('/incidencias/justshow/{id}', [IncidenciaController::class, 'justshow'])->name('incidencias.justshow');
+    });
+
+    Route::middleware(['auth', 'permission:incidencias.eliminar'])->group(function () {
+        Route::delete('/incidencias/{id}', [Incidenciacontroller::class, 'destroy'])->name('incidencias.destroy');
     });
 
     Route::middleware(['auth', 'permission:incidencias.exportarExcel'])->group(function () {
