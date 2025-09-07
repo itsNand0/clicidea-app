@@ -15,6 +15,8 @@ use App\Models\Comentarios;
 use App\Models\Estadoincidencia;
 use App\Models\User;
 use App\Notifications\IncidenciaAsignada;
+use App\Notifications\IncidenciaActualizada;
+use App\Notifications\IncidenciaResuelta;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Log;
 
@@ -108,16 +110,22 @@ class Incidenciacontroller extends Controller
         // 🔔 ENVIAR NOTIFICACIÓN AL USUARIO ASIGNADO
         if ($usuarioNuevo && $usuarioNuevo->id !== $original['usuario_idusuario']) {
             try {
+                // Notificar al nuevo usuario asignado
                 $usuarioNuevo->notify(new IncidenciaAsignada($incidencia, Auth::user()));
                 
                 // Log para debugging
-                Log::info('Notificación enviada', [
+                Log::info('Notificación enviada exitosamente', [
                     'incidencia_id' => $incidencia->idincidencia,
                     'usuario_asignado' => $usuarioNuevo->name,
                     'asignado_por' => Auth::user()->name
                 ]);
+                
             } catch (\Exception $e) {
-                Log::error('Error al enviar notificación: ' . $e->getMessage());
+                Log::error('Error al enviar notificación: ' . $e->getMessage(), [
+                    'incidencia_id' => $incidencia->idincidencia,
+                    'usuario_asignado_id' => $usuarioNuevo->id,
+                    'error' => $e->getTraceAsString()
+                ]);
             }
         }
 
@@ -221,6 +229,30 @@ class Incidenciacontroller extends Controller
 
         // Guardar los cambios en la base de datos
         $data->save();
+        
+        // 🔔 ENVIAR NOTIFICACIÓN DE ACTUALIZACIÓN
+        if ($data->usuario_idusuario && $data->wasChanged()) {
+            $usuarioAsignado = User::find($data->usuario_idusuario);
+            if ($usuarioAsignado && $usuarioAsignado->id !== Auth::id()) {
+                try {
+                    $cambios = [];
+                    if ($data->wasChanged('asuntoincidencia')) {
+                        $cambios['Asunto'] = $data->asuntoincidencia;
+                    }
+                    if ($data->wasChanged('descriincidencia')) {
+                        $cambios['Descripción'] = $data->descriincidencia;
+                    }
+                    if ($data->wasChanged('contactoincidencia')) {
+                        $cambios['Contacto'] = $data->contactoincidencia;
+                    }
+                    
+                    $usuarioAsignado->notify(new IncidenciaActualizada($data, Auth::user(), $cambios));
+                    
+                } catch (\Exception $e) {
+                    Log::error('Error al enviar notificación de actualización: ' . $e->getMessage());
+                }
+            }
+        }
         // Registrar la auditoría
         // Aquí se registra la auditoría de los cambios realizados
         // Se guarda el modelo, el id del modelo, los cambios realizados y el usuario que

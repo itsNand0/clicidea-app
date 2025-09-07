@@ -23,22 +23,27 @@ Route::middleware('auth')->group(function () {
     Route::post('/import-sedes', [ImportController::class, 'importSedes'])->name('import.sedes');
     Route::post('/import-incidencias', [ImportController::class, 'importIncidencias'])->name('import.incidencias');
 
+    Route::middleware(['auth', 'permission:incidencias.crear'])->group(function () {
+        Route::get('/incidencias/create', [IncidenciaController::class, 'create'])->name('incidencias.create');
+        Route::post('/incidencias', [IncidenciaController::class, 'store'])->name('incidencias.store');
+    });
+
     Route::middleware(['auth', 'permission:incidencias.ver'])->group(function () {
         Route::get('/incidencias', [Incidenciacontroller::class, 'index'])->name('incidencias.index');
-        Route::get('/incidencias/{id}', [Incidenciacontroller::class, 'show'])->name('incidencias.show');
-        Route::get('/incidencias/{id}/auditoria', [IncidenciaController::class, 'getAuditoria'])->name('incidencias.auditoria');
-        Route::get('/incidencias/justshow/{id}', [IncidenciaController::class, 'justshow'])->name('incidencias.justshow');
+        Route::get('/incidencias/{id}/auditoria', [IncidenciaController::class, 'getAuditoria'])->name('incidencias.auditoria')->where('id', '[0-9]+');
+        Route::get('/incidencias/justshow/{id}', [IncidenciaController::class, 'justshow'])->name('incidencias.justshow')->where('id', '[0-9]+');
+        Route::get('/incidencias/{id}', [Incidenciacontroller::class, 'show'])->name('incidencias.show')->where('id', '[0-9]+');
     });
 
     Route::middleware(['auth', 'permission:incidencias.editar'])->group(function () {
-        Route::get('/incidencias/{id}/edit', [Incidenciacontroller::class, 'edit'])->name('incidencias.edit');
-        Route::put('/incidencias/{id}', [Incidenciacontroller::class, 'update'])->name('incidencias.update');
-        Route::post('/incidencias/{id}/comentario', [Incidenciacontroller::class, 'comentarios'])->name('comentarios.store');
-        Route::put('/incidencias/{id}/update-file', [IncidenciaController::class, 'updateFile'])->name('incidencias.updateFile');
+        Route::get('/incidencias/{id}/edit', [Incidenciacontroller::class, 'edit'])->name('incidencias.edit')->where('id', '[0-9]+');
+        Route::put('/incidencias/{id}', [Incidenciacontroller::class, 'update'])->name('incidencias.update')->where('id', '[0-9]+');
+        Route::post('/incidencias/{id}/comentario', [Incidenciacontroller::class, 'comentarios'])->name('comentarios.store')->where('id', '[0-9]+');
+        Route::put('/incidencias/{id}/update-file', [IncidenciaController::class, 'updateFile'])->name('incidencias.updateFile')->where('id', '[0-9]+');
     });
 
     Route::middleware(['auth', 'permission:incidencias.eliminar'])->group(function () {
-        Route::delete('/incidencias/{id}', [Incidenciacontroller::class, 'destroy'])->name('incidencias.destroy');
+        Route::delete('/incidencias/{id}', [Incidenciacontroller::class, 'destroy'])->name('incidencias.destroy')->where('id', '[0-9]+');
     });
 
     Route::middleware(['auth', 'permission:incidencias.exportarExcel'])->group(function () {
@@ -55,10 +60,6 @@ Route::middleware('auth')->group(function () {
         Route::delete('/clientes/{id}', [Clientecontroller::class, 'destroy'])->name('clientes.destroy');
     });
 
-    Route::middleware(['auth', 'permission:incidencias.crear'])->group(function () {
-        Route::get('/incidencias/create', [IncidenciaController::class, 'create'])->name('incidencias.create');
-    });
-    
     Route::middleware(['auth', 'permission:incidencias.asignar'])->group(function () {
         Route::put('/incidencias/{id}/asignar', [IncidenciaController::class, 'asignar'])->name('incidencias.asignar');
     });

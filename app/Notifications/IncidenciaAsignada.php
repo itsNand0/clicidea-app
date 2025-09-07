@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Models\Incidencias;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -52,18 +53,18 @@ class IncidenciaAsignada extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $url = route('incidencias.show', $this->incidencia->idincidencias);
+        $url = route('incidencias.show', $this->incidencia->idincidencia);
         
         return (new MailMessage)
-            ->subject('🎯 Nueva Incidencia Asignada #' . $this->incidencia->idincidencias)
+            ->subject('🎯 Nueva Incidencia Asignada #' . $this->incidencia->idincidencia)
             ->greeting('¡Hola ' . $notifiable->name . '!')
             ->line('Se te ha asignado una nueva incidencia.')
             ->line('**Detalles de la incidencia:**')
-            ->line('📋 **Asunto:** ' . $this->incidencia->asunto)
-            ->line('🏢 **Cliente:** ' . $this->incidencia->cliente->nombre ?? 'No especificado')
-            ->line('📅 **Fecha:** ' . $this->incidencia->fechareporte->format('d/m/Y H:i'))
+            ->line('📋 **Asunto:** ' . $this->incidencia->asuntoincidencia)
+            ->line('🏢 **Cliente:** ' . ($this->incidencia->cliente->nombrecliente ?? 'No especificado'))
+            ->line('📅 **Fecha:** ' . \Carbon\Carbon::parse($this->incidencia->fechaincidencia)->format('d/m/Y H:i'))
             ->line('👤 **Asignado por:** ' . $this->asignadoPor->name)
-            ->line('📝 **Descripción:** ' . substr($this->incidencia->descripcion, 0, 100) . '...')
+            ->line('📝 **Descripción:** ' . substr($this->incidencia->descrincidencia, 0, 100) . '...')
             ->action('🔍 Ver Incidencia Completa', $url)
             ->line('Te recomendamos revisar y actualizar el estado de la incidencia lo antes posible.')
             ->line('¡Gracias por tu dedicación al equipo!')
@@ -79,12 +80,16 @@ El equipo de ' . config('app.name'));
         return [
             'incidencia_id' => $this->incidencia->idincidencia,
             'titulo' => 'Nueva incidencia asignada',
-            'mensaje' => 'Se te ha asignado la incidencia: ' . $this->incidencia->asunto,
-            'asunto' => $this->incidencia->asunto,
+            'mensaje' => 'Se te ha asignado la incidencia: ' . $this->incidencia->asuntoincidencia,
+            'asunto' => $this->incidencia->asuntoincidencia,
+            'cliente' => $this->incidencia->cliente->nombrecliente ?? 'No especificado',
             'asignado_por' => $this->asignadoPor->name,
+            'asignado_por_id' => $this->asignadoPor->id,
+            'fecha_asignacion' => now()->toDateTimeString(),
             'tipo' => 'asignacion',
             'icono' => 'fa-solid fa-user-tag',
-            'color' => 'blue'
+            'color' => 'blue',
+            'url' => route('incidencias.show', $this->incidencia->idincidencia)
         ];
     }
 

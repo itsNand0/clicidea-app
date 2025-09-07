@@ -1,0 +1,24 @@
+# /etc/systemd/system/laravel-queue.service
+[Unit]
+Description=Laravel Queue Worker
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+Restart=always
+RestartSec=10
+WorkingDirectory=/var/www/your-app
+ExecStart=/usr/bin/php /var/www/your-app/artisan queue:work --sleep=3 --tries=3 --max-time=3600
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+
+# Comandos para activar:
+# sudo systemctl daemon-reload
+# sudo systemctl enable laravel-queue
+# sudo systemctl start laravel-queue
+# sudo systemctl status laravel-queue
