@@ -94,6 +94,44 @@
                             class="mr-2 rounded text-blue-600 focus:ring-blue-500 focus:ring-2">
                         <span class="font-medium whitespace-nowrap">Mostrar cerrados</span>
                     </label>
+
+                    <!-- Show today only toggle -->
+                    <label class="flex items-center text-sm text-gray-700 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer">
+                        <input type="checkbox" wire:model.live="showTodayOnly" 
+                            class="mr-2 rounded text-blue-600 focus:ring-blue-500 focus:ring-2">
+                        <span class="font-medium whitespace-nowrap">Hoy</span>
+                    </label>
+
+                    <!-- Show active only toggle -->
+                    <label class="flex items-center text-sm text-gray-700 bg-yellow-50 px-3 py-2 rounded-lg border border-yellow-200 hover:bg-yellow-100 transition-colors cursor-pointer">
+                        <input type="checkbox" wire:model.live="showActiveOnly" 
+                            class="mr-2 rounded text-blue-600 focus:ring-blue-500 focus:ring-2">
+                        <span class="font-medium whitespace-nowrap">Activos</span>
+                    </label>
+                </div>
+
+                <!-- Date filters section -->
+                <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <!-- Date from -->
+                    <div class="flex flex-col">
+                        <input type="date" wire:model.live="dateFrom"
+                            class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <!-- Date to -->
+                    <div class="flex flex-col">
+                        <input type="date" wire:model.live="dateTo"
+                            class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <!-- Clear filters button -->
+                    <div class="flex items-end">
+                        <button wire:click="clearFilters" type="button"
+                            class="px-3 py-2 text-sm bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 rounded-lg transition-colors flex items-center gap-1">
+                            <i class="fa-solid fa-filter-circle-xmark"></i>
+                            <span class="hidden sm:inline">Limpiar</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Right controls -->
@@ -102,7 +140,6 @@
                         <a href="{{ route('incidencias.create') }}" 
                             class="bg-lime-600 hover:bg-lime-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 min-w-[44px]">
                             <i class="fa-solid fa-plus"></i>
-                            <span class="hidden sm:inline">Nueva</span>
                         </a>
                     @endcan
 
@@ -110,7 +147,6 @@
                         <a href="{{ route('incidencias.exportarExcel') }}" 
                             class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 min-w-[44px]">
                             <i class="fa-solid fa-file-excel"></i>
-                            <span class="hidden sm:inline">Excel</span>
                         </a>
                     @endcan
                 </div>

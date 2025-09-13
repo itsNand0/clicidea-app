@@ -9,15 +9,11 @@ const urlsToCache = [
 
 // Instalar Service Worker
 self.addEventListener('install', event => {
-    console.log('SW: Instalando...');
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
-                console.log('SW: Cache abierto');
                 return cache.addAll(urlsToCache)
                     .catch(error => {
-                        console.error('SW: Error cacheando URLs:', error);
-                        // Cachear solo las URLs que existen
                         return Promise.all([
                             cache.add('/').catch(() => console.log('/ no encontrado')),
                             cache.add('/manifest.json').catch(() => console.log('manifest.json no encontrado')),
@@ -34,13 +30,11 @@ self.addEventListener('install', event => {
 
 // Activar Service Worker
 self.addEventListener('activate', event => {
-    console.log('SW: Activando...');
     event.waitUntil(
         caches.keys().then(cacheNames => {
             return Promise.all(
                 cacheNames.map(cacheName => {
                     if (cacheName !== CACHE_NAME) {
-                        console.log('SW: Eliminando cache viejo:', cacheName);
                         return caches.delete(cacheName);
                     }
                 })
@@ -74,7 +68,6 @@ self.addEventListener('fetch', event => {
             .then(response => {
                 // Si está en cache, devolver desde cache
                 if (response) {
-                    console.log('SW: Sirviendo desde cache:', event.request.url);
                     return response;
                 }
                 
@@ -105,7 +98,6 @@ self.addEventListener('fetch', event => {
                         return response;
                     })
                     .catch(error => {
-                        console.log('SW: Error de red, sirviendo offline:', error);
                         // Si es una petición de navegación, servir página offline
                         if (event.request.destination === 'document') {
                             return caches.match('/offline.html');

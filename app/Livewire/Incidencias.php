@@ -15,6 +15,10 @@ class Incidencias extends Component
     public $sortField = 'fechaincidencia';
     public $sortDirection = 'desc';
     public $showClosed = false; // Filtro para mostrar estados cerrados
+    public $showTodayOnly = false; // Filtro para mostrar solo incidencias del día
+    public $showActiveOnly = true; // Filtro para mostrar solo pendientes/en proceso
+    public $dateFrom = ''; // Fecha desde para filtro personalizado
+    public $dateTo = ''; // Fecha hasta para filtro personalizado
 
     public $visibleColumns = [
         'usuario' => true,
@@ -57,6 +61,50 @@ class Incidencias extends Component
         $this->resetPage(); // Reinicia la paginación al cambiar filtro de cerrados
     }
 
+    public function updatingShowTodayOnly()
+    {
+        if ($this->showTodayOnly) {
+            // Limpiar filtros de fecha personalizada cuando se activa "Solo hoy"
+            $this->dateFrom = '';
+            $this->dateTo = '';
+        }
+        $this->resetPage(); // Reinicia la paginación al cambiar filtro del día
+    }
+
+    public function updatingShowActiveOnly()
+    {
+        $this->resetPage(); // Reinicia la paginación al cambiar filtro de activos
+    }
+
+    public function updatingDateFrom()
+    {
+        if ($this->dateFrom) {
+            // Desactivar "Solo hoy" cuando se establece una fecha personalizada
+            $this->showTodayOnly = false;
+        }
+        $this->resetPage(); // Reinicia la paginación al cambiar fecha desde
+    }
+
+    public function updatingDateTo()
+    {
+        if ($this->dateTo) {
+            // Desactivar "Solo hoy" cuando se establece una fecha personalizada
+            $this->showTodayOnly = false;
+        }
+        $this->resetPage(); // Reinicia la paginación al cambiar fecha hasta
+    }
+
+    public function clearFilters()
+    {
+        $this->search = '';
+        $this->showClosed = false;
+        $this->showTodayOnly = false;
+        $this->showActiveOnly = true;
+        $this->dateFrom = '';
+        $this->dateTo = '';
+        $this->resetPage();
+    }
+
     public function render()
     {
         $user = Auth::user();
@@ -96,6 +144,35 @@ class Incidencias extends Component
                             ->orWhere('usuarioincidencia', 'ILIKE', '%' . $searchTerm . '%')
                             ->orWhere('idincidencia', 'LIKE', '%' . $searchTerm . '%');
                     });
+                })
+                ->when($this->showTodayOnly, function ($query) {
+                    // Filtrar solo incidencias del día actual
+                    $query->whereDate('fechaincidencia', today());
+                })
+                ->when($this->showActiveOnly && !$this->showClosed, function ($query) {
+                    // Filtrar solo estados pendientes o en proceso (solo si no se muestran cerrados)
+                    $query->whereHas('estadoincidencia', function ($q) {
+                        $q->where('descriestadoincidencia', 'ILIKE', '%Pendiente%')
+                          ->orWhere('descriestadoincidencia', 'ILIKE', '%En proceso%');
+                    });
+                })
+                ->when($this->dateFrom && $this->dateTo, function ($query) {
+                    // Filtrar por rango de fechas personalizado
+                    if ($this->dateFrom === $this->dateTo) {
+                        // Si las fechas son iguales, filtrar solo por ese día
+                        $query->whereDate('fechaincidencia', $this->dateFrom);
+                    } else {
+                        // Si son diferentes, usar rango between
+                        $query->whereBetween('fechaincidencia', [$this->dateFrom, $this->dateTo]);
+                    }
+                })
+                ->when($this->dateFrom && !$this->dateTo, function ($query) {
+                    // Solo fecha desde
+                    $query->whereDate('fechaincidencia', '>=', $this->dateFrom);
+                })
+                ->when(!$this->dateFrom && $this->dateTo, function ($query) {
+                    // Solo fecha hasta
+                    $query->whereDate('fechaincidencia', '<=', $this->dateTo);
                 })
                 ->when(!$this->showClosed, function ($query) {
                     // Filtrar estados cerrados cuando showClosed es false
@@ -153,6 +230,35 @@ class Incidencias extends Component
                             })
                             ->orWhere('usuarioincidencia', 'ILIKE', '%' . $searchTerm . '%');
                     });
+                })
+                ->when($this->showTodayOnly, function ($query) {
+                    // Filtrar solo incidencias del día actual
+                    $query->whereDate('fechaincidencia', today());
+                })
+                ->when($this->showActiveOnly && !$this->showClosed, function ($query) {
+                    // Filtrar solo estados pendientes o en proceso (solo si no se muestran cerrados)
+                    $query->whereHas('estadoincidencia', function ($q) {
+                        $q->where('descriestadoincidencia', 'ILIKE', '%Pendiente%')
+                          ->orWhere('descriestadoincidencia', 'ILIKE', '%En proceso%');
+                    });
+                })
+                ->when($this->dateFrom && $this->dateTo, function ($query) {
+                    // Filtrar por rango de fechas personalizado
+                    if ($this->dateFrom === $this->dateTo) {
+                        // Si las fechas son iguales, filtrar solo por ese día
+                        $query->whereDate('fechaincidencia', $this->dateFrom);
+                    } else {
+                        // Si son diferentes, usar rango between
+                        $query->whereBetween('fechaincidencia', [$this->dateFrom, $this->dateTo]);
+                    }
+                })
+                ->when($this->dateFrom && !$this->dateTo, function ($query) {
+                    // Solo fecha desde
+                    $query->whereDate('fechaincidencia', '>=', $this->dateFrom);
+                })
+                ->when(!$this->dateFrom && $this->dateTo, function ($query) {
+                    // Solo fecha hasta
+                    $query->whereDate('fechaincidencia', '<=', $this->dateTo);
                 })
                 ->when(!$this->showClosed, function ($query) {
                     // Filtrar estados cerrados cuando showClosed es false
