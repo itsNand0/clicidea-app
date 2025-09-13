@@ -16,29 +16,16 @@ class WebPushController extends Controller
     public function subscribe(Request $request)
     {
         try {
-            Log::info('🔔 Iniciando suscripción web push', [
-                'user_agent' => $request->header('User-Agent'),
-                'ip' => $request->ip(),
-                'data_received' => $request->all()
-            ]);
-
             $request->validate([
                 'endpoint' => 'required|url',
                 'keys.p256dh' => 'required|string',
                 'keys.auth' => 'required|string',
             ]);
 
-            Log::info('✅ Validación pasada correctamente');
-
+            // Usar auth() para autenticación web tradicional
             $user = Auth::user();
             
-            Log::info('🔐 Usuario autenticado', [
-                'user_id' => $user?->id,
-                'user_email' => $user?->email
-            ]);
-            
             if (!$user) {
-                Log::warning('❌ Usuario no autenticado');
                 return response()->json(['error' => 'Usuario no autenticado'], 401);
             }
 
@@ -59,12 +46,6 @@ class WebPushController extends Controller
                 ]
             );
 
-            Log::info('Suscripción web push creada/actualizada', [
-                'user_id' => $user->id,
-                'subscription_id' => $subscription->id,
-                'endpoint' => substr($request->endpoint, 0, 50) . '...'
-            ]);
-
             return response()->json([
                 'success' => true,
                 'message' => 'Suscripción registrada exitosamente',
@@ -72,8 +53,6 @@ class WebPushController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Error al crear suscripción web push: ' . $e->getMessage());
-            
             return response()->json([
                 'success' => false,
                 'error' => 'Error al registrar suscripción'
@@ -269,95 +248,19 @@ class WebPushController extends Controller
     }
 
     /**
-     * Suscripción pública para testing (sin autenticación)
-     */
-    public function subscribePublic(Request $request)
-    {
-        try {
-            Log::info('🔔 TEST: Iniciando suscripción pública', [
-                'data_received' => $request->all()
-            ]);
-
-            $request->validate([
-                'endpoint' => 'required|url',
-                'keys.p256dh' => 'required|string',
-                'keys.auth' => 'required|string',
-            ]);
-
-            Log::info('✅ TEST: Validación pasada');
-
-            // Para testing, usar específicamente al usuario con ID 2
-            $targetUser = \App\Models\User::find(2);
-            
-            if (!$targetUser) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'Usuario con ID 2 no encontrado en la base de datos'
-                ], 400);
-            }
-
-            Log::info('👤 TEST: Usando usuario ID 2 para testing', [
-                'user_id' => $targetUser->id,
-                'user_name' => $targetUser->name,
-                'user_email' => $targetUser->email
-            ]);
-
-            // Crear o actualizar suscripción
-            $subscription = WebPushSubscription::updateOrCreate(
-                [
-                    'user_id' => $targetUser->id,
-                    'endpoint' => $request->endpoint
-                ],
-                [
-                    'public_key' => $request->input('keys.p256dh'),
-                    'auth_token' => $request->input('keys.auth'),
-                    'content_encoding' => $request->input('contentEncoding', 'aesgcm'),
-                    'subscription_data' => $request->all(),
-                    'user_agent' => $request->header('User-Agent'),
-                    'is_active' => true,
-                    'last_used_at' => now()
-                ]
-            );
-
-            Log::info('✅ TEST: Suscripción creada/actualizada', [
-                'subscription_id' => $subscription->id
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Suscripción de prueba creada exitosamente para usuario ID 2',
-                'subscription_id' => $subscription->id,
-                'user_id' => $targetUser->id,
-                'user_name' => $targetUser->name,
-                'user_email' => $targetUser->email
-            ]);
-
-        } catch (\Exception $e) {
-            Log::error('❌ TEST: Error en suscripción pública: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString()
-            ]);
-            
-            return response()->json([
-                'success' => false,
-                'error' => 'Error en suscripción: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
      * Probar notificación de incidencia asignada
      */
     public function testIncidenciaNotification(Request $request)
     {
         try {
-            // Obtener específicamente al usuario con ID 2
-            $user = \App\Models\User::find(2);
+            // Usar el usuario autenticado actual
+            $user = Auth::user();
 
             if (!$user) {
                 return response()->json([
                     'success' => false,
-                    'error' => 'Usuario con ID 2 no encontrado'
-                ], 400);
+                    'error' => 'Usuario no autenticado'
+                ], 401);
             }
 
             // Verificar si el usuario tiene suscripciones activas
@@ -368,7 +271,7 @@ class WebPushController extends Controller
             if ($subscriptionsCount === 0) {
                 return response()->json([
                     'success' => false,
-                    'error' => 'Usuario ID 2 no tiene suscripciones push activas'
+                    'error' => 'Usuario no tiene suscripciones push activas'
                 ], 400);
             }
 
@@ -382,7 +285,7 @@ class WebPushController extends Controller
                 ], 400);
             }
 
-            Log::info('🧪 Enviando notificación de prueba al usuario ID 2', [
+            Log::info('🧪 Enviando notificación de prueba', [
                 'user_id' => $user->id,
                 'user_name' => $user->name,
                 'user_email' => $user->email,
@@ -395,7 +298,7 @@ class WebPushController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Notificación de incidencia enviada exitosamente al usuario ID 2',
+                'message' => 'Notificación de incidencia enviada exitosamente',
                 'user_id' => $user->id,
                 'user_name' => $user->name,
                 'user_email' => $user->email,

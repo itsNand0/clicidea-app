@@ -92,6 +92,12 @@ Route::middleware('auth')->group(function () {
         })->name('buscar.incidencia');
     });
     
+    // 🔔 WEB PUSH ROUTES (con autenticación web tradicional)
+    Route::post('/web-push/subscribe', [App\Http\Controllers\Api\WebPushController::class, 'subscribe'])->name('web-push.subscribe');
+    Route::post('/web-push/test-incidencia', [App\Http\Controllers\Api\WebPushController::class, 'testIncidenciaNotification'])->name('web-push.test-incidencia');
+    Route::post('/web-push/unsubscribe', [App\Http\Controllers\Api\WebPushController::class, 'unsubscribe'])->name('web-push.unsubscribe');
+    Route::get('/web-push/status', [App\Http\Controllers\Api\WebPushController::class, 'status'])->name('web-push.status');
+    
 });
 
 Route::post('/logout', function () {

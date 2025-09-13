@@ -58,12 +58,13 @@ class PushNotificationManager {
 
     async sendSubscriptionToServer(subscription) {
         try {
-            // Para testing, usar endpoint público sin autenticación
-            const response = await fetch('/api/web-push/subscribe-public', {
+            // Usar rutas web con CSRF token
+            const response = await fetch('/web-push/subscribe', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
                 },
                 body: JSON.stringify({
                     endpoint: subscription.endpoint,
@@ -186,11 +187,12 @@ window.testSimpleEndpoint = async function() {
 // === FUNCIÓN DE TEST INCIDENCIA ===
 window.testIncidenciaNotification = async function() {
     try {
-        const response = await fetch('/api/web-push/test-incidencia', {
+        const response = await fetch('/web-push/test-incidencia', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
             }
         });
 

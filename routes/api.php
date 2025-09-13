@@ -29,12 +29,5 @@ Route::apiResource('clientes', ClientesController::class)->names([
 // 🔔 WEB PUSH ROUTES
 Route::get('/web-push/vapid-key', [WebPushController::class, 'getVapidKey']); // Endpoint público para obtener clave VAPID
 Route::post('/web-push/test-simple', [WebPushController::class, 'testSimple']); // Test simple sin autenticación
-Route::post('/web-push/subscribe-public', [WebPushController::class, 'subscribePublic']); // Test de suscripción sin auth
-Route::post('/web-push/test-incidencia', [WebPushController::class, 'testIncidenciaNotification']); // Test notificación incidencia
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/web-push/subscribe', [WebPushController::class, 'subscribe']);
-    Route::post('/web-push/unsubscribe', [WebPushController::class, 'unsubscribe']);
-    Route::post('/web-push/test', [WebPushController::class, 'testPush']);
-    Route::get('/web-push/status', [WebPushController::class, 'status']);
-});
+// Las rutas con autenticación se movieron a web.php para usar sesiones en lugar de Sanctum
