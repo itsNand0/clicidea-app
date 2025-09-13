@@ -699,6 +699,9 @@
         });
         @endif
     </script>
+    
+    <!-- 🔔 Push Notifications Script -->
+    <script src="/js/push-notifications.js"></script>
 </body>
 
 </html>

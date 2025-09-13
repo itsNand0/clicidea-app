@@ -11,9 +11,11 @@
     "require": {
         "php": "^8.2",
         "ladumor/laravel-pwa": "^0.0.5",
+        "laravel-notification-channels/webpush": "^10.2",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "livewire/livewire": "^3.6",
+        "minishlink/web-push": "^9.0",
         "phpoffice/phpspreadsheet": "^4.4",
         "pusher/pusher-php-server": "^7.2",
         "spatie/laravel-permission": "^6.18"

@@ -64,4 +64,20 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Cargo::class);
     }
+
+    /**
+     * Relación con suscripciones web push
+     */
+    public function webPushSubscriptions()
+    {
+        return $this->hasMany(WebPushSubscription::class);
+    }
+
+    /**
+     * Obtener suscripciones activas de web push
+     */
+    public function activeWebPushSubscriptions()
+    {
+        return $this->webPushSubscriptions()->active();
+    }
 }

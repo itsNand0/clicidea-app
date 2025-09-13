@@ -40,6 +40,9 @@ class IncidenciaAsignada extends Notification implements ShouldQueue
             $channels[] = 'mail';
         }
         
+        // 🔔 AGREGAR WEB PUSH CHANNEL
+        $channels[] = \App\Notifications\Channels\WebPushChannel::class;
+        
         // Agregar push si el usuario tiene token FCM
         if ($notifiable->fcm_token) {
             $channels[] = 'fcm'; // Requiere paquete FCM
@@ -90,6 +93,41 @@ El equipo de ' . config('app.name'));
             'icono' => 'fa-solid fa-user-tag',
             'color' => 'blue',
             'url' => route('incidencias.show', $this->incidencia->idincidencia)
+        ];
+    }
+
+    /**
+     * Get the web push representation of the notification.
+     */
+    public function toWebPush(object $notifiable): array
+    {
+        return [
+            'title' => '🎯 Nueva Incidencia Asignada',
+            'body' => "#{$this->incidencia->idincidencia}: {$this->incidencia->asuntoincidencia}",
+            'icon' => '/images/lateral01.png',
+            'badge' => '/images/lateral01.png',
+            'tag' => 'incidencia-' . $this->incidencia->idincidencia,
+            'data' => [
+                'incidencia_id' => $this->incidencia->idincidencia,
+                'url' => route('incidencias.show', $this->incidencia->idincidencia),
+                'cliente' => $this->incidencia->cliente->nombre ?? 'No especificado',
+                'asignado_por' => $this->asignadoPor->name,
+                'timestamp' => now()->toISOString()
+            ],
+            'actions' => [
+                [
+                    'action' => 'view',
+                    'title' => 'Ver Incidencia',
+                    'icon' => '/images/view-icon.png'
+                ],
+                [
+                    'action' => 'close',
+                    'title' => 'Cerrar',
+                    'icon' => '/images/close-icon.png'
+                ]
+            ],
+            'requireInteraction' => true, // Requiere interacción del usuario
+            'vibrate' => [200, 100, 200] // Patrón de vibración
         ];
     }
 

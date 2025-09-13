@@ -18,7 +18,7 @@
                         <button @click="open = !open" type="button" 
                             class="bg-gray-200 hover:bg-gray-300 px-3 py-2 rounded-lg text-gray-700 transition-colors flex items-center gap-2 btn-animated">
                             <i class="fa-solid fa-eye-low-vision"></i>
-                            <span class="hidden sm:inline">Mostrar campos</span>
+                            <span class="hidden sm:inline">Columnas</span>
                         </button>
                         <div x-show="open" @click.away="open = false"
                             class="absolute left-0 mt-2 bg-white border rounded-lg shadow-lg p-4 z-20 w-64 max-h-64 overflow-y-auto mobile-dropdown"
@@ -92,7 +92,7 @@
                     <label class="flex items-center text-sm text-gray-700 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors cursor-pointer">
                         <input type="checkbox" wire:model.live="showClosed" 
                             class="mr-2 rounded text-blue-600 focus:ring-blue-500 focus:ring-2">
-                        <span class="font-medium whitespace-nowrap">Mostrar cerrados</span>
+                        <span class="font-medium whitespace-nowrap">Cerrados</span>
                     </label>
 
                     <!-- Show today only toggle -->

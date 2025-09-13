@@ -49,13 +49,6 @@
                 </button>
             </div>
         </form>
-
-        <div>
-            <button title="Presione aquí para restablecer su contraseña" id="button_link"
-                class="text-blue-600 hover:underline text-sm">
-                ¿Olvidaste tu contraseña?
-            </button>
-        </div>
     </div>
 
 </body>

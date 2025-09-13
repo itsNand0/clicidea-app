@@ -27,6 +27,9 @@
     <!-- PWA Scripts -->
     <script src="/js/pwa-final.js"></script>
     
+    <!-- 🔔 Push Notifications Script -->
+    <script src="/js/push-notifications.js"></script>
+    
     @livewireScripts
 </body>
 
