@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use Livewire\WithPagination;
 
-use App\Http\Controllers\Usercontroller;
+use App\Http\Controllers\UserController;
 use App\Models\User;
 use Livewire\Component;
 

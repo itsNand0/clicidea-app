@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Cliente;
 use App\Models\Incidencias;
 use App\Models\User;
+use App\Notifications\IncidenciaAsignada;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class IncidenciasController extends Controller
 {
@@ -69,10 +71,28 @@ class IncidenciasController extends Controller
             
             $data->save();
 
+            // 🔔 ENVIAR NOTIFICACIÓN SI SE ASIGNA A UN USUARIO
+            if ($request->usuario_idusuario) {
+                try {
+                    $usuarioAsignado = User::find($request->usuario_idusuario);
+                    if ($usuarioAsignado) {
+                        // Crear usuario temporal para el contexto (usuario del sistema)
+                        $usuarioCreador = User::find(26); // Usuario "Automatización de sistema"
+                        
+                        // Enviar notificación al usuario asignado
+                        $usuarioAsignado->notify(new IncidenciaAsignada($data, $usuarioCreador));
+                    }
+                } catch (\Exception $e) {
+                    // Error en notificación no debe afectar la creación de la incidencia
+                    Log::warning('Error enviando notificación de nueva incidencia: ' . $e->getMessage());
+                }
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'Incidencia creada correctamente',
-                'data' => $data->load(['cliente', 'estadoIncidencia', 'usuario'])
+                'data' => $data->load(['cliente', 'estadoIncidencia', 'usuario']),
+                'notification_sent' => $request->usuario_idusuario ? true : false
             ], 201);
 
         } catch (\Illuminate\Validation\ValidationException $e) {

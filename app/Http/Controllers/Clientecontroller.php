@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-class Clientecontroller extends Controller
+class ClienteController extends Controller
 {
     public function index()
     {

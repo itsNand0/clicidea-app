@@ -33,6 +33,12 @@
                     </div>
 
                     <div class="flex items-center space-x-4">
+                        <label for="document" class="w-40 text-right text-sm font-medium text-gray-700">Documento</label>
+                        <input type="text" name="document" id="document" required
+                            class="flex-1 px-4 py-2 border rounded-lg shadow-sm border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+
+                    <div class="flex items-center space-x-4">
                         <label for="email" class="w-40 text-right text-sm font-medium text-gray-700">Email</label>
                         <input type="email" name="email" id="email" required
                             class="flex-1 px-4 py-2 border rounded-lg shadow-sm border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">

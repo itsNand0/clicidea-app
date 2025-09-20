@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-class Incidenciacontroller extends Controller
+class IncidenciaController extends Controller
 {
     /**
      * Display a listing of the resource.

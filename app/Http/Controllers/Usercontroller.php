@@ -9,7 +9,7 @@ use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
-class Usercontroller extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -44,6 +44,7 @@ class Usercontroller extends Controller
             'area_id' => 'nullable|integer',
             'cargo_id' => 'nullable|integer',
             'role' => 'nullable|string|exists:roles,name',
+            'document' => 'nullable|string|max:255|unique:users,document',
         ]);
         
         $user = new User();
@@ -53,6 +54,7 @@ class Usercontroller extends Controller
         $user->password = bcrypt($request->password);
         $user->area_id = $request->area_id;
         $user->cargo_id = $request->cargo_id;
+        $user->document = $request->document;
         $user->save();
 
         // Asignar rol después de guardar el usuario
@@ -101,6 +103,7 @@ class Usercontroller extends Controller
             'cargo_id' => 'nullable|integer',
             'area_id' => 'nullable|integer',
             'role' => 'nullable|string|exists:roles,name',
+            'document' => 'nullable|string|max:255|unique:users,document,' . $user->id,
         ]);
 
         $user->name = $request->input('name');
@@ -114,6 +117,7 @@ class Usercontroller extends Controller
         
         $user->cargo_id = $request->input('cargo_id');
         $user->area_id = $request->input('area_id');
+        $user->document = $request->input('document');
 
         $user->save();
 
