@@ -194,3 +194,56 @@ function doBackgroundSync() {
             console.error('Error en sincronización:', error);
         });
 }
+
+// 🔔 MANEJADOR DE PUSH NOTIFICATIONS
+self.addEventListener('push', event => {
+    console.log('Push notification received:', event);
+    
+    if (event.data) {
+        const data = event.data.json();
+        console.log('Push data:', data);
+        
+        const options = {
+            body: data.body || 'Nueva notificación',
+            icon: data.icon || '/images/lateral01.png',
+            badge: data.badge || '/images/lateral01.png',
+            tag: data.tag || 'default',
+            data: data.data || {},
+            actions: data.actions || [],
+            requireInteraction: data.requireInteraction || false,
+            vibrate: data.vibrate || [200, 100, 200]
+        };
+        
+        event.waitUntil(
+            self.registration.showNotification(data.title || 'ClicIdea', options)
+        );
+    }
+});
+
+// 🔔 MANEJADOR DE CLICK EN NOTIFICACIONES
+self.addEventListener('notificationclick', event => {
+    console.log('Notification clicked:', event);
+    
+    event.notification.close();
+    
+    if (event.action === 'view' || !event.action) {
+        // Abrir/enfocar la URL de la notificación
+        const urlToOpen = event.notification.data.url || '/';
+        
+        event.waitUntil(
+            clients.matchAll({ type: 'window', includeUncontrolled: true })
+                .then(clientList => {
+                    // Buscar una ventana ya abierta con la URL
+                    for (const client of clientList) {
+                        if (client.url === urlToOpen && 'focus' in client) {
+                            return client.focus();
+                        }
+                    }
+                    // Si no hay ventana abierta, abrir una nueva
+                    if (clients.openWindow) {
+                        return clients.openWindow(urlToOpen);
+                    }
+                })
+        );
+    }
+});
