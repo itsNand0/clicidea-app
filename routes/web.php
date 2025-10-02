@@ -125,6 +125,50 @@ Route::middleware('auth')->group(function () {
         }
     })->name('test.notificacion-asignacion');
     
+    Route::post('/test/notificacion-directa', function() {
+        try {
+            // Ejecutar la misma lógica del comando pero directamente
+            $usuario = \App\Models\User::first();
+            if (!$usuario) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'No hay usuarios en la base de datos'
+                ], 400);
+            }
+            
+            $incidencia = \App\Models\Incidencias::first();
+            if (!$incidencia) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'No hay incidencias en la base de datos'
+                ], 400);
+            }
+            
+            // Crear un usuario "asignador" ficticio
+            $asignadoPor = \App\Models\User::where('id', '!=', $usuario->id)->first() ?? $usuario;
+            
+            // Enviar la notificación
+            $usuario->notify(new \App\Notifications\IncidenciaAsignada($incidencia, $asignadoPor));
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Notificación enviada exitosamente',
+                'data' => [
+                    'usuario' => $usuario->name,
+                    'incidencia' => $incidencia->asuntoincidencia,
+                    'asignado_por' => $asignadoPor->name
+                ]
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ], 500);
+        }
+    })->name('test.notificacion-directa');
+    
 });
 
 Route::post('/logout', function () {

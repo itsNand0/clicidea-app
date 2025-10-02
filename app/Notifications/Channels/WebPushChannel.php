@@ -87,12 +87,26 @@ class WebPushChannel
     private function sendPushNotification($subscriptionData, $data)
     {
         try {
+            Log::info('WebPush: Enviando notificación individual', [
+                'endpoint' => substr($subscriptionData['endpoint'], 0, 50) . '...',
+                'title' => $data['title'] ?? 'N/A'
+            ]);
+
+            // Verificar configuración VAPID
+            $vapidPublic = config('webpush.vapid.public_key');
+            $vapidPrivate = config('webpush.vapid.private_key');
+            
+            if (!$vapidPublic || !$vapidPrivate) {
+                Log::error('WebPush: Claves VAPID no configuradas correctamente');
+                return false;
+            }
+
             // Configurar WebPush con claves VAPID
             $webPush = new WebPush([
                 'VAPID' => [
                     'subject' => config('app.url'),
-                    'publicKey' => config('webpush.vapid.public_key'),
-                    'privateKey' => config('webpush.vapid.private_key'),
+                    'publicKey' => $vapidPublic,
+                    'privateKey' => $vapidPrivate,
                 ]
             ]);
 
@@ -118,20 +132,47 @@ class WebPushChannel
                 'vibrate' => $data['vibrate'] ?? [200, 100, 200]
             ]);
 
+            Log::info('WebPush: Payload preparado', [
+                'payload_size' => strlen($payload),
+                'title' => $data['title']
+            ]);
+
             // Enviar notificación
             $result = $webPush->sendOneNotification(
                 $subscription,
                 $payload
             );
 
-            if (!$result->isSuccess() && $result->isSubscriptionExpired()) {
-                // Si la suscripción expiró, marcarla como inactiva
-                WebPushSubscription::where('endpoint', $subscriptionData['endpoint'])
-                    ->update(['is_active' => false]);
+            Log::info('WebPush: Resultado del envío', [
+                'success' => $result->isSuccess(),
+                'reason' => $result->getReason()
+            ]);
+
+            if (!$result->isSuccess()) {
+                Log::error('WebPush: Error en el envío', [
+                    'reason' => $result->getReason(),
+                    'endpoint' => substr($subscriptionData['endpoint'], 0, 50) . '...'
+                ]);
+                
+                if ($result->isSubscriptionExpired()) {
+                    Log::warning('WebPush: Suscripción expirada, marcando como inactiva');
+                    WebPushSubscription::where('endpoint', $subscriptionData['endpoint'])
+                        ->update(['is_active' => false]);
+                }
+                
+                return false;
             }
             
+            Log::info('WebPush: Notificación enviada exitosamente');
+            return true;
+            
         } catch (\Exception $e) {
-            // Error silenciado para producción
+            Log::error('WebPush: Excepción al enviar notificación', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'endpoint' => substr($subscriptionData['endpoint'] ?? 'unknown', 0, 50) . '...'
+            ]);
+            return false;
         }
     }
 }

@@ -293,7 +293,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     // Prueba incidencia
     document.getElementById('btn-incidencia').addEventListener('click', async function() {
-        addLog('🎯 Iniciando test detallado de notificación de incidencia...');
+        addLog('🎯 Iniciando diagnóstico completo del WebPushChannel...');
         
         try {
             // Verificar CSRF token
@@ -304,13 +304,70 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
             
             addLog('✅ CSRF token encontrado', 'success');
-            addLog(`🔍 Token: ${csrfToken.getAttribute('content').substring(0, 10)}...`, 'info');
             
-            // Verificar la URL del endpoint
+            // Primero verificar estado del WebPush en el sistema
+            addLog('🔍 Verificando estado del WebPush en el servidor...', 'info');
+            
+            try {
+                const statusResponse = await fetch('/web-push/status', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken.getAttribute('content')
+                    }
+                });
+                
+                if (statusResponse.ok) {
+                    const statusData = await statusResponse.json();
+                    addLog('📊 Estado del WebPush:', 'info');
+                    addLog(`   - Suscripciones activas: ${statusData.active_subscriptions || 0}`, 'info');
+                    addLog(`   - VAPID configurado: ${statusData.vapid_configured ? '✅' : '❌'}`, statusData.vapid_configured ? 'success' : 'error');
+                    
+                    if (statusData.active_subscriptions === 0) {
+                        addLog('⚠️ No hay suscripciones WebPush activas', 'warning');
+                        addLog('� Intentando crear suscripción automáticamente...', 'info');
+                        
+                        // Intentar suscribirse automáticamente
+                        if ('serviceWorker' in navigator && 'PushManager' in window) {
+                            const registration = await navigator.serviceWorker.ready;
+                            
+                            const subscription = await registration.pushManager.subscribe({
+                                userVisibleOnly: true,
+                                applicationServerKey: statusData.vapid_public_key
+                            });
+                            
+                            // Enviar suscripción al servidor
+                            const subscribeResponse = await fetch('/web-push/subscribe', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': csrfToken.getAttribute('content')
+                                },
+                                body: JSON.stringify({
+                                    endpoint: subscription.endpoint,
+                                    keys: subscription.toJSON().keys
+                                })
+                            });
+                            
+                            if (subscribeResponse.ok) {
+                                addLog('✅ Suscripción WebPush creada exitosamente', 'success');
+                            } else {
+                                addLog('❌ Error creando suscripción WebPush', 'error');
+                            }
+                        }
+                    }
+                } else {
+                    addLog(`❌ Error obteniendo estado WebPush: ${statusResponse.status}`, 'error');
+                }
+            } catch (statusError) {
+                addLog(`❌ Error verificando estado WebPush: ${statusError.message}`, 'error');
+            }
+            
+            // Ahora ejecutar el test de incidencia
+            addLog('🎯 Ejecutando test de notificación de incidencia...', 'info');
+            
             const testUrl = '{{ route("test.notificacion-asignacion") }}';
             addLog(`🔍 URL del test: ${testUrl}`, 'info');
-            
-            addLog('📨 Enviando petición al servidor...', 'info');
             
             const response = await fetch(testUrl, {
                 method: 'POST',
@@ -330,53 +387,37 @@ document.addEventListener('DOMContentLoaded', async function() {
             
             if (!response.ok) {
                 addLog(`❌ Error HTTP: ${response.status}`, 'error');
-                
-                // Intentar leer el cuerpo del error
-                try {
-                    const errorText = await response.text();
-                    addLog(`🔍 Cuerpo del error: ${errorText.substring(0, 200)}...`, 'error');
-                } catch (readError) {
-                    addLog(`❌ No se pudo leer el cuerpo del error: ${readError.message}`, 'error');
-                }
+                const errorText = await response.text();
+                addLog(`� Error: ${errorText.substring(0, 300)}...`, 'error');
                 return;
             }
             
             const responseData = await response.json();
             
-            addLog('✅ Respuesta del servidor recibida', 'success');
-            addLog(`📊 Datos de respuesta:`, 'info');
-            addLog(`   - success: ${responseData.success}`, 'info');
-            addLog(`   - message: ${responseData.message || 'N/A'}`, 'info');
-            
-            if (responseData.output) {
-                addLog(`📋 Output del comando:`, 'info');
-                addLog(`${responseData.output}`, 'info');
-            }
+            addLog('✅ Comando ejecutado en el servidor', 'success');
             
             if (responseData.success) {
-                addLog('🎉 Test de incidencia ejecutado exitosamente', 'success');
-                addLog('⏳ Esperando notificación push...', 'info');
+                addLog('🎉 Test de incidencia completado exitosamente', 'success');
+                addLog('📋 Output del comando:', 'info');
+                addLog(responseData.output || 'Sin output específico', 'info');
+                addLog('⏳ Esperando notificación push en 3 segundos...', 'info');
                 
-                // Timeout para verificar si llega la notificación
+                // Esperar y verificar si llegó la notificación
                 setTimeout(() => {
-                    addLog('🔍 Si no has visto una notificación push, puede ser un problema del WebPushChannel', 'warning');
+                    addLog('🔍 Verificando logs del WebPushChannel...', 'info');
+                    addLog('💡 Si no viste una notificación push, revisa:', 'warning');
+                    addLog('   1. Logs del servidor Laravel (storage/logs/laravel.log)', 'info');
+                    addLog('   2. Suscripciones WebPush en la base de datos', 'info');
+                    addLog('   3. Configuración VAPID en .env', 'info');
+                    addLog('   4. Errores en el WebPushChannel', 'info');
                 }, 3000);
             } else {
-                addLog(`❌ Error en test de incidencia: ${responseData.error || 'Error desconocido'}`, 'error');
+                addLog(`❌ Error en test: ${responseData.error || 'Error desconocido'}`, 'error');
             }
             
         } catch (error) {
-            addLog(`❌ Error de conexión o JavaScript: ${error.message}`, 'error');
-            addLog(`🔍 Error name: ${error.name}`, 'error');
+            addLog(`❌ Error general: ${error.message}`, 'error');
             addLog(`🔍 Stack: ${error.stack}`, 'error');
-            
-            // Verificar conectividad básica
-            try {
-                const pingResponse = await fetch('/', {method: 'HEAD'});
-                addLog(`🔍 Conectividad básica: ${pingResponse.status}`, 'info');
-            } catch (pingError) {
-                addLog(`❌ Problema de conectividad: ${pingError.message}`, 'error');
-            }
         }
     });
 });
