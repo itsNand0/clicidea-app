@@ -103,6 +103,10 @@ Route::middleware('auth')->group(function () {
         return view('diagnostico-notificaciones');
     })->name('diagnostico.notificaciones');
     
+    Route::get('/test-push', function() {
+        return view('diagnostico-simple');
+    })->name('test.push.simple');
+    
     Route::post('/test/notificacion-asignacion', function() {
         try {
             \Illuminate\Support\Facades\Artisan::call('test:notificacion-asignacion');
