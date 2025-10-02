@@ -98,6 +98,29 @@ Route::middleware('auth')->group(function () {
     Route::post('/web-push/unsubscribe', [App\Http\Controllers\Api\WebPushController::class, 'unsubscribe'])->name('web-push.unsubscribe');
     Route::get('/web-push/status', [App\Http\Controllers\Api\WebPushController::class, 'status'])->name('web-push.status');
     
+    // 🔍 DIAGNÓSTICO DE NOTIFICACIONES
+    Route::get('/diagnostico-notificaciones', function() {
+        return view('diagnostico-notificaciones');
+    })->name('diagnostico.notificaciones');
+    
+    Route::post('/test/notificacion-asignacion', function() {
+        try {
+            \Illuminate\Support\Facades\Artisan::call('test:notificacion-asignacion');
+            $output = \Illuminate\Support\Facades\Artisan::output();
+            
+            return response()->json([
+                'success' => true,
+                'output' => $output,
+                'message' => 'Comando ejecutado correctamente'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    })->name('test.notificacion-asignacion');
+    
 });
 
 Route::post('/logout', function () {
