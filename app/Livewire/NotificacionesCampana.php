@@ -17,6 +17,12 @@ class NotificacionesCampana extends Component
         $this->cargarNotificaciones();
     }
 
+    // 🔄 Auto-refrescar cada 30 segundos
+    public function updatedNotificaciones()
+    {
+        $this->cargarNotificaciones();
+    }
+
     public function cargarNotificaciones()
     {
         /** @var User|null $user */

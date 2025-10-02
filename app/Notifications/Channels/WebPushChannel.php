@@ -4,6 +4,7 @@ namespace App\Notifications\Channels;
 
 use App\Models\WebPushSubscription;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 use Minishlink\WebPush\WebPush;
 use Minishlink\WebPush\Subscription;
 
@@ -14,19 +15,50 @@ class WebPushChannel
      */
     public function send($notifiable, Notification $notification)
     {
-        // Obtener datos de la notificación
-        $data = $notification->toWebPush($notifiable);
-        
-        // Obtener todas las suscripciones activas del usuario
-        $subscriptions = $this->getUserSubscriptions($notifiable);
-        
-        if (empty($subscriptions)) {
-            return;
-        }
-        
-        // Enviar a cada suscripción
-        foreach ($subscriptions as $subscription) {
-            $this->sendPushNotification($subscription, $data);
+        try {
+            Log::info('WebPush: Iniciando envío de notificación', [
+                'user_id' => $notifiable->id,
+                'notification_class' => get_class($notification)
+            ]);
+
+            // Obtener datos de la notificación
+            $data = $notification->toWebPush($notifiable);
+            
+            Log::info('WebPush: Datos de notificación obtenidos', [
+                'title' => $data['title'] ?? 'N/A'
+            ]);
+            
+            // Obtener todas las suscripciones activas del usuario
+            $subscriptions = $this->getUserSubscriptions($notifiable);
+            
+            Log::info('WebPush: Suscripciones encontradas', [
+                'user_id' => $notifiable->id,
+                'count' => count($subscriptions)
+            ]);
+            
+            if (empty($subscriptions)) {
+                Log::warning('WebPush: Usuario sin suscripciones activas', [
+                    'user_id' => $notifiable->id
+                ]);
+                return;
+            }
+            
+            // Enviar a cada suscripción
+            foreach ($subscriptions as $subscription) {
+                $this->sendPushNotification($subscription, $data);
+            }
+            
+            Log::info('WebPush: Notificaciones enviadas exitosamente', [
+                'user_id' => $notifiable->id,
+                'subscriptions_sent' => count($subscriptions)
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('WebPush: Error al enviar notificación', [
+                'user_id' => $notifiable->id ?? 'unknown',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
         }
     }
 

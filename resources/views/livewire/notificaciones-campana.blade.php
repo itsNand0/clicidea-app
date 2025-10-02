@@ -1,4 +1,4 @@
-<div class="relative" x-data="{ showDropdown: @entangle('mostrarDropdown') }">
+<div class="relative" x-data="{ showDropdown: @entangle('mostrarDropdown') }" wire:poll.30s="cargarNotificaciones">
     <!-- Campana de notificaciones -->
     <button 
         @click="$wire.toggleDropdown()"
