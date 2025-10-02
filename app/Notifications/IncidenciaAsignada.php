@@ -39,10 +39,10 @@ class IncidenciaAsignada extends Notification
         // 🔔 AGREGAR WEB PUSH CHANNEL
         $channels[] = \App\Notifications\Channels\WebPushChannel::class;
         
-        // Agregar push si el usuario tiene token FCM
-        if ($notifiable->fcm_token) {
-            $channels[] = 'fcm'; // Requiere paquete FCM
-        }
+        // Agregar push si el usuario tiene token FCM (DESHABILITADO TEMPORALMENTE)
+        // if ($notifiable->fcm_token) {
+        //     $channels[] = 'fcm'; // Requiere paquete FCM
+        // }
         
         return $channels;
     }
