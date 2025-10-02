@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     // Prueba push
     document.getElementById('btn-push').addEventListener('click', async function() {
-        addLog('📨 Iniciando diagnóstico de push notification...');
+        addLog('📨 Iniciando diagnóstico detallado de push notification...');
         
         if (Notification.permission !== 'granted') {
             addLog('❌ Permisos de notificación no concedidos', 'error');
@@ -211,90 +211,172 @@ document.addEventListener('DOMContentLoaded', async function() {
                 return;
             }
             
-            addLog('🔍 Verificando Service Worker...');
+            addLog('🔍 Obteniendo registration del Service Worker...');
             
-            // Intentar registrar Service Worker si no está registrado
-            let registration = await navigator.serviceWorker.getRegistration();
+            const registration = await navigator.serviceWorker.getRegistration();
             
             if (!registration) {
-                addLog('⚠️ Service Worker no registrado, intentando registrar...', 'warning');
-                
-                try {
-                    registration = await navigator.serviceWorker.register('/sw.js');
-                    addLog('✅ Service Worker registrado exitosamente', 'success');
-                    
-                    // Esperar a que esté listo
-                    await navigator.serviceWorker.ready;
-                    addLog('✅ Service Worker está listo', 'success');
-                } catch (registerError) {
-                    addLog(`❌ Error registrando Service Worker: ${registerError.message}`, 'error');
-                    addLog('🔍 Verificando si /sw.js existe...', 'info');
-                    
-                    // Verificar si el archivo sw.js existe
-                    try {
-                        const response = await fetch('/sw.js');
-                        if (response.ok) {
-                            addLog('✅ Archivo /sw.js encontrado', 'success');
-                        } else {
-                            addLog(`❌ Archivo /sw.js retorna error: ${response.status}`, 'error');
-                        }
-                    } catch (fetchError) {
-                        addLog(`❌ No se puede acceder a /sw.js: ${fetchError.message}`, 'error');
-                    }
-                    return;
-                }
-            } else {
-                addLog('✅ Service Worker ya está registrado', 'success');
-                addLog(`📍 Scope: ${registration.scope}`, 'info');
-                addLog(`📍 Estado: ${registration.active ? 'Activo' : 'Inactivo'}`, 'info');
+                addLog('❌ No se pudo obtener registration del Service Worker', 'error');
+                return;
             }
             
-            // Intentar mostrar notificación
-            addLog('📨 Enviando push notification a través del Service Worker...', 'info');
+            addLog('✅ Registration obtenido correctamente', 'success');
+            addLog(`📍 Scope: ${registration.scope}`, 'info');
             
-            await registration.showNotification('🧪 Push de Prueba', {
-                body: 'Si ves esto, las push notifications funcionan correctamente',
+            // Verificar el estado del Service Worker
+            if (registration.installing) {
+                addLog('⏳ Service Worker instalándose...', 'warning');
+            } else if (registration.waiting) {
+                addLog('⏳ Service Worker esperando...', 'warning');
+            } else if (registration.active) {
+                addLog('✅ Service Worker activo', 'success');
+            } else {
+                addLog('❌ Service Worker en estado desconocido', 'error');
+            }
+            
+            // Verificar que showNotification esté disponible
+            if (typeof registration.showNotification !== 'function') {
+                addLog('❌ showNotification no está disponible en registration', 'error');
+                return;
+            }
+            
+            addLog('🔍 Método showNotification está disponible', 'success');
+            
+            // Intentar mostrar notificación con configuración mínima primero
+            addLog('📨 Enviando notificación con configuración mínima...', 'info');
+            
+            try {
+                await registration.showNotification('Test Mínimo');
+                addLog('✅ Notificación mínima enviada exitosamente', 'success');
+            } catch (minError) {
+                addLog(`❌ Error en notificación mínima: ${minError.message}`, 'error');
+                addLog(`� Stack: ${minError.stack}`, 'error');
+                return;
+            }
+            
+            // Si la mínima funcionó, probar con configuración completa
+            addLog('📨 Enviando notificación con configuración completa...', 'info');
+            
+            const notificationOptions = {
+                body: 'Esta es una notificación de prueba con configuración completa',
                 icon: '/images/lateral01.png',
                 badge: '/images/lateral01.png',
-                tag: 'test-push',
-                requireInteraction: true,
+                tag: 'test-push-complete',
+                requireInteraction: false, // Cambiar a false para ver si es problema de requireInteraction
+                data: {
+                    test: true,
+                    timestamp: Date.now()
+                },
                 actions: [
                     { action: 'view', title: 'Ver' },
                     { action: 'close', title: 'Cerrar' }
                 ]
-            });
+            };
             
-            addLog('✅ Push notification enviada exitosamente', 'success');
+            addLog(`🔍 Opciones: ${JSON.stringify(notificationOptions, null, 2)}`, 'info');
+            
+            await registration.showNotification('🧪 Push Completo', notificationOptions);
+            
+            addLog('✅ Notificación completa enviada exitosamente', 'success');
+            addLog('🎉 ¡Push notifications están funcionando!', 'success');
             
         } catch (error) {
             addLog(`❌ Error general en push notification: ${error.message}`, 'error');
+            addLog(`🔍 Error name: ${error.name}`, 'error');
             addLog(`🔍 Stack trace: ${error.stack}`, 'error');
+            
+            // Información adicional del navegador
+            addLog(`🔍 User Agent: ${navigator.userAgent}`, 'info');
+            addLog(`🔍 Platform: ${navigator.platform}`, 'info');
         }
     });
     
     // Prueba incidencia
     document.getElementById('btn-incidencia').addEventListener('click', async function() {
-        addLog('🎯 Ejecutando test de incidencia...');
+        addLog('🎯 Iniciando test detallado de notificación de incidencia...');
         
         try {
-            const response = await fetch('{{ route("test.notificacion-asignacion") }}', {
+            // Verificar CSRF token
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+            if (!csrfToken) {
+                addLog('❌ CSRF token no encontrado en la página', 'error');
+                return;
+            }
+            
+            addLog('✅ CSRF token encontrado', 'success');
+            addLog(`🔍 Token: ${csrfToken.getAttribute('content').substring(0, 10)}...`, 'info');
+            
+            // Verificar la URL del endpoint
+            const testUrl = '{{ route("test.notificacion-asignacion") }}';
+            addLog(`🔍 URL del test: ${testUrl}`, 'info');
+            
+            addLog('📨 Enviando petición al servidor...', 'info');
+            
+            const response = await fetch(testUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken.getAttribute('content'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    test: true,
+                    timestamp: Date.now()
+                })
             });
             
-            const data = await response.json();
+            addLog(`📊 Respuesta HTTP: ${response.status} ${response.statusText}`, 'info');
             
-            if (response.ok) {
-                addLog('✅ Test de incidencia ejecutado', 'success');
-                addLog(`📊 Resultado: ${JSON.stringify(data).substring(0, 100)}...`);
-            } else {
-                addLog(`❌ Error en test: ${data.error || 'Error desconocido'}`, 'error');
+            if (!response.ok) {
+                addLog(`❌ Error HTTP: ${response.status}`, 'error');
+                
+                // Intentar leer el cuerpo del error
+                try {
+                    const errorText = await response.text();
+                    addLog(`🔍 Cuerpo del error: ${errorText.substring(0, 200)}...`, 'error');
+                } catch (readError) {
+                    addLog(`❌ No se pudo leer el cuerpo del error: ${readError.message}`, 'error');
+                }
+                return;
             }
+            
+            const responseData = await response.json();
+            
+            addLog('✅ Respuesta del servidor recibida', 'success');
+            addLog(`📊 Datos de respuesta:`, 'info');
+            addLog(`   - success: ${responseData.success}`, 'info');
+            addLog(`   - message: ${responseData.message || 'N/A'}`, 'info');
+            
+            if (responseData.output) {
+                addLog(`📋 Output del comando:`, 'info');
+                addLog(`${responseData.output}`, 'info');
+            }
+            
+            if (responseData.success) {
+                addLog('🎉 Test de incidencia ejecutado exitosamente', 'success');
+                addLog('⏳ Esperando notificación push...', 'info');
+                
+                // Timeout para verificar si llega la notificación
+                setTimeout(() => {
+                    addLog('🔍 Si no has visto una notificación push, puede ser un problema del WebPushChannel', 'warning');
+                }, 3000);
+            } else {
+                addLog(`❌ Error en test de incidencia: ${responseData.error || 'Error desconocido'}`, 'error');
+            }
+            
         } catch (error) {
-            addLog(`❌ Error de conexión: ${error.message}`, 'error');
+            addLog(`❌ Error de conexión o JavaScript: ${error.message}`, 'error');
+            addLog(`🔍 Error name: ${error.name}`, 'error');
+            addLog(`🔍 Stack: ${error.stack}`, 'error');
+            
+            // Verificar conectividad básica
+            try {
+                const pingResponse = await fetch('/', {method: 'HEAD'});
+                addLog(`🔍 Conectividad básica: ${pingResponse.status}`, 'info');
+            } catch (pingError) {
+                addLog(`❌ Problema de conectividad: ${pingError.message}`, 'error');
+            }
         }
     });
 });
