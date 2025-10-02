@@ -5,15 +5,11 @@ namespace App\Notifications;
 use App\Models\Incidencias;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class IncidenciaAsignada extends Notification implements ShouldQueue
+class IncidenciaAsignada extends Notification
 {
-    use Queueable;
-
     protected $incidencia;
     protected $asignadoPor;
 
