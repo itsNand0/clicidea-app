@@ -96,9 +96,55 @@ function updateStatus() {
 }
 
 // Event listeners
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     addLog('🔍 Verificando estado del sistema...');
     updateStatus();
+    
+    // Verificar Service Worker automáticamente
+    if ('serviceWorker' in navigator) {
+        try {
+            addLog('🔍 Verificando Service Worker...');
+            
+            let registration = await navigator.serviceWorker.getRegistration();
+            
+            if (registration) {
+                addLog('✅ Service Worker encontrado', 'success');
+                addLog(`📍 Scope: ${registration.scope}`, 'info');
+                addLog(`📍 Estado: ${registration.active ? 'Activo' : 'Inactivo'}`, 'info');
+            } else {
+                addLog('⚠️ Service Worker no está registrado', 'warning');
+                addLog('🔧 Intentando registrar automáticamente...', 'info');
+                
+                try {
+                    registration = await navigator.serviceWorker.register('/sw.js');
+                    addLog('✅ Service Worker registrado automáticamente', 'success');
+                    
+                    // Esperar a que esté listo
+                    await navigator.serviceWorker.ready;
+                    addLog('✅ Service Worker está listo para usar', 'success');
+                } catch (error) {
+                    addLog(`❌ Error registrando Service Worker: ${error.message}`, 'error');
+                    
+                    // Verificar si el archivo existe
+                    try {
+                        const response = await fetch('/sw.js');
+                        if (response.ok) {
+                            addLog('✅ Archivo /sw.js existe y es accesible', 'info');
+                            addLog('⚠️ Puede ser un problema de permisos o HTTPS', 'warning');
+                        } else {
+                            addLog(`❌ Archivo /sw.js retorna error HTTP: ${response.status}`, 'error');
+                        }
+                    } catch (fetchError) {
+                        addLog(`❌ No se puede acceder a /sw.js: ${fetchError.message}`, 'error');
+                    }
+                }
+            }
+        } catch (error) {
+            addLog(`❌ Error verificando Service Worker: ${error.message}`, 'error');
+        }
+    } else {
+        addLog('❌ Service Workers no soportados en este navegador', 'error');
+    }
     
     // Limpiar log
     document.getElementById('btn-limpiar').addEventListener('click', function() {
@@ -151,27 +197,78 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Prueba push
     document.getElementById('btn-push').addEventListener('click', async function() {
-        addLog('📨 Enviando push notification...');
+        addLog('📨 Iniciando diagnóstico de push notification...');
+        
+        if (Notification.permission !== 'granted') {
+            addLog('❌ Permisos de notificación no concedidos', 'error');
+            return;
+        }
         
         try {
-            const registration = await navigator.serviceWorker.getRegistration();
-            
-            if (!registration) {
-                addLog('❌ Service Worker no registrado', 'error');
+            // Verificar si Service Worker está soportado
+            if (!('serviceWorker' in navigator)) {
+                addLog('❌ Service Worker no soportado en este navegador', 'error');
                 return;
             }
             
+            addLog('🔍 Verificando Service Worker...');
+            
+            // Intentar registrar Service Worker si no está registrado
+            let registration = await navigator.serviceWorker.getRegistration();
+            
+            if (!registration) {
+                addLog('⚠️ Service Worker no registrado, intentando registrar...', 'warning');
+                
+                try {
+                    registration = await navigator.serviceWorker.register('/sw.js');
+                    addLog('✅ Service Worker registrado exitosamente', 'success');
+                    
+                    // Esperar a que esté listo
+                    await navigator.serviceWorker.ready;
+                    addLog('✅ Service Worker está listo', 'success');
+                } catch (registerError) {
+                    addLog(`❌ Error registrando Service Worker: ${registerError.message}`, 'error');
+                    addLog('🔍 Verificando si /sw.js existe...', 'info');
+                    
+                    // Verificar si el archivo sw.js existe
+                    try {
+                        const response = await fetch('/sw.js');
+                        if (response.ok) {
+                            addLog('✅ Archivo /sw.js encontrado', 'success');
+                        } else {
+                            addLog(`❌ Archivo /sw.js retorna error: ${response.status}`, 'error');
+                        }
+                    } catch (fetchError) {
+                        addLog(`❌ No se puede acceder a /sw.js: ${fetchError.message}`, 'error');
+                    }
+                    return;
+                }
+            } else {
+                addLog('✅ Service Worker ya está registrado', 'success');
+                addLog(`📍 Scope: ${registration.scope}`, 'info');
+                addLog(`📍 Estado: ${registration.active ? 'Activo' : 'Inactivo'}`, 'info');
+            }
+            
+            // Intentar mostrar notificación
+            addLog('📨 Enviando push notification a través del Service Worker...', 'info');
+            
             await registration.showNotification('🧪 Push de Prueba', {
-                body: 'Si ves esto, las push notifications funcionan',
+                body: 'Si ves esto, las push notifications funcionan correctamente',
                 icon: '/images/lateral01.png',
                 badge: '/images/lateral01.png',
                 tag: 'test-push',
-                requireInteraction: true
+                requireInteraction: true,
+                actions: [
+                    { action: 'view', title: 'Ver' },
+                    { action: 'close', title: 'Cerrar' }
+                ]
             });
             
-            addLog('✅ Push notification enviada', 'success');
+            addLog('✅ Push notification enviada exitosamente', 'success');
+            
         } catch (error) {
-            addLog(`❌ Error: ${error.message}`, 'error');
+            addLog(`❌ Error general en push notification: ${error.message}`, 'error');
+            addLog(`🔍 Stack trace: ${error.stack}`, 'error');
         }
     });
     
@@ -204,5 +301,6 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/pwa-final.js"></script>
 </body>
 </html>
