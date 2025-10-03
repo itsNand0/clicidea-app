@@ -150,51 +150,55 @@
                         
                         <!-- Botón Asignar -->
                         <li id="opcionasignar" class="nav-item border border-gray-500 px-2 sm:px-4 py-1 rounded-md hover:bg-gray-700 cursor-pointer">
-                            <a class="nav-link text-xs sm:text-sm block text-center">
+                            <a class="nav-link text-xs sm:text-sm block text-center flex flex-col sm:flex-row items-center justify-center">
                                 <i class="fa-regular fa-user"></i>
-                                <span class="hidden sm:inline">&nbsp;&nbsp;Asignar</span>
+                                <span class="sm:ml-2 mt-1 sm:mt-0 inline">&nbsp;&nbsp;Asignar</span>
                             </a>
                         </li>
 
                         <!-- Botón Editar -->
                         <li id='opcioneditar' class="nav-item border border-gray-500 px-2 sm:px-4 py-1 rounded-md hover:bg-gray-700 cursor-pointer">
-                            <a class="nav-link text-xs sm:text-sm block text-center">
+                            <a class="nav-link text-xs sm:text-sm block text-center flex flex-col sm:flex-row items-center justify-center">
                                 <i class="fa-solid fa-pen-to-square"></i>
-                                <span class="hidden sm:inline">&nbsp;&nbsp;Editar</span>
+                                <span class="sm:ml-2 mt-1 sm:mt-0 inline">&nbsp;&nbsp;Editar</span>
                             </a>
                         </li>
 
                         <!-- Botón Adjuntar -->
                         <li id="opcionadjuntar" class="nav-item border border-gray-500 px-2 sm:px-4 py-1 rounded-md hover:bg-gray-700 cursor-pointer">
-                            <a class="nav-link text-xs sm:text-sm block text-center">
+                            <a class="nav-link text-xs sm:text-sm block text-center flex flex-col sm:flex-row items-center justify-center">
                                 <i class="fa-solid fa-paperclip"></i>
-                                <span class="hidden sm:inline">&nbsp;&nbsp;Adjuntar</span>
+                                <span class="sm:ml-2 mt-1 sm:mt-0 inline">&nbsp;&nbsp;Adjuntar</span>
                             </a>
                         </li>
 
                         <!-- Botón Comentario -->
                         <li id="opcioncomentar" class="nav-item border border-gray-500 px-2 sm:px-4 py-1 rounded-md hover:bg-gray-700 cursor-pointer">
-                            <a class="nav-link text-xs sm:text-sm block text-center">
+                            <a class="nav-link text-xs sm:text-sm block text-center flex flex-col sm:flex-row items-center justify-center">
                                 <i class="fa-solid fa-comment"></i>
-                                <span class="hidden sm:inline">&nbsp;&nbsp;Comentario</span>
+                                <span class="sm:ml-2 mt-1 sm:mt-0 inline">&nbsp;&nbsp;Comentario</span>
                             </a>
                         </li>
 
                         <!-- Botón Estado -->
                         <li id="opcionestado" class="nav-item border border-gray-500 px-2 sm:px-4 py-1 rounded-md hover:bg-gray-700 cursor-pointer">
-                            <a class="nav-link text-xs sm:text-sm block text-center">
+                            <a class="nav-link text-xs sm:text-sm block text-center flex flex-col sm:flex-row items-center justify-center">
                                 <i class="fa-solid fa-bars"></i>
-                                <span class="hidden sm:inline">&nbsp;&nbsp;Estado</span>
+                                <span class="sm:ml-2 mt-1 sm:mt-0 inline">&nbsp;&nbsp;Estado</span>
                             </a>
                         </li>
 
                         <!-- Botón Resolver -->
-                        <li id="opcionresolver" class="nav-item border border-gray-500 px-2 sm:px-4 py-1 rounded-md hover:bg-gray-700 cursor-pointer">
-                            <a class="nav-link text-xs sm:text-sm block text-center">
-                                <i class="fa-solid fa-hand"></i>
-                                <span class="hidden sm:inline">&nbsp;&nbsp;Resolver</span>
-                            </a>
-                        </li>
+                        @can('incidencias.resolver')
+                            @if ($datas->estadoincidencia->descriestadoincidencia !== 'Cerrado')
+                                <li id="opcionresolver" class="nav-item border border-gray-500 px-2 sm:px-4 py-1 rounded-md hover:bg-gray-700 cursor-pointer">
+                                    <a class="nav-link text-xs sm:text-sm block text-center flex flex-col sm:flex-row items-center justify-center">
+                                        <i class="fa-solid fa-hand"></i>
+                                        <span class="sm:ml-2 mt-1 sm:mt-0 inline">&nbsp;&nbsp;Resolver</span>
+                                    </a>
+                                </li>
+                            @endif
+                        @endcan
                     </ul>
                 </nav>
 

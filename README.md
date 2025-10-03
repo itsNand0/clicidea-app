@@ -5,3 +5,5 @@
 * Para que el service worker funcione correctamente en Desarrollo se debe agregar como segura la wwb en chrome://flags/ opcion unsefuly...
 
 * En caso que no funcione las notificaciones en prueba ejecutar php artisan queue:work --stop-when-empty ya que podrian quedar en cola
+
+* sudo apt install php-gmp EJECUTAR SI O SIIIIIIIIIIIIIIIIIIIIIIIIII
